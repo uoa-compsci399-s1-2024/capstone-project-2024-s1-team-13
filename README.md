@@ -3,3 +3,6 @@
 # Capstone Project
 
 ## Contributors
+
+-Saacha (lead)
+-Eisen (backend developer)
