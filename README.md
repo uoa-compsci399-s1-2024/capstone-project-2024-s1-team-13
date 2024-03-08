@@ -2,6 +2,6 @@
 
 # Capstone Project
 
-
 ## Contributors
-- Istefat Sawda (Full Stack)
+
+- Zainab (full-stack dev)
