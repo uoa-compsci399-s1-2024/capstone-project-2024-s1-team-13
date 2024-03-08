@@ -3,6 +3,8 @@
 # Capstone Project
 
 ## Contributors
-- Natania (project manager)
+- Saacha (lead)
+- Eisen (backend developer)
 - Istefat Sawda (Full-Stack)
 - Zainab (full-stack)
+- Natania (project manager)
