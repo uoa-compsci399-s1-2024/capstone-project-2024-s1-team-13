@@ -3,7 +3,6 @@
 # Capstone Project
 
 ## Contributors
-
+- Natania (project manager)
 - Istefat Sawda (Full-Stack)
-
 - Zainab (full-stack)
