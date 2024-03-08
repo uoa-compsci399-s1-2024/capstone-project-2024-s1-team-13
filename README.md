@@ -4,4 +4,6 @@
 
 
 ## Contributors
-- Istefat Sawda (Full Stack)
+- Istefat Sawda (Full-Stack)
+
+
