@@ -2,4 +2,6 @@
 
 # Capstone Project
 
+
 ## Contributors
+- Istefat Sawda (Full Stack)
