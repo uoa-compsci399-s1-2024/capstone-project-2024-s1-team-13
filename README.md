@@ -7,3 +7,4 @@
 - Eisen (backend developer)
 - Istefat Sawda (Full-Stack)
 - Zainab (full-stack)
+- Natania (project manager)
