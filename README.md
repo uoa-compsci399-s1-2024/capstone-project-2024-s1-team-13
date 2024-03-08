@@ -3,3 +3,4 @@
 # Capstone Project
 
 ## Contributors
+- Natania (project manager)
