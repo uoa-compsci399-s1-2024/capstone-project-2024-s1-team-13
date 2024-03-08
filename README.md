@@ -3,6 +3,7 @@
 # Capstone Project
 
 ## Contributors
-
--Saacha (lead)
--Eisen (backend developer)
+- Saacha (lead)
+- Eisen (backend developer)
+- Istefat Sawda (Full-Stack)
+- Zainab (full-stack)
