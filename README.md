@@ -3,3 +3,5 @@
 # Capstone Project
 
 ## Contributors
+
+- Zainab (full-stack dev)
