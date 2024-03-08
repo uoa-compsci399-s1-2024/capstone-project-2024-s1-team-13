@@ -4,4 +4,4 @@
 
 ## Contributors
 
-- Zainab (full-stack dev)
+- Zainab (full-stack)
