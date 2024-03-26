@@ -9,3 +9,10 @@ Te Tuhi Disability Training Cafe platform for trainees
 - Istefat Sawda (Full-Stack)
 - Zainab (full-stack)
 - Natania (project manager)
+
+# Backend Resources
+
+
+
+
+# Frontend Resources
