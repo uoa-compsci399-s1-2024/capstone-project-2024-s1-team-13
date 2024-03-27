@@ -23,6 +23,7 @@ Our capstone project focuses on the Te Tuhi Disability Training Cafe, in which w
 # Frontend Resources
     ## Document
 
-    ## Videos
+    ##Videos
+[AWS Amplify with Flutter - Authentication](https://www.youtube.com/watch?v=M0syInU3VNs)
 
     ## Design Ideas
