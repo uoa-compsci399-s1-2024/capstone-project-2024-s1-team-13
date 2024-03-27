@@ -14,10 +14,11 @@ Our capstone project focuses on the Te Tuhi Disability Training Cafe, in which w
 
 # Backend Resources
     ## Document
-    [Backend Section Document](https://docs.google.com/document/d/1SDRM_Ymiu-dTaR5IqxHMonCC6Gumcb81q76EDuDEwJI/edit?usp=sharing)
+[Backend Section Document](https://docs.google.com/document/d/1SDRM_Ymiu-dTaR5IqxHMonCC6Gumcb81q76EDuDEwJI/edit?usp=sharing)
 
     ## Videos
 [AWS Full Web App Portfolio Project Tutorial](https://youtu.be/zuKu0VFiwas?si=QnAoLocDemAZlc-r)
+
 [AWS DynamoDB Tutorial for Beginners](https://youtu.be/FQrN5aJWa_U?si=Y3kmW1Fro0TJwFDH)
 
 # Frontend Resources
