@@ -1,0 +1,48 @@
+name: istefat_s_application1
+description: A new Flutter project.
+version: 1.0.0+1
+environment: 
+  sdk: '>=2.12.0 <3.0.0'
+dependencies: 
+  flutter: 
+    sdk: flutter
+  cached_network_image: ^3.3.0
+  flutter_svg: ^2.0.9
+  intl: ^0.18.0
+dev_dependencies: 
+  flutter_test: 
+    sdk: flutter
+flutter: 
+  uses-material-design: true
+  assets: 
+    - assets/
+    - assets/images/
+  fonts: 
+    - family: Lexend Exa
+      fonts: 
+        - asset: assets/fonts/LexendExaMedium.ttf
+          weight: 500
+        - asset: assets/fonts/LexendExaBold.ttf
+          weight: 700
+    - family: Lexend Deca
+      fonts: 
+        - asset: assets/fonts/LexendDecaMedium.ttf
+          weight: 500
+    - family: Lexend
+      fonts: 
+        - asset: assets/fonts/LexendExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/LexendMedium.ttf
+          weight: 500
+        - asset: assets/fonts/LexendSemiBold.ttf
+          weight: 600
+    - family: Poppins
+      fonts: 
+        - asset: assets/fonts/PoppinsMedium.ttf
+          weight: 500
+    - family: Inter
+      fonts: 
+        - asset: assets/fonts/InterSemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/InterExtraBold.ttf
+          weight: 800
