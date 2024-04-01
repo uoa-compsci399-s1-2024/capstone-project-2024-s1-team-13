@@ -12,12 +12,6 @@ Our capstone project focuses on the Te Tuhi Disability Training Cafe, in which w
 - Zainab (full-stack)
 - Natania (project manager)
 
-- Saacha Moyo (Team Lead)
-- Eisen Belleza (Backend Developer)
-- Istefat Sawda (Fullstack Developer)
-- Zainab Shehzad (Fullstack Developer)
-- Natania Thomas (Project Manager)
-
 # Backend Resources
     ## Document
     [Backend Section Document](https://docs.google.com/document/d/1SDRM_Ymiu-dTaR5IqxHMonCC6Gumcb81q76EDuDEwJI/edit?usp=sharing)
