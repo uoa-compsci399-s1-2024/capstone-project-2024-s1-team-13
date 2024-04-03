@@ -49,7 +49,36 @@ class AppNavigationScreen extends StatelessWidget {
                           onTapScreenTitle: () => onTapScreenTitle(
                               context, AppRoutes.taskRecipeScreen),
                         ),
-
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "recipes",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.recipesScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Notifications",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.notificationsScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "recipe train method - Container",
+                          onTapScreenTitle: () => onTapScreenTitle(context,
+                              AppRoutes.recipeTrainMethodContainerScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "recipe train method",
+                          onTapScreenTitle: () => onTapScreenTitle(context,
+                              AppRoutes.recipeTrainMethodPage),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Macarons recipe",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.macaronsRecipeScreen),
+                        ),
 
                       ],
                     ),

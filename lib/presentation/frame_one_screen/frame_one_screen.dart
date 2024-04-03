@@ -7,10 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:istefat_s_application1/core/app_export.dart';
 
 class FrameOneScreen extends StatelessWidget {
-  const FrameOneScreen({Key? key})
-      : super(
-          key: key,
-        );
+  const FrameOneScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -97,20 +94,34 @@ class FrameOneScreen extends StatelessWidget {
             ],
           ),
         ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.pushNamed(context, AppRoutes.notificationsScreen);
+          },
+          label: Text('Notifications'),
+          icon: Icon(Icons.notifications),
+          backgroundColor: Colors.blue,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       ),
     );
   }
 
-  /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return CustomAppBar(
       leadingWidth: 43.h,
-      leading: AppbarLeadingImage(
-        imagePath: ImageConstant.imgIconBell,
-        margin: EdgeInsets.only(
-          left: 22.h,
-          top: 14.v,
-          bottom: 14.v,
+      leading: GestureDetector(
+        onTap: () {
+          // You can keep the bell icon button's functionality here
+          // Or replace it with any other action
+        },
+        child: AppbarLeadingImage(
+          imagePath: ImageConstant.imgIconBell,
+          margin: EdgeInsets.only(
+            left: 22.h,
+            top: 14.v,
+            bottom: 14.v,
+          ),
         ),
       ),
       centerTitle: true,

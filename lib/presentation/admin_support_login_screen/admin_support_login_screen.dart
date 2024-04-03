@@ -160,7 +160,11 @@ class AdminSupportLoginScreen extends StatelessWidget {
                             buttonStyle: CustomButtonStyles.outlinePrimaryTL18,
                             buttonTextStyle: theme.textTheme.labelLarge!,
                             alignment: Alignment.center,
-                          ),
+                            onPressed: () {
+                                        Navigator.pushNamed(context, AppRoutes.frameOneScreen);
+                                      },
+                          )
+
                         ],
                       ),
                     ),

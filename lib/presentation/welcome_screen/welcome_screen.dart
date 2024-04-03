@@ -57,6 +57,7 @@ class WelcomeScreen extends StatelessWidget {
                       buttonStyle: CustomButtonStyles.outlinePrimary,
                       onPressed: () {
                         Navigator.pushNamed(context, AppRoutes.taskRecipeScreen);
+                        //Navigator.pushNamed(context, AppRoutes.notificationsScreen);
                       },
                     ),
                     SizedBox(height: 18.v),
@@ -68,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                       buttonTextStyle: CustomTextStyles.titleMediumWhiteA700,
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.frameOneScreen);
+                        Navigator.pushNamed(context, AppRoutes.adminSupportLoginScreen);
                       },
                     ),
                     SizedBox(height: 10.v),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../core/app_export.dart';
-
 class CustomBottomBar extends StatefulWidget {
-  CustomBottomBar({this.onChanged});
+  CustomBottomBar({this.onChanged, this.onItemSelected});
 
-  Function(BottomBarEnum)? onChanged;
-
+  final void Function(int)? onItemSelected; // Define onItemSelected as an optional function parameter
+  final void Function(BottomBarEnum)? onChanged; // Define onChanged as an optional function parameter
+  
   @override
   CustomBottomBarState createState() => CustomBottomBarState();
 }
@@ -34,6 +34,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
     )
   ];
 
+  @override
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,9 +108,12 @@ class CustomBottomBarState extends State<CustomBottomBar> {
           );
         }),
         onTap: (index) {
-          selectedIndex = index;
-          widget.onChanged?.call(bottomMenuList[index].type);
-          setState(() {});
+          setState(() {
+            selectedIndex = index;
+          });
+          if (widget.onItemSelected != null) {
+            widget.onItemSelected!(index); // Passing the index to the onItemSelected callback if it's not null
+          }
         },
       ),
     );

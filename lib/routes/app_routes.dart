@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../presentation/recipe_train_method_page/recipe_train_method_page.dart';
 import '../presentation/task_recipe_screen/task_recipe_screen.dart';
 import '../presentation/welcome_screen/welcome_screen.dart';
 import '../presentation/admin_support_login_screen/admin_support_login_screen.dart';
@@ -44,6 +45,7 @@ class AppRoutes {
     recipesScreen: (context) => RecipesScreen(),
     notificationsScreen: (context) => NotificationsScreen(),
     recipeTrainMethodContainerScreen: (context) => RecipeTrainMethodContainerScreen(),
+    recipeTrainMethodPage: (context) => RecipeTrainMethodPage(),
     macaronsRecipeScreen: (context) => MacaronsRecipeScreen(),
     appNavigationScreen: (context) => AppNavigationScreen()
   };

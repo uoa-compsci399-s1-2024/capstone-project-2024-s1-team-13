@@ -1,62 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:istefat_s_application1/core/app_export.dart';
 
-// ignore: must_be_immutable
 class RecipetrainmethodItemWidget extends StatelessWidget {
-  const RecipetrainmethodItemWidget({Key? key})
-      : super(
-          key: key,
-        );
+  const RecipetrainmethodItemWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 154.v,
-      width: 146.h,
-      child: Stack(
-        alignment: Alignment.center,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CustomImageView(
-            imagePath: ImageConstant.imgRectangle136,
-            height: 32.v,
-            alignment: Alignment.bottomCenter,
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: SizedBox(
-              height: 153.v,
-              width: 146.h,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.macaronsRecipeScreen);
+            },
+            child: Container(
+              width: 146.h, // Fixed width for the container
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8.0),
+                  bottomLeft: Radius.circular(8.0),
+                ),
+                border: Border.all(color: Colors.black, width: 1.0),
+              ),
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 153.v,
-                      width: 146.h,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 39.h,
-                        vertical: 32.v,
-                      ),
-                      decoration: AppDecoration.fillGray400.copyWith(
-                        borderRadius: BorderRadiusStyle.roundedBorder22,
-                      ),
-                      child: CustomImageView(
-                        imagePath: ImageConstant.imgClose,
-                        height: 65.v,
-                        alignment: Alignment.topCenter,
-                      ),
-                    ),
+                  Icon(Icons.remove_red_eye),
+                  SizedBox(height: 5),
+                  Text(
+                    "VISUAL",
+                    style: TextStyle(fontSize: 16, color: Colors.black), // Adjust styling as needed
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 6.v),
-                      child: Text(
-                        "AUDITORY",
-                        style: theme.textTheme.labelLarge,
-                      ),
-                    ),
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+
+              Navigator.pushNamed(context, AppRoutes.macaronsRecipeScreen);
+            },
+            
+            child: Container(
+              width: 146.h, // Fixed width for the container
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(8.0),
+                  bottomRight: Radius.circular(8.0),
+                ),
+                border: Border.all(color: Colors.black, width: 1.0),
+              ),
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.hearing),
+                  SizedBox(height: 5),
+                  Text(
+                    "AUDITORY",
+                    style: TextStyle(fontSize: 16, color: Colors.black), // Adjust styling as needed
                   ),
                 ],
               ),

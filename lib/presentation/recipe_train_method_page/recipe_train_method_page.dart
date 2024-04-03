@@ -73,7 +73,7 @@ class RecipeTrainMethodPage extends StatelessWidget {
               width: 9.h,
             );
           },
-          itemCount: 2,
+          itemCount: 1,
           itemBuilder: (context, index) {
             return RecipetrainmethodItemWidget();
           },
