@@ -144,6 +144,9 @@ class EditRecipesFrameScreen extends StatelessWidget {
         AppbarTrailingImage(
           imagePath: ImageConstant.imgClose,
           margin: EdgeInsets.fromLTRB(16.h, 16.v, 16.h, 15.v),
+          onTap: () {
+          onTapAddButtonRight(context);
+        },
         )
       ],
       styleType: Style.bgShadow,
@@ -396,6 +399,11 @@ class EditRecipesFrameScreen extends StatelessWidget {
   /// Navigates back to the previous screen.
   onTapArrowLeft(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  // Navigates to the addRecipeFrameScreen when the action is triggered.
+  onTapAddButtonRight(BuildContext context){
+    Navigator.pushNamed(context, AppRoutes.addRecipeFrameScreen);
   }
 
   /// Navigates to the editRecipeFrameScreen when the action is triggered.
