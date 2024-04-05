@@ -59,6 +59,16 @@ class CustomTextStyles {
   static get titleLarge20 => theme.textTheme.titleLarge!.copyWith(
         fontSize: 20.fSize,
       );
+  
+  static get labelLargeGray40001 => theme.textTheme.labelLarge!.copyWith(
+        color: appTheme.gray40001,
+      );
+  static get labelLargeOnError => theme.textTheme.labelLarge!.copyWith(
+        color: theme.colorScheme.onError,
+      );
+  static get labelMediumff000000 => theme.textTheme.labelMedium!.copyWith(
+        color: Color(0XFF000000),
+      );
 }
 
 

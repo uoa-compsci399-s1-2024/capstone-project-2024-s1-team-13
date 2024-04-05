@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/app_export.dart';
 class CustomBottomBar extends StatefulWidget {
-  CustomBottomBar({this.onChanged, this.onItemSelected});
+  CustomBottomBar({this.onChanged, this.onItemSelected, required int selectedIndex});
+  
 
   final void Function(int)? onItemSelected; // Define onItemSelected as an optional function parameter
   final void Function(BottomBarEnum)? onChanged; // Define onChanged as an optional function parameter
@@ -11,7 +12,9 @@ class CustomBottomBar extends StatefulWidget {
 }
 
 class CustomBottomBarState extends State<CustomBottomBar> {
-  int selectedIndex = 0;
+  late int selectedIndex=0;
+
+  
 
   List<BottomMenuModel> bottomMenuList = [
     BottomMenuModel(
@@ -35,7 +38,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
   ];
 
   @override
-  @override
+  
   Widget build(BuildContext context) {
     return Container(
       height: 65.v,
@@ -72,7 +75,8 @@ class CustomBottomBarState extends State<CustomBottomBar> {
               children: [
                 CustomImageView(
                   imagePath: bottomMenuList[index].icon,
-                  height: 26.v,
+                  height: 25.adaptSize,
+                  width: 25.adaptSize,
                   color: theme.colorScheme.onPrimaryContainer,
                 ),
                 Text(
@@ -107,16 +111,22 @@ class CustomBottomBarState extends State<CustomBottomBar> {
             label: '',
           );
         }),
+        
         onTap: (index) {
+          widget.onChanged?.call(bottomMenuList[index].type);
+          widget.onItemSelected?.call(index); // Call the onItemSelected callback with the index
           setState(() {
-            selectedIndex = index;
+            selectedIndex = index; // Update the selectedIndex variable
           });
-          if (widget.onItemSelected != null) {
-            widget.onItemSelected!(index); // Passing the index to the onItemSelected callback if it's not null
-          }
         },
       ),
     );
+    
+  }
+  void setSelectedIndex(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
   }
 }
 

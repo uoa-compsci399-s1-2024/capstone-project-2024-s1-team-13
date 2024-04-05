@@ -2,7 +2,7 @@ import 'package:istefat_s_application1/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:istefat_s_application1/core/app_export.dart';
 
-import '../task_recipe_screen/task_recipe_screen.dart';
+import '../trainees/task_recipe_screen/task_recipe_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key})

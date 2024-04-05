@@ -7,13 +7,13 @@ String _appTheme = "primary";
 /// Helper class for managing themes and colors.
 class ThemeHelper {
   // A map of custom color themes supported by the app
-  Map<String, PrimaryColors> _supportedCustomColor = {
-    'primary': PrimaryColors()
-  };
-
+  
 // A map of color schemes supported by the app
   Map<String, ColorScheme> _supportedColorScheme = {
     'primary': ColorSchemes.primaryColorScheme
+  };
+  Map<String, PrimaryColors> _supportedCustomColor = {
+    'primary': PrimaryColors()
   };
 
   /// Changes the app theme to [_newTheme].
@@ -50,6 +50,14 @@ class ThemeHelper {
           ),
           padding: EdgeInsets.zero,
         ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: appTheme.gray50,
+      ),
+      dividerTheme: DividerThemeData(
+        thickness: 100,
+        space: 100,
+        color: appTheme.gray40001,
       ),
     );
   }
@@ -120,6 +128,12 @@ class TextThemes {
           fontFamily: 'Lexend Exa',
           fontWeight: FontWeight.w400,
         ),
+        bodySmall: TextStyle(
+          color: Color(0XFF000000),
+          fontSize: 10.fSize,
+          fontFamily: 'Lexend Exa',
+          fontWeight: FontWeight.w300,
+        ),
       );
 }
 
@@ -138,6 +152,8 @@ class ColorSchemes {
     // On colors(text colors)
     onPrimary: Color(0XFF2A2A2A),
     onPrimaryContainer: Color(0XFFC1C1C1),
+
+    
   );
 }
 
@@ -165,6 +181,17 @@ class PrimaryColors {
 
   // White
   Color get whiteA700 => Color(0XFFFFFFFF);
+
+
+  Color get blueGray400 => Color(0XFF888888);
+
+  // Gray
+  
+  Color get gray40001 => Color(0XFFC1C1C1);
+
+  // Red
+  Color get red400 => Color(0XFFCE5959);
+  Color get red600 => Color(0XFFE13F3F);
 }
 
 PrimaryColors get appTheme => ThemeHelper().themeColor();

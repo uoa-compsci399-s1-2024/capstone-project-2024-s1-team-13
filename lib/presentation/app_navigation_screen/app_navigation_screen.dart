@@ -63,6 +63,12 @@ class AppNavigationScreen extends StatelessWidget {
                         ),
                         _buildScreenTitle(
                           context,
+                          screenTitle: "Notifications",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.notificationsScreenSupport),
+                        ),
+                        _buildScreenTitle(
+                          context,
                           screenTitle: "recipe train method - Container",
                           onTapScreenTitle: () => onTapScreenTitle(context,
                               AppRoutes.recipeTrainMethodContainerScreen),
@@ -80,6 +86,24 @@ class AppNavigationScreen extends StatelessWidget {
                               context, AppRoutes.macaronsRecipeScreen),
                         ),
 
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "add-recipe-frame",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.addRecipeFrameScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "edit-recipe-frame",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.editRecipeFrameScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "edit-recipes-frame",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.editRecipesFrameScreen),
+                        ),
                       ],
                     ),
                   ),
@@ -109,7 +133,7 @@ class AppNavigationScreen extends StatelessWidget {
                 "App Navigation",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0XFF000000),
+                  color: theme.colorScheme.primaryContainer,
                   fontSize: 20.fSize,
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.w400,
@@ -126,7 +150,7 @@ class AppNavigationScreen extends StatelessWidget {
                 "Check your app's UI from the below demo screens of your app.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0XFF888888),
+                  color: appTheme.blueGray400,
                   fontSize: 16.fSize,
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.w400,
@@ -138,7 +162,7 @@ class AppNavigationScreen extends StatelessWidget {
           Divider(
             height: 1.v,
             thickness: 1.v,
-            color: Color(0XFF000000),
+            color: theme.colorScheme.primaryContainer,
           ),
         ],
       ),
@@ -170,7 +194,7 @@ class AppNavigationScreen extends StatelessWidget {
                   screenTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Color(0XFF000000),
+                    color: theme.colorScheme.primaryContainer,
                     fontSize: 20.fSize,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w400,
@@ -183,7 +207,7 @@ class AppNavigationScreen extends StatelessWidget {
             Divider(
               height: 1.v,
               thickness: 1.v,
-              color: Color(0XFF888888),
+              color: appTheme.blueGray400,
             ),
           ],
         ),

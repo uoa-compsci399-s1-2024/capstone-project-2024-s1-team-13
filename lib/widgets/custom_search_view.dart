@@ -96,7 +96,7 @@ class CustomSearchView extends StatelessWidget {
             }
           },
           autofocus: autofocus!,
-          style: textStyle ?? CustomTextStyles.labelLargeOnPrimaryContainer,
+          style: textStyle ?? CustomTextStyles.labelLargeGray40001,
           keyboardType: textInputType,
           maxLines: maxLines ?? 1,
           decoration: decoration,
@@ -108,7 +108,7 @@ class CustomSearchView extends StatelessWidget {
       );
   InputDecoration get decoration => InputDecoration(
         hintText: hintText ?? "",
-        hintStyle: hintStyle ?? CustomTextStyles.labelLargeOnPrimaryContainer,
+        hintStyle: hintStyle ?? CustomTextStyles.labelLargeGray40001,
         prefixIcon: prefix ??
             Container(
               margin: EdgeInsets.fromLTRB(11.h, 9.v, 9.h, 9.v),

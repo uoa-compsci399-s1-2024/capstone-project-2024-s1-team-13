@@ -25,6 +25,8 @@ class MyApp extends StatelessWidget {
           title: 'istefat_s_application1',
           debugShowCheckedModeBanner: false,
           initialRoute: AppRoutes.welcomeScreen,
+          //eisens --comment aboveand uncomment below
+          //initialRoute: AppRoutes.addRecipeFrameScreen,
           routes: AppRoutes.routes,
         );
       },
