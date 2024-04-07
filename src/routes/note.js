@@ -1,0 +1,1 @@
+//routes that the notes has access to
