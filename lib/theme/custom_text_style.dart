@@ -69,6 +69,43 @@ class CustomTextStyles {
   static get labelMediumff000000 => theme.textTheme.labelMedium!.copyWith(
         color: Color(0XFF000000),
       );
+  static get labelLargeRed400 => theme.textTheme.labelLarge!.copyWith(
+        color: appTheme.red400,
+      );
+  // Merge
+  static get labelMediumPink900_1 => theme.textTheme.labelMedium!.copyWith(
+        color: appTheme.pink900,
+      );
+  static get labelMediumff89375f => theme.textTheme.labelMedium!.copyWith(
+        color: Color(0XFF89375F),
+      );
+
+  static get lexendExaWhiteA700 => TextStyle(
+        color: appTheme.whiteA700,
+        fontSize: 66.fSize,
+        fontWeight: FontWeight.w500,
+      ).lexendExa;
+
+  // Title text style
+  static get titleLargeBlack900 => theme.textTheme.titleLarge!.copyWith(
+        color: appTheme.black900,
+        fontSize: 22.fSize,
+      );
+  static get titleMedium19 => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 19.fSize,
+      );
+  static get titleMediumBlack900 => theme.textTheme.titleMedium!.copyWith(
+        color: appTheme.black900,
+        fontSize: 19.fSize,
+      );
+
+  // Merge
+
+  static get titleMediumPink900 => theme.textTheme.titleMedium!.copyWith(
+        color: appTheme.pink900,
+      );
+
+  
 }
 
 

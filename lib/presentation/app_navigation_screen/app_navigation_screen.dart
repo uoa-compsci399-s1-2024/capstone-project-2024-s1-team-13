@@ -104,6 +104,30 @@ class AppNavigationScreen extends StatelessWidget {
                           onTapScreenTitle: () => onTapScreenTitle(
                               context, AppRoutes.editRecipesFrameScreen),
                         ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Task_Analysis_Mood_Screen",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.taskAnalysisMoodScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Task_Analysis_JudgeCall_Screen",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.taskAnalysisJudgecallScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Task_Analysis_Notes",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.taskAnalysisNotesScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Profile Container",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.profileContainerScreen),
+                        ),
                       ],
                     ),
                   ),

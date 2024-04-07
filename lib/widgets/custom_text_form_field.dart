@@ -99,7 +99,7 @@ class CustomTextFormField extends StatelessWidget {
             }
           },
           autofocus: autofocus!,
-          style: textStyle ?? CustomTextStyles.poppinsOnPrimaryContainer,
+          style: textStyle ?? CustomTextStyles.labelLargeGray40001, //CustomTextStyles.labelLargeGray40001, for saacha
           obscureText: obscureText!,
           textInputAction: textInputAction,
           keyboardType: textInputType,
@@ -110,26 +110,27 @@ class CustomTextFormField extends StatelessWidget {
       );
   InputDecoration get decoration => InputDecoration(
         hintText: hintText ?? "",
-        hintStyle: hintStyle ?? CustomTextStyles.poppinsOnPrimaryContainer,
+        hintStyle: hintStyle ?? CustomTextStyles.labelLargeGray40001, //.poppinsOnPrimaryContainer, for me
         prefixIcon: prefix,
         prefixIconConstraints: prefixConstraints,
         suffixIcon: suffix,
         suffixIconConstraints: suffixConstraints,
         isDense: true,
-        contentPadding: contentPadding ?? EdgeInsets.all(9.h),
-        fillColor: fillColor,
+        contentPadding: contentPadding ?? EdgeInsets.all(16.h), // 9 for me
+        fillColor: fillColor ?? appTheme.gray200,
         filled: filled,
         border: borderDecoration ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.h),
+              borderRadius: BorderRadius.circular(22.h), //15 for me
               borderSide: BorderSide(
                 color: theme.colorScheme.onError,
                 width: 1,
               ),
             ),
         enabledBorder: borderDecoration ??
+
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.h),
+              borderRadius: BorderRadius.circular(22.h), //15 for me
               borderSide: BorderSide(
                 color: theme.colorScheme.onError,
                 width: 1,
@@ -137,7 +138,7 @@ class CustomTextFormField extends StatelessWidget {
             ),
         focusedBorder: borderDecoration ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.h),
+              borderRadius: BorderRadius.circular(22.h), //15 for me
               borderSide: BorderSide(
                 color: theme.colorScheme.onError,
                 width: 1,

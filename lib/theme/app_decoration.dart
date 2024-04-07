@@ -23,6 +23,32 @@ class AppDecoration {
   static BoxDecoration get fillErrorContainer => BoxDecoration(
         color: theme.colorScheme.errorContainer,
       );
+  static BoxDecoration get fillGray2 => BoxDecoration(
+        color: appTheme.gray50,
+      );
+
+  static BoxDecoration get gradientGrayToTeal => BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment(0.96, 0.5),
+          end: Alignment(0.5, 1),
+          colors: [
+            appTheme.gray400,
+            appTheme.teal300,
+          ],
+        ),
+      );
+  static BoxDecoration get gradientTealToGray => BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment(0, 0.5),
+          end: Alignment(0.83, 0.56),
+          colors: [
+            appTheme.teal300,
+            appTheme.gray400,
+          ],
+        ),
+      );
+  
+  static BoxDecoration get outlineBlack => BoxDecoration();
 
   // Outline decorations
   static BoxDecoration get outlinePrimary => BoxDecoration(
@@ -97,6 +123,26 @@ class BorderRadiusStyle {
       );
   static BorderRadius get roundedBorder6 => BorderRadius.circular(
         6.h,
+      );
+
+  static BorderRadius get circleBorder55 => BorderRadius.circular(
+        55.h,
+      );
+
+  // Custom borders
+  static BorderRadius get customBorderTL22 => BorderRadius.horizontal(
+        left: Radius.circular(22.h),
+      );
+
+  // Rounded borders
+  
+  static BorderRadius get roundedBorder48 => BorderRadius.circular(
+        48.h,
+      );
+
+  // Merge
+  static BorderRadius get customBorderBL22 => BorderRadius.vertical(
+        bottom: Radius.circular(22.h),
       );
 }
 // Comment/Uncomment the below code based on your Flutter SDK version.

@@ -16,6 +16,18 @@ import '../presentation/admin/add_recipe_frame_screen/add_recipe_frame_screen.da
 import '../presentation/admin/edit_recipe_frame_screen/edit_recipe_frame_screen.dart';
 import '../presentation/admin/edit_recipes_frame_screen/edit_recipes_frame_screen.dart';
 import '../presentation/app_navigation_screen/app_navigation_screen.dart';
+import 'package:istefat_s_application1/presentation/support/support_trainee_profile_page/support_trainee_profile_page.dart';
+import '../presentation/support/task_analysis_mood_screen/task_analysis_mood_screen.dart';
+import '../presentation/support/task_analysis_judgecall_screen/task_analysis_judgecall_screen.dart';
+import '../presentation/support/task_analysis_notes_screen/task_analysis_notes_screen.dart';
+import '../presentation/support/profile_container_screen/profile_container_screen.dart';
+import '../presentation/app_navigation_screen/app_navigation_screen.dart';
+import '../presentation/support/support_trainee_progress_screen/support_trainee_progress_screen.dart';
+import '../presentation/support/support_trainee_notes_page/support_trainee_notes_page.dart';
+import '../presentation/support/support_trainee_notes_container_screen/support_trainee_notes_container_screen.dart';
+import '../presentation/support/support_add_notes_screen/support_add_notes_screen.dart';
+import '../presentation/support/support_edit_notes_screen/support_edit_notes_screen.dart';
+
 
 class AppRoutes {
   static const String welcomeScreen = '/welcome_screen';
@@ -56,6 +68,28 @@ class AppRoutes {
 
   static const String dishes = '/dishes';
 
+
+  static const String taskAnalysisMoodScreen = '/task_analysis_mood_screen';
+
+  static const String taskAnalysisJudgecallScreen = '/task_analysis_judgecall_screen';
+
+  static const String taskAnalysisNotesScreen = '/task_analysis_notes_screen';
+
+  static const String supportTraineeProfilePage = '/support_trainee_profile_page';
+
+  static const String profileContainerScreen = '/profile_container_screen';
+
+
+  static const String supportTraineeProgressScreen = '/support_trainee_progress_screen';
+
+  static const String supportTraineeNotesPage = '/support_trainee_notes_page';
+
+  static const String supportTraineeNotesContainerScreen = '/support_trainee_notes_container_screen';
+
+  static const String supportAddNotesScreen = '/support_add_notes_screen';
+
+  static const String supportEditNotesScreen = '/support_edit_notes_screen';
+
   
 
   
@@ -73,14 +107,24 @@ class AppRoutes {
     recipeTrainMethodContainerScreen: (context) => RecipeTrainMethodContainerScreen(),
     recipeTrainMethodPage: (context) => RecipeTrainMethodPage(),
     taskTrainMethodPage: (context) => TaskTrainMethod(),
-    
     macaronsRecipeScreen: (context) => MacaronsRecipeScreen(),
     addRecipeFrameScreen: (context) => AddRecipeFrameScreen(),
     editRecipeFrameScreen: (context) => EditRecipeFrameScreen(),
     editRecipesFrameScreen: (context) => EditRecipesFrameScreen(),
     appNavigationScreen: (context) => AppNavigationScreen(),
     taskScreen: (context) => TaskScreen(),
-    dishes: (context) => Dishes()
+    dishes: (context) => Dishes(),
+    taskAnalysisMoodScreen: (context) => TaskAnalysisMoodScreen(),
+    taskAnalysisJudgecallScreen: (context) => TaskAnalysisJudgecallScreen(),
+    taskAnalysisNotesScreen: (context) => TaskAnalysisNotesScreen(),
+    profileContainerScreen: (context) => ProfileContainerScreen(),
+    supportTraineeProfilePage: (context) => SupportTraineeProfilePage(),
+    supportTraineeProgressScreen: (context) => SupportTraineeProgressScreen(),
+    supportTraineeNotesContainerScreen: (context) =>
+        SupportTraineeNotesContainerScreen(),
+    supportAddNotesScreen: (context) => SupportAddNotesScreen(),
+    supportEditNotesScreen: (context) => SupportEditNotesScreen(),
+    supportTraineeNotesPage: (context) => SupportTraineeNotesPage()
 
   };
 }

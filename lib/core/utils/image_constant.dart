@@ -106,4 +106,60 @@ class ImageConstant {
 
 
 
+
+  
+  // Task_Analysis_Mood_Screen images
+  static String imgVeryBadButton = '$imagePath/img_very_bad_button.png';
+
+  static String imgBadButton = '$imagePath/img_bad_button.png';
+
+  static String imgNotSoGoodButton = '$imagePath/img_not_so_good_button.png';
+
+  static String imgGoodButton = '$imagePath/img_good_button.png';
+
+  static String imgVeryGoodButton = '$imagePath/img_very_good_button.png';
+
+  // Support_Staff_Drawer_Menu images
+
+  static String imgHome = '$imagePath/img_home.svg';
+
+
+  // Support_Trainee_Profile images
+  static String imgSettingsButton = '$imagePath/img_settings_button.svg';
+
+  static String imgEllipse116 = '$imagePath/img_ellipse_116.png';
+
+  static String imgPerformance01 = '$imagePath/img_performance_01.svg';
+
+  static String imgNotes = '$imagePath/img_notes.svg';
+
+  // Profile Container images
+
+  static String imgNavEvaluate = '$imagePath/img_nav_evaluate.svg';
+
+  // Common images
+  static String imgBackChevronButton = '$imagePath/img_back_chevron_button.png';
+
+  static String imgHamburgerMenu = '$imagePath/img_hamburger_menu.svg';
+
+  // Merge below
+
+  // Support - Trainee Notes images
+  static String imgAddButton = '$imagePath/img_add_button.svg';
+
+  static String imgEditButton = '$imagePath/img_edit_button.svg';
+
+  // Support - Edit Notes images
+  static String imgContrast = '$imagePath/img_contrast.svg';
+
+  static String imgChevronBackButton = '$imagePath/img_chevron_back_button.png';
+
+  static String imgNavProfile = '$imagePath/img_nav_profile.svg';
+
+  static String imgFilterButton = '$imagePath/img_filter_button.svg';
+
+  static String imgTickButton = '$imagePath/img_tick_button.svg';
+
+
+
 }

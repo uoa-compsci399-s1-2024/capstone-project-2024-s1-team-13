@@ -25,6 +25,8 @@ flutter:
           weight: 500
         - asset: assets/fonts/LexendExaBold.ttf
           weight: 700
+        - asset: assets/fonts/LexendExaRegular.ttf
+          weight: 400
     - family: Lexend Deca
       fonts: 
         - asset: assets/fonts/LexendDecaMedium.ttf

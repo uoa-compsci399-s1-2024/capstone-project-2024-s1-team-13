@@ -96,7 +96,7 @@ class CustomSearchView extends StatelessWidget {
             }
           },
           autofocus: autofocus!,
-          style: textStyle ?? CustomTextStyles.labelLargeGray40001,
+          style: textStyle ?? CustomTextStyles.labelLargeGray40001, // theme.textTheme.labelLarge, for saacha
           keyboardType: textInputType,
           maxLines: maxLines ?? 1,
           decoration: decoration,
@@ -108,43 +108,53 @@ class CustomSearchView extends StatelessWidget {
       );
   InputDecoration get decoration => InputDecoration(
         hintText: hintText ?? "",
-        hintStyle: hintStyle ?? CustomTextStyles.labelLargeGray40001,
+        hintStyle: hintStyle ?? CustomTextStyles.labelLargeGray40001, //appTheme.blueGray400 for saacha
         prefixIcon: prefix ??
             Container(
-              margin: EdgeInsets.fromLTRB(11.h, 9.v, 9.h, 9.v),
+              margin: EdgeInsets.fromLTRB(11.h, 9.v, 7.h, 7.v),
               child: CustomImageView(
                 imagePath: ImageConstant.imgRewind,
-                height: 12.adaptSize,
-                width: 12.adaptSize,
+                height: 15.adaptSize,
+                width: 15.adaptSize,
+              
+              //saachas conficting one
+
+              //margin: EdgeInsets.fromLTRB(10.h, 6.v, 5.h, 5.v),
+              //child: Icon(
+              //Icons.search,
+              //size: 40,
+              //color: appTheme.blueGray400,
               ),
+
             ),
         prefixIconConstraints: prefixConstraints ??
             BoxConstraints(
-              maxHeight: 31.v,
+              maxHeight: 32.v,
             ),
         suffixIcon: suffix ??
             Padding(
               padding: EdgeInsets.only(
-                right: 15.h,
+                right: 5.h, //5 for saacha
               ),
               child: IconButton(
                 onPressed: () => controller!.clear(),
                 icon: Icon(
                   Icons.clear,
-                  color: Colors.grey.shade600,
+                  color: Colors.grey.shade400, //400 for saacha
                 ),
+                iconSize: 30, //saachas addition
               ),
             ),
         suffixIconConstraints: suffixConstraints ??
             BoxConstraints(
-              maxHeight: 31.v,
+              maxHeight: 32.v,
             ),
         isDense: true,
         contentPadding: contentPadding ??
             EdgeInsets.only(
-              top: 6.v,
-              right: 6.h,
-              bottom: 6.v,
+              top: 7.v,
+              right: 7.h,
+              bottom: 7.v,
             ),
         fillColor: fillColor ?? appTheme.gray200,
         filled: filled,

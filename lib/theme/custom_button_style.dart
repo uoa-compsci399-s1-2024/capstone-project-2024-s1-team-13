@@ -35,6 +35,16 @@ class CustomButtonStyles {
         backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
         elevation: MaterialStateProperty.all<double>(0),
       );
+
+  static ButtonStyle get outlineBlack => ElevatedButton.styleFrom(
+        backgroundColor: appTheme.blueGray100,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.h),
+        ),
+        shadowColor: appTheme.black900.withOpacity(0.25),
+        elevation: 1,
+      );
+  // text button style
 }
 
 

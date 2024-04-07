@@ -15,6 +15,7 @@ class ThemeHelper {
   Map<String, PrimaryColors> _supportedCustomColor = {
     'primary': PrimaryColors()
   };
+  
 
   /// Changes the app theme to [_newTheme].
   void changeTheme(String _newTheme) {
@@ -40,7 +41,7 @@ class ThemeHelper {
         style: ElevatedButton.styleFrom(
           backgroundColor: appTheme.pink900,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(28), //20 for saacha's
           ),
           shadowColor: colorScheme.primary,
           elevation: 1,
@@ -134,7 +135,60 @@ class TextThemes {
           fontFamily: 'Lexend Exa',
           fontWeight: FontWeight.w300,
         ),
+
+        
       );
+    
+}
+
+class MyTextStyles {
+  static final TextStyle bodySmall2 = TextStyle(
+    color: appTheme.pink900,
+    fontSize: 11.fSize,
+    fontFamily: 'Lexend Exa',
+    fontWeight: FontWeight.w400,
+  );
+
+  static final TextStyle bodyMedium2 = TextStyle(
+    color: appTheme.black900,
+    fontSize: 15.fSize,
+    fontFamily: 'Lexend Exa',
+    fontWeight: FontWeight.w400,
+  );
+  static final TextStyle headlineMedium2 = TextStyle(
+    color: appTheme.black900,
+    fontSize: 26.fSize,
+    fontFamily: 'Lexend Exa',
+    fontWeight: FontWeight.w700,
+  );
+
+  static final TextStyle labelLarge2 = TextStyle(
+      color: appTheme.pink900,
+      fontSize: 13.fSize,
+      fontFamily: 'Lexend Exa',
+      fontWeight: FontWeight.w500,
+    );
+
+  static final TextStyle labelMedium2 = TextStyle(
+    color: appTheme.black900,
+    fontSize: 11.fSize,
+    fontFamily: 'Lexend Exa',
+    fontWeight: FontWeight.w500,
+  );
+
+  static final TextStyle labelSmall2 = TextStyle(
+    color: appTheme.gray400,
+    fontSize: 8.fSize,
+    fontFamily: 'Lexend Exa',
+    fontWeight: FontWeight.w500,
+  );
+
+  static final TextStyle titleMedium2 = TextStyle(
+    color: appTheme.pink900,
+    fontSize: 17.fSize,
+    fontFamily: 'Lexend Exa',
+    fontWeight: FontWeight.w500,
+  );
 }
 
 /// Class containing the supported color schemes.
@@ -152,6 +206,9 @@ class ColorSchemes {
     // On colors(text colors)
     onPrimary: Color(0XFF2A2A2A),
     onPrimaryContainer: Color(0XFFC1C1C1),
+
+
+    
 
     
   );
@@ -192,6 +249,19 @@ class PrimaryColors {
   // Red
   Color get red400 => Color(0XFFCE5959);
   Color get red600 => Color(0XFFE13F3F);
+
+
+
+
+  // Black
+  Color get black900 => Color(0XFF000000);
+
+  // BlueGray
+
+  // Teal
+  Color get teal300 => Color(0XFF59AACE);
+
+  // White
 }
 
 PrimaryColors get appTheme => ThemeHelper().themeColor();
