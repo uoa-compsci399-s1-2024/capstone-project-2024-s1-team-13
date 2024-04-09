@@ -1,0 +1,922 @@
+type Task @aws_iam @aws_api_key {
+  id: ID!
+  taskTitle: String
+  taskStep: String
+  adminID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type TaskNotes @aws_iam @aws_api_key {
+  id: ID!
+  taskTitle: String
+  taskDesc: String
+  supportID: ID!
+  adminID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type TraineeNotes @aws_iam @aws_api_key {
+  id: ID!
+  noteTitle: String
+  noteDesc: String
+  supportID: ID!
+  adminID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Recipe @aws_iam @aws_api_key {
+  id: ID!
+  recipeTitle: String
+  recipeStep: String
+  adminID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Notifications @aws_iam @aws_api_key {
+  id: ID!
+  userID: ID
+  content: String
+  timestamp: AWSTimestamp
+  supportID: ID!
+  adminID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type CurrTask @aws_iam @aws_api_key {
+  id: ID!
+  taskFeeling: String
+  taskPassed: String
+  taskProgress: String
+  taskNoteID: ID
+  taskSteps: String
+  currTaskName: String
+  TaskNotes: TaskNotes
+  Support: Support
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  currTaskTaskNotesId: ID
+  currTaskSupportId: ID
+}
+
+type Trainee @aws_iam @aws_api_key {
+  id: ID!
+  traineePhoto: String
+  currTaskID: ID
+  firstName: String
+  surName: String
+  traineeNoteID: ID
+  supportID: ID!
+  CurrTask: CurrTask
+  TraineeNotes: TraineeNotes
+  TaskNotes: TaskNotes
+  adminID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  traineeCurrTaskId: ID
+  traineeTraineeNotesId: ID
+  traineeTaskNotesId: ID
+}
+
+type Support @aws_iam @aws_api_key {
+  id: ID!
+  traineeID: ID
+  currTaskID: ID
+  sharedPassword: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+  trainee(filter: ModelTraineeFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTraineeConnection
+  TraineeNotes(filter: ModelTraineeNotesFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTraineeNotesConnection
+  CurrTask: CurrTask
+  Notifications(filter: ModelNotificationsFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNotificationsConnection
+  TaskNotes(filter: ModelTaskNotesFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTaskNotesConnection
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  supportCurrTaskId: ID
+}
+
+type Admin @aws_iam @aws_api_key {
+  id: ID!
+  userName: String
+  password: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+  Trainees(filter: ModelTraineeFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTraineeConnection
+  Tasks(filter: ModelTaskFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTaskConnection
+  Recipes(filter: ModelRecipeFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelRecipeConnection
+  Notifications(filter: ModelNotificationsFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNotificationsConnection
+  TaskNotes(filter: ModelTaskNotesFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTaskNotesConnection
+  TraineeNotes(filter: ModelTraineeNotesFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTraineeNotesConnection
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelTaskConnection @aws_api_key @aws_iam {
+  items: [Task]!
+  nextToken: String
+}
+
+input ModelTaskFilterInput {
+  id: ModelIDInput
+  taskTitle: ModelStringInput
+  taskStep: ModelStringInput
+  adminID: ModelIDInput
+  and: [ModelTaskFilterInput]
+  or: [ModelTaskFilterInput]
+  not: ModelTaskFilterInput
+}
+
+type Query {
+  getTask(id: ID!): Task @aws_api_key @aws_iam
+  listTasks(filter: ModelTaskFilterInput, limit: Int, nextToken: String): ModelTaskConnection @aws_api_key @aws_iam
+  tasksByAdminID(adminID: ID!, sortDirection: ModelSortDirection, filter: ModelTaskFilterInput, limit: Int, nextToken: String): ModelTaskConnection @aws_api_key @aws_iam
+  getTaskNotes(id: ID!): TaskNotes @aws_api_key @aws_iam
+  listTaskNotes(filter: ModelTaskNotesFilterInput, limit: Int, nextToken: String): ModelTaskNotesConnection @aws_api_key @aws_iam
+  taskNotesBySupportID(supportID: ID!, sortDirection: ModelSortDirection, filter: ModelTaskNotesFilterInput, limit: Int, nextToken: String): ModelTaskNotesConnection @aws_api_key @aws_iam
+  taskNotesByAdminID(adminID: ID!, sortDirection: ModelSortDirection, filter: ModelTaskNotesFilterInput, limit: Int, nextToken: String): ModelTaskNotesConnection @aws_api_key @aws_iam
+  getTraineeNotes(id: ID!): TraineeNotes @aws_api_key @aws_iam
+  listTraineeNotes(filter: ModelTraineeNotesFilterInput, limit: Int, nextToken: String): ModelTraineeNotesConnection @aws_api_key @aws_iam
+  traineeNotesBySupportID(supportID: ID!, sortDirection: ModelSortDirection, filter: ModelTraineeNotesFilterInput, limit: Int, nextToken: String): ModelTraineeNotesConnection @aws_api_key @aws_iam
+  traineeNotesByAdminID(adminID: ID!, sortDirection: ModelSortDirection, filter: ModelTraineeNotesFilterInput, limit: Int, nextToken: String): ModelTraineeNotesConnection @aws_api_key @aws_iam
+  getRecipe(id: ID!): Recipe @aws_api_key @aws_iam
+  listRecipes(filter: ModelRecipeFilterInput, limit: Int, nextToken: String): ModelRecipeConnection @aws_api_key @aws_iam
+  recipesByAdminID(adminID: ID!, sortDirection: ModelSortDirection, filter: ModelRecipeFilterInput, limit: Int, nextToken: String): ModelRecipeConnection @aws_api_key @aws_iam
+  getNotifications(id: ID!): Notifications @aws_api_key @aws_iam
+  listNotifications(filter: ModelNotificationsFilterInput, limit: Int, nextToken: String): ModelNotificationsConnection @aws_api_key @aws_iam
+  notificationsBySupportID(supportID: ID!, sortDirection: ModelSortDirection, filter: ModelNotificationsFilterInput, limit: Int, nextToken: String): ModelNotificationsConnection @aws_api_key @aws_iam
+  notificationsByAdminID(adminID: ID!, sortDirection: ModelSortDirection, filter: ModelNotificationsFilterInput, limit: Int, nextToken: String): ModelNotificationsConnection @aws_api_key @aws_iam
+  getCurrTask(id: ID!): CurrTask @aws_api_key @aws_iam
+  listCurrTasks(filter: ModelCurrTaskFilterInput, limit: Int, nextToken: String): ModelCurrTaskConnection @aws_api_key @aws_iam
+  getTrainee(id: ID!): Trainee @aws_api_key @aws_iam
+  listTrainees(filter: ModelTraineeFilterInput, limit: Int, nextToken: String): ModelTraineeConnection @aws_api_key @aws_iam
+  traineesBySupportID(supportID: ID!, sortDirection: ModelSortDirection, filter: ModelTraineeFilterInput, limit: Int, nextToken: String): ModelTraineeConnection @aws_api_key @aws_iam
+  traineesByAdminID(adminID: ID!, sortDirection: ModelSortDirection, filter: ModelTraineeFilterInput, limit: Int, nextToken: String): ModelTraineeConnection @aws_api_key @aws_iam
+  getSupport(id: ID!): Support @aws_api_key @aws_iam
+  listSupports(filter: ModelSupportFilterInput, limit: Int, nextToken: String): ModelSupportConnection @aws_api_key @aws_iam
+  getAdmin(id: ID!): Admin @aws_api_key @aws_iam
+  listAdmins(filter: ModelAdminFilterInput, limit: Int, nextToken: String): ModelAdminConnection @aws_api_key @aws_iam
+}
+
+input ModelTaskConditionInput {
+  taskTitle: ModelStringInput
+  taskStep: ModelStringInput
+  adminID: ModelIDInput
+  and: [ModelTaskConditionInput]
+  or: [ModelTaskConditionInput]
+  not: ModelTaskConditionInput
+}
+
+input CreateTaskInput {
+  id: ID
+  taskTitle: String
+  taskStep: String
+  adminID: ID!
+}
+
+input UpdateTaskInput {
+  id: ID!
+  taskTitle: String
+  taskStep: String
+  adminID: ID
+}
+
+input DeleteTaskInput {
+  id: ID!
+}
+
+type Mutation {
+  createTask(input: CreateTaskInput!, condition: ModelTaskConditionInput): Task @aws_api_key @aws_iam
+  updateTask(input: UpdateTaskInput!, condition: ModelTaskConditionInput): Task @aws_api_key @aws_iam
+  deleteTask(input: DeleteTaskInput!, condition: ModelTaskConditionInput): Task @aws_api_key @aws_iam
+  createTaskNotes(input: CreateTaskNotesInput!, condition: ModelTaskNotesConditionInput): TaskNotes @aws_api_key @aws_iam
+  updateTaskNotes(input: UpdateTaskNotesInput!, condition: ModelTaskNotesConditionInput): TaskNotes @aws_api_key @aws_iam
+  deleteTaskNotes(input: DeleteTaskNotesInput!, condition: ModelTaskNotesConditionInput): TaskNotes @aws_api_key @aws_iam
+  createTraineeNotes(input: CreateTraineeNotesInput!, condition: ModelTraineeNotesConditionInput): TraineeNotes @aws_api_key @aws_iam
+  updateTraineeNotes(input: UpdateTraineeNotesInput!, condition: ModelTraineeNotesConditionInput): TraineeNotes @aws_api_key @aws_iam
+  deleteTraineeNotes(input: DeleteTraineeNotesInput!, condition: ModelTraineeNotesConditionInput): TraineeNotes @aws_api_key @aws_iam
+  createRecipe(input: CreateRecipeInput!, condition: ModelRecipeConditionInput): Recipe @aws_api_key @aws_iam
+  updateRecipe(input: UpdateRecipeInput!, condition: ModelRecipeConditionInput): Recipe @aws_api_key @aws_iam
+  deleteRecipe(input: DeleteRecipeInput!, condition: ModelRecipeConditionInput): Recipe @aws_api_key @aws_iam
+  createNotifications(input: CreateNotificationsInput!, condition: ModelNotificationsConditionInput): Notifications @aws_api_key @aws_iam
+  updateNotifications(input: UpdateNotificationsInput!, condition: ModelNotificationsConditionInput): Notifications @aws_api_key @aws_iam
+  deleteNotifications(input: DeleteNotificationsInput!, condition: ModelNotificationsConditionInput): Notifications @aws_api_key @aws_iam
+  createCurrTask(input: CreateCurrTaskInput!, condition: ModelCurrTaskConditionInput): CurrTask @aws_api_key @aws_iam
+  updateCurrTask(input: UpdateCurrTaskInput!, condition: ModelCurrTaskConditionInput): CurrTask @aws_api_key @aws_iam
+  deleteCurrTask(input: DeleteCurrTaskInput!, condition: ModelCurrTaskConditionInput): CurrTask @aws_api_key @aws_iam
+  createTrainee(input: CreateTraineeInput!, condition: ModelTraineeConditionInput): Trainee @aws_api_key @aws_iam
+  updateTrainee(input: UpdateTraineeInput!, condition: ModelTraineeConditionInput): Trainee @aws_api_key @aws_iam
+  deleteTrainee(input: DeleteTraineeInput!, condition: ModelTraineeConditionInput): Trainee @aws_api_key @aws_iam
+  createSupport(input: CreateSupportInput!, condition: ModelSupportConditionInput): Support @aws_api_key @aws_iam
+  updateSupport(input: UpdateSupportInput!, condition: ModelSupportConditionInput): Support @aws_api_key @aws_iam
+  deleteSupport(input: DeleteSupportInput!, condition: ModelSupportConditionInput): Support @aws_api_key @aws_iam
+  createAdmin(input: CreateAdminInput!, condition: ModelAdminConditionInput): Admin @aws_api_key @aws_iam
+  updateAdmin(input: UpdateAdminInput!, condition: ModelAdminConditionInput): Admin @aws_api_key @aws_iam
+  deleteAdmin(input: DeleteAdminInput!, condition: ModelAdminConditionInput): Admin @aws_api_key @aws_iam
+}
+
+input ModelSubscriptionTaskFilterInput {
+  id: ModelSubscriptionIDInput
+  taskTitle: ModelSubscriptionStringInput
+  taskStep: ModelSubscriptionStringInput
+  adminID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionTaskFilterInput]
+  or: [ModelSubscriptionTaskFilterInput]
+}
+
+type Subscription {
+  onCreateTask(filter: ModelSubscriptionTaskFilterInput): Task @aws_subscribe(mutations: ["createTask"]) @aws_api_key @aws_iam
+  onUpdateTask(filter: ModelSubscriptionTaskFilterInput): Task @aws_subscribe(mutations: ["updateTask"]) @aws_api_key @aws_iam
+  onDeleteTask(filter: ModelSubscriptionTaskFilterInput): Task @aws_subscribe(mutations: ["deleteTask"]) @aws_api_key @aws_iam
+  onCreateTaskNotes(filter: ModelSubscriptionTaskNotesFilterInput): TaskNotes @aws_subscribe(mutations: ["createTaskNotes"]) @aws_api_key @aws_iam
+  onUpdateTaskNotes(filter: ModelSubscriptionTaskNotesFilterInput): TaskNotes @aws_subscribe(mutations: ["updateTaskNotes"]) @aws_api_key @aws_iam
+  onDeleteTaskNotes(filter: ModelSubscriptionTaskNotesFilterInput): TaskNotes @aws_subscribe(mutations: ["deleteTaskNotes"]) @aws_api_key @aws_iam
+  onCreateTraineeNotes(filter: ModelSubscriptionTraineeNotesFilterInput): TraineeNotes @aws_subscribe(mutations: ["createTraineeNotes"]) @aws_api_key @aws_iam
+  onUpdateTraineeNotes(filter: ModelSubscriptionTraineeNotesFilterInput): TraineeNotes @aws_subscribe(mutations: ["updateTraineeNotes"]) @aws_api_key @aws_iam
+  onDeleteTraineeNotes(filter: ModelSubscriptionTraineeNotesFilterInput): TraineeNotes @aws_subscribe(mutations: ["deleteTraineeNotes"]) @aws_api_key @aws_iam
+  onCreateRecipe(filter: ModelSubscriptionRecipeFilterInput): Recipe @aws_subscribe(mutations: ["createRecipe"]) @aws_api_key @aws_iam
+  onUpdateRecipe(filter: ModelSubscriptionRecipeFilterInput): Recipe @aws_subscribe(mutations: ["updateRecipe"]) @aws_api_key @aws_iam
+  onDeleteRecipe(filter: ModelSubscriptionRecipeFilterInput): Recipe @aws_subscribe(mutations: ["deleteRecipe"]) @aws_api_key @aws_iam
+  onCreateNotifications(filter: ModelSubscriptionNotificationsFilterInput): Notifications @aws_subscribe(mutations: ["createNotifications"]) @aws_api_key @aws_iam
+  onUpdateNotifications(filter: ModelSubscriptionNotificationsFilterInput): Notifications @aws_subscribe(mutations: ["updateNotifications"]) @aws_api_key @aws_iam
+  onDeleteNotifications(filter: ModelSubscriptionNotificationsFilterInput): Notifications @aws_subscribe(mutations: ["deleteNotifications"]) @aws_api_key @aws_iam
+  onCreateCurrTask(filter: ModelSubscriptionCurrTaskFilterInput): CurrTask @aws_subscribe(mutations: ["createCurrTask"]) @aws_api_key @aws_iam
+  onUpdateCurrTask(filter: ModelSubscriptionCurrTaskFilterInput): CurrTask @aws_subscribe(mutations: ["updateCurrTask"]) @aws_api_key @aws_iam
+  onDeleteCurrTask(filter: ModelSubscriptionCurrTaskFilterInput): CurrTask @aws_subscribe(mutations: ["deleteCurrTask"]) @aws_api_key @aws_iam
+  onCreateTrainee(filter: ModelSubscriptionTraineeFilterInput): Trainee @aws_subscribe(mutations: ["createTrainee"]) @aws_api_key @aws_iam
+  onUpdateTrainee(filter: ModelSubscriptionTraineeFilterInput): Trainee @aws_subscribe(mutations: ["updateTrainee"]) @aws_api_key @aws_iam
+  onDeleteTrainee(filter: ModelSubscriptionTraineeFilterInput): Trainee @aws_subscribe(mutations: ["deleteTrainee"]) @aws_api_key @aws_iam
+  onCreateSupport(filter: ModelSubscriptionSupportFilterInput): Support @aws_subscribe(mutations: ["createSupport"]) @aws_api_key @aws_iam
+  onUpdateSupport(filter: ModelSubscriptionSupportFilterInput): Support @aws_subscribe(mutations: ["updateSupport"]) @aws_api_key @aws_iam
+  onDeleteSupport(filter: ModelSubscriptionSupportFilterInput): Support @aws_subscribe(mutations: ["deleteSupport"]) @aws_api_key @aws_iam
+  onCreateAdmin(filter: ModelSubscriptionAdminFilterInput): Admin @aws_subscribe(mutations: ["createAdmin"]) @aws_api_key @aws_iam
+  onUpdateAdmin(filter: ModelSubscriptionAdminFilterInput): Admin @aws_subscribe(mutations: ["updateAdmin"]) @aws_api_key @aws_iam
+  onDeleteAdmin(filter: ModelSubscriptionAdminFilterInput): Admin @aws_subscribe(mutations: ["deleteAdmin"]) @aws_api_key @aws_iam
+}
+
+type ModelTaskNotesConnection @aws_api_key @aws_iam {
+  items: [TaskNotes]!
+  nextToken: String
+}
+
+input ModelTaskNotesFilterInput {
+  id: ModelIDInput
+  taskTitle: ModelStringInput
+  taskDesc: ModelStringInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelTaskNotesFilterInput]
+  or: [ModelTaskNotesFilterInput]
+  not: ModelTaskNotesFilterInput
+}
+
+input ModelTaskNotesConditionInput {
+  taskTitle: ModelStringInput
+  taskDesc: ModelStringInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelTaskNotesConditionInput]
+  or: [ModelTaskNotesConditionInput]
+  not: ModelTaskNotesConditionInput
+}
+
+input CreateTaskNotesInput {
+  id: ID
+  taskTitle: String
+  taskDesc: String
+  supportID: ID!
+  adminID: ID!
+}
+
+input UpdateTaskNotesInput {
+  id: ID!
+  taskTitle: String
+  taskDesc: String
+  supportID: ID
+  adminID: ID
+}
+
+input DeleteTaskNotesInput {
+  id: ID!
+}
+
+input ModelSubscriptionTaskNotesFilterInput {
+  id: ModelSubscriptionIDInput
+  taskTitle: ModelSubscriptionStringInput
+  taskDesc: ModelSubscriptionStringInput
+  supportID: ModelSubscriptionIDInput
+  adminID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionTaskNotesFilterInput]
+  or: [ModelSubscriptionTaskNotesFilterInput]
+}
+
+type ModelTraineeNotesConnection @aws_api_key @aws_iam {
+  items: [TraineeNotes]!
+  nextToken: String
+}
+
+input ModelTraineeNotesFilterInput {
+  id: ModelIDInput
+  noteTitle: ModelStringInput
+  noteDesc: ModelStringInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelTraineeNotesFilterInput]
+  or: [ModelTraineeNotesFilterInput]
+  not: ModelTraineeNotesFilterInput
+}
+
+input ModelTraineeNotesConditionInput {
+  noteTitle: ModelStringInput
+  noteDesc: ModelStringInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelTraineeNotesConditionInput]
+  or: [ModelTraineeNotesConditionInput]
+  not: ModelTraineeNotesConditionInput
+}
+
+input CreateTraineeNotesInput {
+  id: ID
+  noteTitle: String
+  noteDesc: String
+  supportID: ID!
+  adminID: ID!
+}
+
+input UpdateTraineeNotesInput {
+  id: ID!
+  noteTitle: String
+  noteDesc: String
+  supportID: ID
+  adminID: ID
+}
+
+input DeleteTraineeNotesInput {
+  id: ID!
+}
+
+input ModelSubscriptionTraineeNotesFilterInput {
+  id: ModelSubscriptionIDInput
+  noteTitle: ModelSubscriptionStringInput
+  noteDesc: ModelSubscriptionStringInput
+  supportID: ModelSubscriptionIDInput
+  adminID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionTraineeNotesFilterInput]
+  or: [ModelSubscriptionTraineeNotesFilterInput]
+}
+
+type ModelRecipeConnection @aws_api_key @aws_iam {
+  items: [Recipe]!
+  nextToken: String
+}
+
+input ModelRecipeFilterInput {
+  id: ModelIDInput
+  recipeTitle: ModelStringInput
+  recipeStep: ModelStringInput
+  adminID: ModelIDInput
+  and: [ModelRecipeFilterInput]
+  or: [ModelRecipeFilterInput]
+  not: ModelRecipeFilterInput
+}
+
+input ModelRecipeConditionInput {
+  recipeTitle: ModelStringInput
+  recipeStep: ModelStringInput
+  adminID: ModelIDInput
+  and: [ModelRecipeConditionInput]
+  or: [ModelRecipeConditionInput]
+  not: ModelRecipeConditionInput
+}
+
+input CreateRecipeInput {
+  id: ID
+  recipeTitle: String
+  recipeStep: String
+  adminID: ID!
+}
+
+input UpdateRecipeInput {
+  id: ID!
+  recipeTitle: String
+  recipeStep: String
+  adminID: ID
+}
+
+input DeleteRecipeInput {
+  id: ID!
+}
+
+input ModelSubscriptionRecipeFilterInput {
+  id: ModelSubscriptionIDInput
+  recipeTitle: ModelSubscriptionStringInput
+  recipeStep: ModelSubscriptionStringInput
+  adminID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionRecipeFilterInput]
+  or: [ModelSubscriptionRecipeFilterInput]
+}
+
+type ModelNotificationsConnection @aws_api_key @aws_iam {
+  items: [Notifications]!
+  nextToken: String
+}
+
+input ModelNotificationsFilterInput {
+  id: ModelIDInput
+  userID: ModelIDInput
+  content: ModelStringInput
+  timestamp: ModelIntInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelNotificationsFilterInput]
+  or: [ModelNotificationsFilterInput]
+  not: ModelNotificationsFilterInput
+}
+
+input ModelNotificationsConditionInput {
+  userID: ModelIDInput
+  content: ModelStringInput
+  timestamp: ModelIntInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelNotificationsConditionInput]
+  or: [ModelNotificationsConditionInput]
+  not: ModelNotificationsConditionInput
+}
+
+input CreateNotificationsInput {
+  id: ID
+  userID: ID
+  content: String
+  timestamp: AWSTimestamp
+  supportID: ID!
+  adminID: ID!
+}
+
+input UpdateNotificationsInput {
+  id: ID!
+  userID: ID
+  content: String
+  timestamp: AWSTimestamp
+  supportID: ID
+  adminID: ID
+}
+
+input DeleteNotificationsInput {
+  id: ID!
+}
+
+input ModelSubscriptionNotificationsFilterInput {
+  id: ModelSubscriptionIDInput
+  userID: ModelSubscriptionIDInput
+  content: ModelSubscriptionStringInput
+  timestamp: ModelSubscriptionIntInput
+  supportID: ModelSubscriptionIDInput
+  adminID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionNotificationsFilterInput]
+  or: [ModelSubscriptionNotificationsFilterInput]
+}
+
+type ModelCurrTaskConnection @aws_api_key @aws_iam {
+  items: [CurrTask]!
+  nextToken: String
+}
+
+input ModelCurrTaskFilterInput {
+  id: ModelIDInput
+  taskFeeling: ModelStringInput
+  taskPassed: ModelStringInput
+  taskProgress: ModelStringInput
+  taskNoteID: ModelIDInput
+  taskSteps: ModelStringInput
+  currTaskName: ModelStringInput
+  and: [ModelCurrTaskFilterInput]
+  or: [ModelCurrTaskFilterInput]
+  not: ModelCurrTaskFilterInput
+  currTaskTaskNotesId: ModelIDInput
+  currTaskSupportId: ModelIDInput
+}
+
+input ModelCurrTaskConditionInput {
+  taskFeeling: ModelStringInput
+  taskPassed: ModelStringInput
+  taskProgress: ModelStringInput
+  taskNoteID: ModelIDInput
+  taskSteps: ModelStringInput
+  currTaskName: ModelStringInput
+  and: [ModelCurrTaskConditionInput]
+  or: [ModelCurrTaskConditionInput]
+  not: ModelCurrTaskConditionInput
+  currTaskTaskNotesId: ModelIDInput
+  currTaskSupportId: ModelIDInput
+}
+
+input CreateCurrTaskInput {
+  id: ID
+  taskFeeling: String
+  taskPassed: String
+  taskProgress: String
+  taskNoteID: ID
+  taskSteps: String
+  currTaskName: String
+  currTaskTaskNotesId: ID
+  currTaskSupportId: ID
+}
+
+input UpdateCurrTaskInput {
+  id: ID!
+  taskFeeling: String
+  taskPassed: String
+  taskProgress: String
+  taskNoteID: ID
+  taskSteps: String
+  currTaskName: String
+  currTaskTaskNotesId: ID
+  currTaskSupportId: ID
+}
+
+input DeleteCurrTaskInput {
+  id: ID!
+}
+
+input ModelSubscriptionCurrTaskFilterInput {
+  id: ModelSubscriptionIDInput
+  taskFeeling: ModelSubscriptionStringInput
+  taskPassed: ModelSubscriptionStringInput
+  taskProgress: ModelSubscriptionStringInput
+  taskNoteID: ModelSubscriptionIDInput
+  taskSteps: ModelSubscriptionStringInput
+  currTaskName: ModelSubscriptionStringInput
+  and: [ModelSubscriptionCurrTaskFilterInput]
+  or: [ModelSubscriptionCurrTaskFilterInput]
+}
+
+type ModelTraineeConnection @aws_api_key @aws_iam {
+  items: [Trainee]!
+  nextToken: String
+}
+
+input ModelTraineeFilterInput {
+  id: ModelIDInput
+  traineePhoto: ModelStringInput
+  currTaskID: ModelIDInput
+  firstName: ModelStringInput
+  surName: ModelStringInput
+  traineeNoteID: ModelIDInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelTraineeFilterInput]
+  or: [ModelTraineeFilterInput]
+  not: ModelTraineeFilterInput
+  traineeCurrTaskId: ModelIDInput
+  traineeTraineeNotesId: ModelIDInput
+  traineeTaskNotesId: ModelIDInput
+}
+
+input ModelTraineeConditionInput {
+  traineePhoto: ModelStringInput
+  currTaskID: ModelIDInput
+  firstName: ModelStringInput
+  surName: ModelStringInput
+  traineeNoteID: ModelIDInput
+  supportID: ModelIDInput
+  adminID: ModelIDInput
+  and: [ModelTraineeConditionInput]
+  or: [ModelTraineeConditionInput]
+  not: ModelTraineeConditionInput
+  traineeCurrTaskId: ModelIDInput
+  traineeTraineeNotesId: ModelIDInput
+  traineeTaskNotesId: ModelIDInput
+}
+
+input CreateTraineeInput {
+  id: ID
+  traineePhoto: String
+  currTaskID: ID
+  firstName: String
+  surName: String
+  traineeNoteID: ID
+  supportID: ID!
+  adminID: ID!
+  traineeCurrTaskId: ID
+  traineeTraineeNotesId: ID
+  traineeTaskNotesId: ID
+}
+
+input UpdateTraineeInput {
+  id: ID!
+  traineePhoto: String
+  currTaskID: ID
+  firstName: String
+  surName: String
+  traineeNoteID: ID
+  supportID: ID
+  adminID: ID
+  traineeCurrTaskId: ID
+  traineeTraineeNotesId: ID
+  traineeTaskNotesId: ID
+}
+
+input DeleteTraineeInput {
+  id: ID!
+}
+
+input ModelSubscriptionTraineeFilterInput {
+  id: ModelSubscriptionIDInput
+  traineePhoto: ModelSubscriptionStringInput
+  currTaskID: ModelSubscriptionIDInput
+  firstName: ModelSubscriptionStringInput
+  surName: ModelSubscriptionStringInput
+  traineeNoteID: ModelSubscriptionIDInput
+  supportID: ModelSubscriptionIDInput
+  adminID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionTraineeFilterInput]
+  or: [ModelSubscriptionTraineeFilterInput]
+}
+
+type ModelSupportConnection @aws_api_key @aws_iam {
+  items: [Support]!
+  nextToken: String
+}
+
+input ModelSupportFilterInput {
+  id: ModelIDInput
+  traineeID: ModelIDInput
+  currTaskID: ModelIDInput
+  sharedPassword: ModelStringInput
+  notificationID: ModelIDInput
+  taskNoteID: ModelIDInput
+  traineeNoteID: ModelIDInput
+  and: [ModelSupportFilterInput]
+  or: [ModelSupportFilterInput]
+  not: ModelSupportFilterInput
+  supportCurrTaskId: ModelIDInput
+}
+
+input ModelSupportConditionInput {
+  traineeID: ModelIDInput
+  currTaskID: ModelIDInput
+  sharedPassword: ModelStringInput
+  notificationID: ModelIDInput
+  taskNoteID: ModelIDInput
+  traineeNoteID: ModelIDInput
+  and: [ModelSupportConditionInput]
+  or: [ModelSupportConditionInput]
+  not: ModelSupportConditionInput
+  supportCurrTaskId: ModelIDInput
+}
+
+input CreateSupportInput {
+  id: ID
+  traineeID: ID
+  currTaskID: ID
+  sharedPassword: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+  supportCurrTaskId: ID
+}
+
+input UpdateSupportInput {
+  id: ID!
+  traineeID: ID
+  currTaskID: ID
+  sharedPassword: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+  supportCurrTaskId: ID
+}
+
+input DeleteSupportInput {
+  id: ID!
+}
+
+input ModelSubscriptionSupportFilterInput {
+  id: ModelSubscriptionIDInput
+  traineeID: ModelSubscriptionIDInput
+  currTaskID: ModelSubscriptionIDInput
+  sharedPassword: ModelSubscriptionStringInput
+  notificationID: ModelSubscriptionIDInput
+  taskNoteID: ModelSubscriptionIDInput
+  traineeNoteID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionSupportFilterInput]
+  or: [ModelSubscriptionSupportFilterInput]
+}
+
+type ModelAdminConnection @aws_api_key @aws_iam {
+  items: [Admin]!
+  nextToken: String
+}
+
+input ModelAdminFilterInput {
+  id: ModelIDInput
+  userName: ModelStringInput
+  password: ModelStringInput
+  notificationID: ModelIDInput
+  taskNoteID: ModelIDInput
+  traineeNoteID: ModelIDInput
+  and: [ModelAdminFilterInput]
+  or: [ModelAdminFilterInput]
+  not: ModelAdminFilterInput
+}
+
+input ModelAdminConditionInput {
+  userName: ModelStringInput
+  password: ModelStringInput
+  notificationID: ModelIDInput
+  taskNoteID: ModelIDInput
+  traineeNoteID: ModelIDInput
+  and: [ModelAdminConditionInput]
+  or: [ModelAdminConditionInput]
+  not: ModelAdminConditionInput
+}
+
+input CreateAdminInput {
+  id: ID
+  userName: String
+  password: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+}
+
+input UpdateAdminInput {
+  id: ID!
+  userName: String
+  password: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+}
+
+input DeleteAdminInput {
+  id: ID!
+}
+
+input ModelSubscriptionAdminFilterInput {
+  id: ModelSubscriptionIDInput
+  userName: ModelSubscriptionStringInput
+  password: ModelSubscriptionStringInput
+  notificationID: ModelSubscriptionIDInput
+  taskNoteID: ModelSubscriptionIDInput
+  traineeNoteID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionAdminFilterInput]
+  or: [ModelSubscriptionAdminFilterInput]
+}

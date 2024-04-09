@@ -105,6 +105,110 @@ class CustomTextStyles {
         color: appTheme.pink900,
       );
 
+
+  static get headlineSmallPrimaryContainer =>
+      theme.textTheme.headlineSmall!.copyWith(
+        color: theme.colorScheme.primaryContainer,
+        fontWeight: FontWeight.w500,
+      );
+  static get headlineMediumMedium => theme.textTheme.headlineMedium!.copyWith(
+        fontWeight: FontWeight.w500,
+      );
+  // Label text style
+  static get labelLargeOnPrimary => theme.textTheme.labelLarge!.copyWith(
+        color: theme.colorScheme.onPrimary,
+        fontSize: 12.fSize,
+      );
+  static get labelLargePink900 => theme.textTheme.labelLarge!.copyWith(
+        color: appTheme.pink900,
+      );
+  static get labelSmallOnPrimary => theme.textTheme.labelSmall!.copyWith(
+        color: theme.colorScheme.onPrimary,
+      );
+  // Lexend text style
+  static get lexendExaGray40001 => TextStyle(
+        color: appTheme.gray40001,
+        fontSize: 7.fSize,
+        fontWeight: FontWeight.w500,
+      ).lexendExa;
+  static get lexendExaOnPrimary => TextStyle(
+        color: theme.colorScheme.onPrimary,
+        fontSize: 7.fSize,
+        fontWeight: FontWeight.w500,
+      ).lexendExa;
+  // Title text style
+  static get titleLarge22 => theme.textTheme.titleLarge!.copyWith(
+        fontSize: 22.fSize,
+      );
+  static get titleLargeInterOnError =>
+      theme.textTheme.titleLarge!.inter.copyWith(
+        color: theme.colorScheme.onError.withOpacity(1),
+        fontWeight: FontWeight.w800,
+      );
+  static get titleLargeOnError => theme.textTheme.titleLarge!.copyWith(
+        color: theme.colorScheme.onError.withOpacity(1),
+        fontSize: 21.fSize,
+        fontWeight: FontWeight.w700,
+      );
+  static get titleMedium17 => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 17.fSize,
+      );
+  static get titleMedium19_1 => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 19.fSize,
+      );
+  static get titleMedium19_2 => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 19.fSize,
+      );
+  static get titleMediumOnPrimary => theme.textTheme.titleMedium!.copyWith(
+        color: theme.colorScheme.onPrimary,
+      );
+  static get titleMediumOnPrimary16 => theme.textTheme.titleMedium!.copyWith(
+        color: theme.colorScheme.onPrimary,
+        fontSize: 16.fSize,
+      );
+
+      
+  static get titleSmallPrimaryContainer => theme.textTheme.titleSmall!.copyWith(
+        color: theme.colorScheme.primaryContainer,
+        fontWeight: FontWeight.w500,
+      );
+      
+  static get labelMedium11 => theme.textTheme.labelMedium!.copyWith(
+        fontSize: 11.fSize,
+      );
+  static get labelMediumOnPrimaryContainer =>
+      theme.textTheme.labelMedium!.copyWith(
+        color: theme.colorScheme.onPrimaryContainer,
+      );
+  static get labelMediumOnPrimaryContainer_1 =>
+      theme.textTheme.labelMedium!.copyWith(
+        color: theme.colorScheme.onPrimaryContainer,
+      );
+  // Lexend text style
+  static get lexendExaOnPrimaryContainer => TextStyle(
+        color: theme.colorScheme.onPrimaryContainer,
+        fontSize: 6.fSize,
+        fontWeight: FontWeight.w500,
+      ).lexendExa;
+  // Title text style
+  static get titleLarge21 => theme.textTheme.titleLarge!.copyWith(
+        fontSize: 21.fSize,
+      );
+  static get titleLargeOnPrimary => theme.textTheme.titleLarge!.copyWith(
+        color: theme.colorScheme.onPrimary,
+        fontSize: 22.fSize,
+      );
+
+  static get titleMedium17_1 => theme.textTheme.titleMedium!.copyWith(
+        fontSize: 17.fSize,
+      );
+  static get titleSmallOnError => theme.textTheme.titleSmall!.copyWith(
+        color: theme.colorScheme.onError,
+      );
+  static get titleSmallOnPrimary => theme.textTheme.titleSmall!.copyWith(
+        color: theme.colorScheme.onPrimary,
+      );
+
   
 }
 

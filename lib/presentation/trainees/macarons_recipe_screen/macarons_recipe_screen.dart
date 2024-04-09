@@ -156,6 +156,7 @@ class MacaronsRecipeScreen extends StatelessWidget {
       styleType: Style.bgShadow,
     );
   }
+  
 
   Widget _buildThirtyFive(BuildContext context) {
     return Padding(

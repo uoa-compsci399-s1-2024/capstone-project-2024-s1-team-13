@@ -106,6 +106,112 @@ class ImageConstant {
 
 
 
+  static String imgGroup36 = '$imagePath/img_group_36.svg';
+
+  static String imgEllipse124 = '$imagePath/img_ellipse_124.png';
+
+  static String imgEllipse125 = '$imagePath/img_ellipse_125.png';
+
+
+  static String imgRectangle32 = '$imagePath/img_rectangle_32.png';
+
+  static String imgEllipse116 = '$imagePath/img_ellipse_116.png';
+
+  static String imgMegaphone = '$imagePath/img_megaphone.svg';
+
+  static String imgEllipse115 = '$imagePath/img_ellipse_115.png';
+
+  static String imgEllipse117 = '$imagePath/img_ellipse_117.png';
+
+
+  static String imgTick = '$imagePath/img_tick.svg';
+
+
+  
+  static String imgDowndroparrow = '$imagePath/img_downdroparrow.svg';
+
+  
+  
+
+  static String imgRectangle144 = '$imagePath/img_rectangle_144.png';
+
+  static String imgContrast = '$imagePath/img_contrast.svg';
+
+
+  static String imgNavEvaluate = '$imagePath/img_nav_evaluate.svg';
+
+  static String imgNavProfile = '$imagePath/img_nav_profile.svg';
+
+  static String imgRectangle139 = '$imagePath/img_rectangle_139.png';
+
+  static String imgRectangle140 = '$imagePath/img_rectangle_140.png';
+
+  static String imgUserRed600 = '$imagePath/img_user_red_600.svg';
+
+  static String imgRectangle9783x112 = '$imagePath/img_rectangle_97_83x112.png';
+
+  static String imgRectangle10083x112 =
+      '$imagePath/img_rectangle_100_83x112.png';
+
+  static String imgRectangle9883x112 = '$imagePath/img_rectangle_98_83x112.png';
+
+  static String imgRectangle9983x112 = '$imagePath/img_rectangle_99_83x112.png';
+
+  static String imgRectangle10383x112 =
+      '$imagePath/img_rectangle_103_83x112.png';
+
+
+  static String imgGroup19 = '$imagePath/img_group_19.svg';
+
+
+
+  static String imgGroup19Onerror = '$imagePath/img_group_19_onerror.svg';
+
+  
+  static String imgEdit = '$imagePath/img_edit.svg';
+
+
+  static String imgHome = '$imagePath/img_home.svg';
+
+
+
+  static String imgCamera = '$imagePath/img_camera.svg';
+
+  // 10 - admin -> trainee profile images
+  static String imgGroup20 = '$imagePath/img_group_20.svg';
+
+  static String imgEllipse116101x101 = '$imagePath/img_ellipse_116_101x101.png';
+
+  static String imgPerformance01 = '$imagePath/img_performance_01.svg';
+
+  static String imgNotes = '$imagePath/img_notes.svg';
+
+  // 10 - admin -> trainee profile - Container images
+
+  static String imgNavTrainees = '$imagePath/img_nav_trainees.svg';
+
+
+  // Common images
+  static String imgArrowRight = '$imagePath/img_arrow_right.png';
+
+
+  // Macaroons auditory images
+
+  static String imgSound = '$imagePath/img_sound.svg';
+ 
+
+  // 09 - admin -> edit trainee details images
+  static String imgEllipse116143x143 = '$imagePath/img_ellipse_116_143x143.png';
+
+  // 19 - admin -> add task no Three images
+
+
+  static String imgContrastPrimarycontainer =
+      '$imagePath/img_contrast_primarycontainer.svg';
+
+  static String imgChevronBackButton = '$imagePath/img_chevron_back_button.png';
+
+  static String imgTickButton = '$imagePath/img_tick_button.svg';
 
   
   // Task_Analysis_Mood_Screen images
@@ -121,21 +227,11 @@ class ImageConstant {
 
   // Support_Staff_Drawer_Menu images
 
-  static String imgHome = '$imagePath/img_home.svg';
-
-
   // Support_Trainee_Profile images
   static String imgSettingsButton = '$imagePath/img_settings_button.svg';
 
-  static String imgEllipse116 = '$imagePath/img_ellipse_116.png';
-
-  static String imgPerformance01 = '$imagePath/img_performance_01.svg';
-
-  static String imgNotes = '$imagePath/img_notes.svg';
 
   // Profile Container images
-
-  static String imgNavEvaluate = '$imagePath/img_nav_evaluate.svg';
 
   // Common images
   static String imgBackChevronButton = '$imagePath/img_back_chevron_button.png';
@@ -149,16 +245,10 @@ class ImageConstant {
 
   static String imgEditButton = '$imagePath/img_edit_button.svg';
 
-  // Support - Edit Notes images
-  static String imgContrast = '$imagePath/img_contrast.svg';
-
-  static String imgChevronBackButton = '$imagePath/img_chevron_back_button.png';
-
-  static String imgNavProfile = '$imagePath/img_nav_profile.svg';
 
   static String imgFilterButton = '$imagePath/img_filter_button.svg';
 
-  static String imgTickButton = '$imagePath/img_tick_button.svg';
+
 
 
 

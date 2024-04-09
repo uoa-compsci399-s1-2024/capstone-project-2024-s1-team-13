@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
           //eisens --comment aboveand uncomment below
           //initialRoute: AppRoutes.addRecipeFrameScreen,
           //saachas 
-          initialRoute: AppRoutes.taskAnalysisMoodScreen,
+          //initialRoute: AppRoutes.taskAnalysisMoodScreen,
+          //zainabs
+          initialRoute: AppRoutes.appNavigationScreen,
           
           routes: AppRoutes.routes,
         );

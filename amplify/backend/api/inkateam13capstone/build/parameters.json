@@ -1,0 +1,7 @@
+{
+    "AppSyncApiName": "inkateam13capstone",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "S3DeploymentBucket": "amplify-inkateam13capstone-staging-230318-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/3d210a1a5ee566db14a5a56d3c5330cd20199cb6"
+}

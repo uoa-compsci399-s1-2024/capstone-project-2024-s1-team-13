@@ -8,6 +8,8 @@ class AppbarTrailingImage extends StatelessWidget {
     this.imagePath,
     this.margin,
     this.onTap,
+    this.height, 
+     this.width, 
   }) : super(
           key: key,
         );
@@ -17,6 +19,9 @@ class AppbarTrailingImage extends StatelessWidget {
   EdgeInsetsGeometry? margin;
 
   Function? onTap;
+
+  final int? height; // Optional height parameter
+  final int? width;  //
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,8 @@ class AppbarTrailingImage extends StatelessWidget {
         padding: margin ?? EdgeInsets.zero,
         child: CustomImageView(
           imagePath: imagePath,
-          width: 18.h, //18 for saachas one 21 for me
+          width: 18.h, //18 for saachas one 21 for me and width?.toDouble() for zainab
+          height: height?.toDouble(), //only have this for zaianbs
           fit: BoxFit.contain,
         ),
       ),

@@ -128,6 +128,126 @@ class AppNavigationScreen extends StatelessWidget {
                           onTapScreenTitle: () => onTapScreenTitle(
                               context, AppRoutes.profileContainerScreen),
                         ),
+
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Support Trainee Task Analysis",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.traineeTaskAnalysis),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Support Staff Settings",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.supportStaffSettings),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Support Trainee Selection",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.supportSelectTrainee),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Support Trainee Summary Container",
+                          onTapScreenTitle: () => onTapScreenTitle(context,
+                              AppRoutes.supportTraineeSummaryContainer),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin Settings",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminSettingsScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin new login",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminNewLogin),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin Notifications",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminNotifications),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin edit task",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminEditTask),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin task",
+                          onTapScreenTitle: () =>
+                              onTapScreenTitle(context, AppRoutes.adminTask),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin add task",
+                          onTapScreenTitle: () =>
+                              onTapScreenTitle(context, AppRoutes.adminAddTask),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin Edit Trainee Details",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminEditTraineeDetails),
+                        ),
+                     
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Macaroons Auditory Screen",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.macaroonsAuditoryScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin Trainee View Home Screen",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminTraineeView),
+                        ),
+
+                         _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin Add Trainee Details",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminAddTrainee),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin Edit Trainee Screen",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminEditTraineesScreen),
+                        ),
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Support Trainee Profile",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.supportTraineeProfile),
+                        ),
+                    
+                        _buildScreenTitle(
+                              context,
+                              screenTitle: "Admin Trainee Profile",
+                              onTapScreenTitle: () => onTapScreenTitle(
+                                  context, AppRoutes.adminTraineeProfile),
+                            ),
+
+                        _buildScreenTitle(
+                          context,
+                          screenTitle: "Support Notifications",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.notificationSupport),
+                        ),
+
+                         _buildScreenTitle(
+                          context,
+                          screenTitle: "Admin Home",
+                          onTapScreenTitle: () => onTapScreenTitle(
+                              context, AppRoutes.adminHome),
+                        ),
                       ],
                     ),
                   ),

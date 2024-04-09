@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "inkateam13capstone",
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authinkateam13capstone4efce070"
+    },
+    "additionalAuthTypes": [
+      {
+        "mode": "AWS_IAM"
+      },
+      {
+        "mode": "API_KEY",
+        "expirationTime": 365,
+        "apiKeyExpirationDate": "2025-04-08T04:17:22.802Z",
+        "keyDescription": "da2-vg5qxcjdtfc3phsla5p2uaagia"
+      }
+    ],
+    "conflictResolution": {}
+  }
+}

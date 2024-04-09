@@ -1,0 +1,73 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run
+
+## exception
+
+_TypeError: Null check operator used on a null value
+
+```
+#0      _reloadDeviceSources (package:flutter_tools/src/run_hot.dart:1375:45)
+#1      defaultReloadSourcesHelper (package:flutter_tools/src/run_hot.dart:1305:71)
+#2      HotRunner._reloadSources (package:flutter_tools/src/run_hot.dart:1026:64)
+<asynchronous suspension>
+#3      HotRunner._hotReloadHelper (package:flutter_tools/src/run_hot.dart:920:16)
+<asynchronous suspension>
+#4      HotRunner.restart (package:flutter_tools/src/run_hot.dart:794:36)
+<asynchronous suspension>
+#5      TerminalHandler._commonTerminalInputHandler (package:flutter_tools/src/resident_runner.dart:1784:40)
+<asynchronous suspension>
+#6      TerminalHandler.processTerminalInput (package:flutter_tools/src/resident_runner.dart:1837:7)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.19.5, on macOS 14.4.1 23E224 darwin-arm64, locale en-NZ)
+    [32m•[39m Flutter version 3.19.5 on channel stable at /Users/istefatsawda/development/flutter
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision 300451adae (12 days ago), 2024-03-27 21:54:07 -0500
+    [32m•[39m Engine revision e76c956498
+    [32m•[39m Dart version 3.3.3
+    [32m•[39m DevTools version 2.31.1
+
+[31m[✗][39m Android toolchain - develop for Android devices
+    [31m✗[39m Unable to locate Android SDK.
+      Install Android Studio from: https://developer.android.com/studio/index.html
+      On first launch it will assist you in installing the Android SDK components.
+      (or visit https://flutter.dev/docs/get-started/install/macos#android-setup for detailed instructions).
+      If the Android SDK has been installed to a custom location, please use
+      `flutter config --android-sdk` to update to that location.
+
+
+[32m[✓][39m Xcode - develop for iOS and macOS (Xcode 15.3)
+    [32m•[39m Xcode at /Applications/Xcode.app/Contents/Developer
+    [32m•[39m Build 15E204a
+    [32m•[39m CocoaPods version 1.15.2
+
+[32m[✓][39m Chrome - develop for the web
+    [32m•[39m Chrome at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+
+[33m[!][39m Android Studio (not installed)
+    [32m•[39m Android Studio not found; download from https://developer.android.com/studio/index.html
+      (or visit https://flutter.dev/docs/get-started/install/macos#android-setup for detailed instructions).
+
+[32m[✓][39m VS Code (version 1.82.2)
+    [32m•[39m VS Code at /Users/istefatsawda/Downloads/Visual Studio Code.app/Contents
+    [32m•[39m Flutter extension version 3.84.0
+
+[32m[✓][39m Connected device (3 available)
+    [32m•[39m iPad Air (5th generation) (mobile) • 54495953-D046-4C96-BA98-0708E3704C99 • ios            • com.apple.CoreSimulator.SimRuntime.iOS-17-4
+      (simulator)
+    [32m•[39m macOS (desktop)                    • macos                                • darwin-arm64   • macOS 14.4.1 23E224 darwin-arm64
+    [32m•[39m Chrome (web)                       • chrome                               • web-javascript • Google Chrome 123.0.6312.107
+
+[32m[✓][39m Network resources
+    [32m•[39m All expected network resources are available.
+
+[33m![39m Doctor found issues in 2 categories.
+```

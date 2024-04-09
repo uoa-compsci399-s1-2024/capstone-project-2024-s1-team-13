@@ -18,13 +18,23 @@ class AppDecoration {
         color: appTheme.whiteA700,
       );
   static BoxDecoration get fillOnError => BoxDecoration(
-        color: theme.colorScheme.onError,
+        color: theme.colorScheme.onError, // zainabs theme.colorScheme.onError.withOpacity(1),
       );
   static BoxDecoration get fillErrorContainer => BoxDecoration(
         color: theme.colorScheme.errorContainer,
       );
   static BoxDecoration get fillGray2 => BoxDecoration(
         color: appTheme.gray50,
+      );
+  static BoxDecoration get fillPink => BoxDecoration(
+        color: appTheme.pink900,
+      );
+
+
+  
+  
+  static BoxDecoration get fillBlueGray => BoxDecoration(
+        color: appTheme.blueGray100,
       );
 
   static BoxDecoration get gradientGrayToTeal => BoxDecoration(
@@ -65,6 +75,8 @@ class AppDecoration {
           ),
         ],
       );
+
+
   static BoxDecoration get outlinePrimary1 => BoxDecoration(
         color:appTheme.gray5001,
         boxShadow: [
@@ -93,6 +105,30 @@ class AppDecoration {
           ),
         ],
       );
+
+
+  static BoxDecoration get outlineBlack900 => BoxDecoration(
+        color: appTheme.gray50,
+        boxShadow: [
+          BoxShadow(
+            color: appTheme.black900.withOpacity(0.25),
+            spreadRadius: 2.h,
+            blurRadius: 2.h,
+            offset: Offset(
+              0,
+              1.85,
+            ),
+          ),
+        ],
+      );
+
+  
+  static BoxDecoration get outlineGray => BoxDecoration(
+        color: appTheme.gray50,
+      );
+  static BoxDecoration get outlineGray500 => BoxDecoration();
+
+  
 }
 
 class BorderRadiusStyle {
@@ -144,6 +180,65 @@ class BorderRadiusStyle {
   static BorderRadius get customBorderBL22 => BorderRadius.vertical(
         bottom: Radius.circular(22.h),
       );
+
+
+  static BorderRadius get circleBorder16 => BorderRadius.circular(
+        16.h,
+      );
+  static BorderRadius get circleBorder9 => BorderRadius.circular(
+        9.h,
+      );
+
+  // Custom borders
+  static BorderRadius get customBorderTL34 => BorderRadius.only(
+        topLeft: Radius.circular(34.h),
+        topRight: Radius.circular(34.h),
+        bottomLeft: Radius.circular(34.h),
+        bottomRight: Radius.circular(33.h),
+      );
+
+  static BorderRadius get circleBorder37 => BorderRadius.circular(
+        37.h,
+      );
+  static BorderRadius get circleBorder50 => BorderRadius.circular(
+        50.h,
+      );
+
+  static BorderRadius get circleBorder45 => BorderRadius.circular(
+        45.h,
+      );
+  static BorderRadius get circleBorder69 => BorderRadius.circular(
+        69.h,
+      );
+
+  static BorderRadius get roundedBorder4 => BorderRadius.circular(
+        4.h,
+      );
+
+  // Rounded borders
+  static BorderRadius get roundedBorder17 => BorderRadius.circular(
+        17.h,
+      );
+  static BorderRadius get roundedBorder20 => BorderRadius.circular(
+        20.h,
+      );
+  
+  static BorderRadius get roundedBorder18 => BorderRadius.circular(
+        18.h,
+      );
+
+
+  static BorderRadius get roundedBorder23 => BorderRadius.circular(
+        23.h,
+      );
+  static BorderRadius get roundedBorder41 => BorderRadius.circular(
+        41.h,
+      );
+
+  static BorderRadius get roundedBorder71 => BorderRadius.circular(
+        71.h,
+      );
+      
 }
 // Comment/Uncomment the below code based on your Flutter SDK version.
 

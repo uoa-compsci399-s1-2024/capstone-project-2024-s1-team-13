@@ -1,0 +1,95 @@
+type Task @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  taskTitle: String
+  taskStep: String
+  adminID: ID! @index(name: "byAdmin")
+}
+
+type TaskNotes @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  taskTitle: String
+  taskDesc: String
+  supportID: ID! @index(name: "bySupport")
+  adminID: ID! @index(name: "byAdmin")
+}
+
+type TraineeNotes @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  noteTitle: String
+  noteDesc: String
+  supportID: ID! @index(name: "bySupport")
+  adminID: ID! @index(name: "byAdmin")
+}
+
+type Recipe @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  recipeTitle: String
+  recipeStep: String
+  adminID: ID! @index(name: "byAdmin")
+}
+
+type Notifications @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userID: ID
+  content: String
+  timestamp: AWSTimestamp
+  supportID: ID! @index(name: "bySupport")
+  adminID: ID! @index(name: "byAdmin")
+}
+
+type CurrTask @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  taskFeeling: String
+  taskPassed: String
+  taskProgress: String
+  taskNoteID: ID
+  taskSteps: String
+  currTaskName: String
+  TaskNotes: TaskNotes @hasOne
+  Support: Support @belongsTo
+}
+
+type Trainee @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  traineePhoto: String
+  currTaskID: ID
+  firstName: String
+  surName: String
+  traineeNoteID: ID
+  supportID: ID! @index(name: "bySupport")
+  CurrTask: CurrTask @hasOne
+  TraineeNotes: TraineeNotes @hasOne
+  TaskNotes: TaskNotes @hasOne
+  adminID: ID! @index(name: "byAdmin")
+}
+
+type Support @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  traineeID: ID
+  currTaskID: ID
+  sharedPassword: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+  trainee: [Trainee] @hasMany(indexName: "bySupport", fields: ["id"])
+  TraineeNotes: [TraineeNotes] @hasMany(indexName: "bySupport", fields: ["id"])
+  CurrTask: CurrTask @hasOne
+  Notifications: [Notifications] @hasMany(indexName: "bySupport", fields: ["id"])
+  TaskNotes: [TaskNotes] @hasMany(indexName: "bySupport", fields: ["id"])
+}
+
+type Admin @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userName: String
+  password: String
+  notificationID: ID
+  taskNoteID: ID
+  traineeNoteID: ID
+  Trainees: [Trainee] @hasMany(indexName: "byAdmin", fields: ["id"])
+  Tasks: [Task] @hasMany(indexName: "byAdmin", fields: ["id"])
+  Recipes: [Recipe] @hasMany(indexName: "byAdmin", fields: ["id"])
+  Notifications: [Notifications] @hasMany(indexName: "byAdmin", fields: ["id"])
+  TaskNotes: [TaskNotes] @hasMany(indexName: "byAdmin", fields: ["id"])
+  TraineeNotes: [TraineeNotes] @hasMany(indexName: "byAdmin", fields: ["id"])
+}
+ 

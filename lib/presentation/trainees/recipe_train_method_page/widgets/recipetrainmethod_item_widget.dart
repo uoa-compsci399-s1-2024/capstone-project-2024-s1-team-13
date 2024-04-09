@@ -44,7 +44,7 @@ class RecipetrainmethodItemWidget extends StatelessWidget {
           GestureDetector(
             onTap: () {
 
-              Navigator.pushNamed(context, AppRoutes.macaronsRecipeScreen);
+              Navigator.pushNamed(context, AppRoutes.macaroonsAuditoryScreen);
             },
             
             child: Container(

@@ -1,0 +1,94 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-inkateam13capstone-staging-230318-authRole",
+      "UnauthRoleArn": "arn:aws:iam::164396468761:role/amplify-inkateam13capstone-staging-230318-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::164396468761:role/amplify-inkateam13capstone-staging-230318-authRole",
+      "Region": "ap-southeast-2",
+      "DeploymentBucketName": "amplify-inkateam13capstone-staging-230318-deployment",
+      "UnauthRoleName": "amplify-inkateam13capstone-staging-230318-unauthRole",
+      "StackName": "amplify-inkateam13capstone-staging-230318",
+      "StackId": "arn:aws:cloudformation:ap-southeast-2:164396468761:stack/amplify-inkateam13capstone-staging-230318/5ded3b30-ed57-11ee-9e42-02da9f376ceb",
+      "AmplifyAppId": "d1dgcnib97bzit"
+    }
+  },
+  "api": {
+    "inkateam13capstone": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            },
+            {
+              "apiKeyConfig": {
+                "apiKeyExpirationDate": "2025-04-08T04:17:22.802Z",
+                "apiKeyExpirationDays": 365,
+                "description": "da2-vg5qxcjdtfc3phsla5p2uaagia"
+              },
+              "authenticationType": "API_KEY"
+            }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            },
+            "authenticationType": "API_KEY"
+          }
+        },
+        "GraphQLAPIIdOutput": "wpe2axjlm5beji2s4vmkkyfqty",
+        "GraphQLAPIEndpointOutput": "https://xbrjpsso7vclnbvohvaqjf6jmy.appsync-api.ap-southeast-2.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-vg5qxcjdtfc3phsla5p2uaagia"
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync",
+      "lastPushTimeStamp": "2024-04-08T04:25:13.686Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-inkateam13capstone-staging-230318-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apiinkateam13capstone"
+      }
+    }
+  },
+  "auth": {
+    "inkateam13capstone4efce070": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "output": {
+        "UserPoolId": "ap-southeast-2_Kk5N3jjUK",
+        "AppClientIDWeb": "2k1kged06nqs5vqi292nc76v4h",
+        "AppClientID": "4vtpidukbhbib6md2kibcc9t6j",
+        "IdentityPoolId": "ap-southeast-2:23cf7004-b692-4fae-acda-ec15155a3a3f",
+        "UserPoolArn": "arn:aws:cognito-idp:ap-southeast-2:164396468761:userpool/ap-southeast-2_Kk5N3jjUK",
+        "IdentityPoolName": "inkateam13capstone4efce070_identitypool_4efce070__staging",
+        "UserPoolName": "inkateam13capstone4efce070_userpool_4efce070"
+      },
+      "lastPushTimeStamp": "2024-04-08T04:25:13.690Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-inkateam13capstone-staging-230318-deployment/amplify-cfn-templates/auth/inkateam13capstone4efce070-cloudformation-template.json",
+        "logicalId": "authinkateam13capstone4efce070"
+      }
+    }
+  }
+}

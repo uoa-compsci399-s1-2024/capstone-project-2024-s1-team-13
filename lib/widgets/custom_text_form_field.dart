@@ -116,7 +116,7 @@ class CustomTextFormField extends StatelessWidget {
         suffixIcon: suffix,
         suffixIconConstraints: suffixConstraints,
         isDense: true,
-        contentPadding: contentPadding ?? EdgeInsets.all(16.h), // 9 for me
+        contentPadding: contentPadding ?? EdgeInsets.all(16.h), // 9 for me //6 for zainab
         fillColor: fillColor ?? appTheme.gray200,
         filled: filled,
         border: borderDecoration ??
@@ -131,7 +131,7 @@ class CustomTextFormField extends StatelessWidget {
 
             OutlineInputBorder(
               borderRadius: BorderRadius.circular(22.h), //15 for me
-              borderSide: BorderSide(
+              borderSide: BorderSide( //borderSide: BorderSide.none, for zainab
                 color: theme.colorScheme.onError,
                 width: 1,
               ),

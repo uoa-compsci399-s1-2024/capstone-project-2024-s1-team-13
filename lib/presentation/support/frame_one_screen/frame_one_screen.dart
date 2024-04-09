@@ -68,7 +68,7 @@ class FrameOneScreen extends StatelessWidget {
                                       ),
                                       buttonTextStyle: theme.textTheme.titleLarge!,
                                       onPressed: () {
-                                        Navigator.pushNamed(context, AppRoutes.adminSupportLoginScreen);
+                                        Navigator.pushNamed(context, AppRoutes.supportSelectTrainee);
                                       },
                                     ),
                                   ],

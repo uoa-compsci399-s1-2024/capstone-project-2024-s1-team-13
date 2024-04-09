@@ -5,7 +5,7 @@ import '../core/app_export.dart';
 
 // ignore: must_be_immutable
 class CustomBottomBar extends StatefulWidget {
-  CustomBottomBar({this.onChanged});
+  CustomBottomBar({this.onChanged, required int selectedIndex});
 
   Function(BottomBarEnum)? onChanged;
 
@@ -68,13 +68,18 @@ class CustomBottomBarState extends State<CustomBottomBar> {
         type: BottomNavigationBarType.fixed,
         items: List.generate(bottomMenuList.length, (index) {
           return BottomNavigationBarItem(
-            icon: Column(
+            icon: GestureDetector(
+              onTap: () {
+                handleMenuItemTap(index);
+              },
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CustomImageView(
                   imagePath: bottomMenuList[index].icon,
-                  height: 25.v,
+                  height: 25.adaptSize,
+                  width: 25.adaptSize,
                   color: appTheme.gray40001,
                 ),
                 Padding(
@@ -87,6 +92,7 @@ class CustomBottomBarState extends State<CustomBottomBar> {
                   ),
                 ),
               ],
+            ),
             ),
             activeIcon: Column(
               mainAxisSize: MainAxisSize.min,
@@ -113,12 +119,24 @@ class CustomBottomBarState extends State<CustomBottomBar> {
           );
         }),
         onTap: (index) {
-          selectedIndex = index;
-          widget.onChanged?.call(bottomMenuList[index].type);
-          setState(() {});
+          handleMenuItemTap(index);
         },
       ),
     );
+  }
+
+  void handleMenuItemTap(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+    switch (bottomMenuList[index].type) {
+      case BottomBarEnum.Profile:
+        // Navigate to the trainee profile screen
+        Navigator.pushNamed(context, AppRoutes.supportTraineeProfile);
+        break;
+      default:
+        widget.onChanged?.call(bottomMenuList[index].type);
+    }
   }
 }
 

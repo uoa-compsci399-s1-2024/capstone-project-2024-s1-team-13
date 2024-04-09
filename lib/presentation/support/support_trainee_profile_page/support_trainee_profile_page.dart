@@ -63,32 +63,35 @@ class SupportTraineeProfilePage extends StatelessWidget {
 
   /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return CustomAppBar(
-      leadingWidth: 36.h,
-      leading: AppbarLeadingImage(
-        imagePath: ImageConstant.imgBackChevronButton,
-        margin: EdgeInsets.only(
-          left: 18.h,
-          top: 12.v,
-          bottom: 12.v,
+  return CustomAppBar(
+    leadingWidth: 36.h,
+    leading: GestureDetector(
+      onTap: () {
+        Navigator.pop(context); // Navigate back to the previous screen
+      },
+      child: Padding(
+        padding: EdgeInsets.only(left: 18.h, top: 12.v, bottom: 12.v),
+        child: Icon(
+          Icons.arrow_back,
+          size: 36, // Adjust the size as needed
+          color: Colors.white, // Adjust the color as needed
         ),
       ),
-      centerTitle: true,
-      title: AppbarTitle(
-        text: "Profile",
+    ),
+    centerTitle: true,
+    title: AppbarTitle(
+      text: "Profile",
+    ),
+    actions: [
+      AppbarTrailingImage(
+        imagePath: ImageConstant.imgSettingsButton,
+        margin: EdgeInsets.symmetric(horizontal: 16.h, vertical: 10.v),
       ),
-      actions: [
-        AppbarTrailingImage(
-          imagePath: ImageConstant.imgSettingsButton,
-          margin: EdgeInsets.symmetric(
-            horizontal: 16.h,
-            vertical: 10.v,
-          ),
-        ),
-      ],
-      styleType: Style.bgShadow,
-    );
-  }
+    ],
+    styleType: Style.bgShadow,
+  );
+}
+
 
   /// Section Widget
   Widget _buildTrainingProgrammes(BuildContext context) {
@@ -179,7 +182,7 @@ class SupportTraineeProfilePage extends StatelessWidget {
       onChanged: (BottomBarEnum type) {
         Navigator.pushNamed(
             navigatorKey.currentContext!, getCurrentRoute(type));
-      },
+      }, selectedIndex: 2,
     );
   }
 
@@ -221,3 +224,7 @@ onTapTraineeProgress(BuildContext context) {
 onTapTraineeNotes(BuildContext context) {
   Navigator.pushNamed(context, AppRoutes.supportTraineeNotesPage);
 }
+
+onTapImgArrowLeft(BuildContext context) {
+    Navigator.pop(context);
+  }

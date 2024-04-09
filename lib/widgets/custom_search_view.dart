@@ -134,13 +134,13 @@ class CustomSearchView extends StatelessWidget {
         suffixIcon: suffix ??
             Padding(
               padding: EdgeInsets.only(
-                right: 5.h, //5 for saacha
+                right: 5.h, //5 for saacha 15 for zainab
               ),
               child: IconButton(
                 onPressed: () => controller!.clear(),
                 icon: Icon(
                   Icons.clear,
-                  color: Colors.grey.shade400, //400 for saacha
+                  color: Colors.grey.shade400, //400 for saacha //600 for zainab
                 ),
                 iconSize: 30, //saachas addition
               ),

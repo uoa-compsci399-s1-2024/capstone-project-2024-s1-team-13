@@ -39,7 +39,7 @@ class ThemeHelper {
       textTheme: TextThemes.textTheme(colorScheme),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: appTheme.pink900,
+          backgroundColor: appTheme.pink900, //colorScheme.onPrimary, for zainab
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28), //20 for saacha's
           ),
@@ -56,8 +56,8 @@ class ThemeHelper {
         backgroundColor: appTheme.gray50,
       ),
       dividerTheme: DividerThemeData(
-        thickness: 100,
-        space: 100,
+        thickness: 100, //70 for zainab
+        space: 100, //70 for zainab
         color: appTheme.gray40001,
       ),
     );
@@ -74,8 +74,14 @@ class ThemeHelper {
 class TextThemes {
   static TextTheme textTheme(ColorScheme colorScheme) => TextTheme(
         headlineLarge: TextStyle(
-          color: colorScheme.primary.withOpacity(1),
+          color: colorScheme.primary.withOpacity(1), //primaryContainer, for zainab
           fontSize: 32.fSize,
+          fontFamily: 'Lexend Exa',
+          fontWeight: FontWeight.w700,
+        ),
+        headlineSmall: TextStyle(
+          color: colorScheme.onError.withOpacity(1),
+          fontSize: 25.fSize,
           fontFamily: 'Lexend Exa',
           fontWeight: FontWeight.w700,
         ),
@@ -94,13 +100,13 @@ class TextThemes {
         ),
         
         labelMedium: TextStyle(
-          color: colorScheme.onPrimary,
+          color: colorScheme.onPrimary, //colorScheme.primary.withOpacity(1), for zainab
           fontSize: 11.fSize,
           fontFamily: 'Lexend',
           fontWeight: FontWeight.w600,
         ),
         labelSmall: TextStyle(
-          color: colorScheme.errorContainer,
+          color: colorScheme.errorContainer, //gray40001, for zainab 
           fontSize: 9.fSize,
           fontFamily: 'Inter',
           fontWeight: FontWeight.w600,
@@ -112,13 +118,13 @@ class TextThemes {
           fontWeight: FontWeight.w500,
         ),
         titleMedium: TextStyle(
-          color: colorScheme.primary.withOpacity(1),
+          color: colorScheme.primary.withOpacity(1), //colorScheme.onError.withOpacity(1), for zainab
           fontSize: 18.fSize,
           fontFamily: 'Lexend Deca',
           fontWeight: FontWeight.w500,
         ),
         titleSmall: TextStyle(
-          color: colorScheme.secondaryContainer,
+          color: colorScheme.secondaryContainer, //colorScheme.onPrimary, for zaianb
           fontSize: 14.fSize,
           fontFamily: 'Lexend',
           fontWeight: FontWeight.w500,
@@ -134,6 +140,18 @@ class TextThemes {
           fontSize: 10.fSize,
           fontFamily: 'Lexend Exa',
           fontWeight: FontWeight.w300,
+        ),
+        bodyLarge: TextStyle(
+          color: colorScheme.primary.withOpacity(1),
+          fontSize: 19.fSize,
+          fontFamily: 'Lexend Exa',
+          fontWeight: FontWeight.w400,
+        ),
+        displayLarge: TextStyle(
+          color: appTheme.whiteA700,
+          fontSize: 60.fSize,
+          fontFamily: 'Lexend Exa',
+          fontWeight: FontWeight.w500,
         ),
 
         
@@ -204,10 +222,10 @@ class ColorSchemes {
     onError: Color(0XFFE1E1E1),
 
     // On colors(text colors)
-    onPrimary: Color(0XFF2A2A2A),
+    onPrimary: Color(0XFF2A2A2A), // Color(0XFF89375F), for zainab
     onPrimaryContainer: Color(0XFFC1C1C1),
 
-
+    // On colors(text colors)
     
 
     
@@ -259,7 +277,9 @@ class PrimaryColors {
   // BlueGray
 
   // Teal
-  Color get teal300 => Color(0XFF59AACE);
+  Color get teal300 => Color(0XFF59AACE); 
+
+
 
   // White
 }

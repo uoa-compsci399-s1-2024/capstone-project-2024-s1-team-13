@@ -39,7 +39,7 @@ class SupportTraineeNotesContainerScreen extends StatelessWidget {
       onChanged: (BottomBarEnum type) {
         Navigator.pushNamed(
             navigatorKey.currentContext!, getCurrentRoute(type));
-      },
+      }, selectedIndex: 2,
     );
   }
 
