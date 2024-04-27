@@ -1,0 +1,113 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-inkaapp-staging-6bd0c-authRole",
+      "UnauthRoleArn": "arn:aws:iam::164396468761:role/amplify-inkaapp-staging-6bd0c-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::164396468761:role/amplify-inkaapp-staging-6bd0c-authRole",
+      "Region": "ap-southeast-2",
+      "DeploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+      "UnauthRoleName": "amplify-inkaapp-staging-6bd0c-unauthRole",
+      "StackName": "amplify-inkaapp-staging-6bd0c",
+      "StackId": "arn:aws:cloudformation:ap-southeast-2:164396468761:stack/amplify-inkaapp-staging-6bd0c/a4e0f250-f966-11ee-9348-023f27b1d84b",
+      "AmplifyAppId": "d33bvuskeii9n4"
+    },
+    "categories": {
+      "storage": {
+        "inkaapp8e5f43fd": {
+          "bucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "region": "ap-southeast-2"
+        }
+      },
+      "auth": {
+        "inkaapp": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "addNotif": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/addNotif-4a797a446b7579387153-build.zip"
+        },
+        "addRecipe": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/addRecipe-7349683035714a4e754b-build.zip"
+        },
+        "addTask": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/addTask-385a304e5a59577a5054-build.zip"
+        },
+        "addTaskNote": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/addTaskNote-7345656a6b63496a3564-build.zip"
+        },
+        "addTrainees": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/addTrainees-507631724b784b397a58-build.zip"
+        },
+        "deleteNotif": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/deleteNotif-5a7776324c66624d6c73-build.zip"
+        },
+        "deleteRecipe": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/deleteRecipe-6253374f72554c524858-build.zip"
+        },
+        "deleteTask": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/deleteTask-6a316d396b5854743538-build.zip"
+        },
+        "deleteTaskNote": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/deleteTaskNote-6a34512b56447758386a-build.zip"
+        },
+        "deleteTrainees": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/deleteTrainees-48794c4945636730367a-build.zip"
+        },
+        "editNotif": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/editNotif-486c634430554a6d6c33-build.zip"
+        },
+        "editRecipe": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/editRecipe-4365704752436952704d-build.zip"
+        },
+        "editTask": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/editTask-456271534357507a324d-build.zip"
+        },
+        "editTaskNote": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/editTaskNote-71312f6d2b4d4c326348-build.zip"
+        },
+        "editTrainees": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/editTrainees-4f77755672307335766a-build.zip"
+        },
+        "taskFeeling": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/taskFeeling-7a39324e563641397468-build.zip"
+        },
+        "viewNotif": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/viewNotif-746e6531447662553177-build.zip"
+        },
+        "viewRecipe": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/viewRecipe-51384e554c4e75486752-build.zip"
+        },
+        "viewTask": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/viewTask-7a69666576496d5a4c4b-build.zip"
+        },
+        "viewTaskNote": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/viewTaskNote-4a7a43744e3235357674-build.zip"
+        },
+        "viewTrainees": {
+          "deploymentBucketName": "amplify-inkaapp-staging-6bd0c-deployment",
+          "s3Key": "amplify-builds/viewTrainees-4a6b7458463861375934-build.zip"
+        }
+      }
+    }
+  }
+}

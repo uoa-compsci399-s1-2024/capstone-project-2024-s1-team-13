@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "function": {
+      "viewTask": [
+        "read"
+      ]
+    },
+    "storage": {
+      "Task:@model(appsync)": [
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

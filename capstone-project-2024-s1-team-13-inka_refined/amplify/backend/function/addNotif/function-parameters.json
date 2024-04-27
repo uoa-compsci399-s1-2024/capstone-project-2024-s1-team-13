@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "storage": {
+      "Notifications:@model(appsync)": [
+        "create"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

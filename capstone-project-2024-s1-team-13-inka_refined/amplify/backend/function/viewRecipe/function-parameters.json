@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "storage": {
+      "Recipe:@model(appsync)": [
+        "read"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

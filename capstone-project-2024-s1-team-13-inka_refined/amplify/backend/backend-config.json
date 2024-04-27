@@ -1,0 +1,801 @@
+{
+  "api": {
+    "inkaapp": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "inkaapp": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS",
+            "REQUIRES_UPPERCASE"
+          ],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "NAME",
+          "PREFERRED_USERNAME"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    },
+    "userPoolGroups": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito-UserPool-Groups"
+    }
+  },
+  "function": {
+    "addNotif": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "addRecipe": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "addTask": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "addTaskNote": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "addTrainees": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "deleteNotif": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewNotif"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "deleteRecipe": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewRecipe"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "deleteTask": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewTask"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "deleteTaskNote": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewTaskNote"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "deleteTrainees": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewTrainees"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "editNotif": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewNotif"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "editRecipe": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewRecipe"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "editTask": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewTask"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "editTaskNote": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewTaskNote"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "editTrainees": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "viewTrainees"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "taskFeeling": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "viewNotif": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "viewRecipe": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "viewTask": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "viewTaskNote": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "viewTrainees": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "inkaapp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_addNotif_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_addNotif_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_addRecipe_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_addRecipe_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_addTaskNote_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_addTaskNote_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_addTask_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_addTask_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_addTrainees_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_function_addTrainees_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "addTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteNotif_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteNotif_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteRecipe_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteRecipe_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteTaskNote_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteTaskNote_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteTask_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteTask_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteTrainees_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_function_deleteTrainees_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "deleteTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_function_editNotif_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_editNotif_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_editRecipe_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_editRecipe_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_editTaskNote_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_editTaskNote_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_editTask_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_editTask_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_editTrainees_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_function_editTrainees_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "editTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_function_taskFeeling_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "taskFeeling"
+        }
+      ]
+    },
+    "AMPLIFY_function_taskFeeling_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "taskFeeling"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewNotif_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewNotif_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewNotif"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewRecipe_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewRecipe_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewRecipe"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewTaskNote_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewTaskNote_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewTaskNote"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewTask_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewTask_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewTask"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewTrainees_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_function_viewTrainees_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "viewTrainees"
+        }
+      ]
+    },
+    "AMPLIFY_storage_inkaapp8e5f43fd_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "inkaapp8e5f43fd"
+        }
+      ]
+    },
+    "AMPLIFY_storage_inkaapp8e5f43fd_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "inkaapp8e5f43fd"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "inkaapp8e5f43fd": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3",
+      "serviceType": "imported"
+    }
+  }
+}
