@@ -1,31 +1,77 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inka_test/support/evaluate_task.dart';
 import 'package:inka_test/support/support_items/evaluate_item.dart';
+import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/support/support_notifications.dart';
 import 'package:inka_test/support/support_settings.dart';
 import 'package:inka_test/support/support_trainee_dashboard.dart';
-import 'package:inka_test/support/support_items/trainee_item.dart';
+import 'package:inka_test/support/support_trainee_profile.dart';
 
-class SupportEvaluate extends StatelessWidget {
-  SupportEvaluate({Key? key, required this.title}) : super(key: key);
+class SupportEvaluate extends StatefulWidget {
+  SupportEvaluate({super.key, required this.title, required this.trainee});
   final String title;
+  final TraineeItem trainee;
+
+  @override
+  _SupportEvaluateState createState() => _SupportEvaluateState();
+}
+
+class _SupportEvaluateState extends State<SupportEvaluate> {
   final TextEditingController _textController = TextEditingController();
+
+  // Bottom Bar Navigation
+  int _selectedIndex = 1;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate to trainee dashboard
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SupportTraineeDashboard(trainee: widget.trainee)));
+        break;
+      case 1:
+        // Navigate to evaluate screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SupportEvaluate(
+                      title: "Evaluate",
+                      trainee: widget.trainee,
+                    )));
+        break;
+      case 2:
+        // Navigate to profile screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SupportTraineeProfile(
+                    title: 'Profile', trainee: widget.trainee)));
+        break;
+      default:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(widget.title),
           // Change to notification icon once bottom bar navigation is sorted
           leading: IconButton(
               iconSize: 40,
-              icon: Icon(Icons.arrow_back_ios_rounded),
+              icon: Icon(Icons.notifications_rounded),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return SupportNotifications(title: 'Notifications');
+                }));
               }),
           actions: [
             IconButton(
@@ -58,8 +104,8 @@ class SupportEvaluate extends StatelessWidget {
               label: 'PROFILE',
             ),
           ],
-          //currentIndex: _selectedIndex,
-          //onTap: _onItemTapped,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
 
         // List View of Evaluations
@@ -78,8 +124,8 @@ class SupportEvaluate extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                EvaluateTask(title: eval.title)));
+                            builder: (context) => EvaluateTask(
+                                evaluation: eval, trainee: widget.trainee)));
                   },
                   child: _EvalCard(eval),
                 );
@@ -143,14 +189,28 @@ class SupportEvaluate extends StatelessWidget {
 
   final List<EvaluateItem> mockEvals = [
     EvaluateItem(
-        title: 'Dishes', assetImage: 'assets/images/task_placeholder.jpg'),
+        title: 'Dishes',
+        assetImage: 'assets/images/task_placeholder.jpg',
+        instructions: ['Do the dishes', 'Do the dishes', 'Do the dishes']),
     EvaluateItem(
-        title: 'Clear Table', assetImage: 'assets/images/task_placeholder.jpg'),
+        title: 'Clear Table',
+        assetImage: 'assets/images/task_placeholder.jpg',
+        instructions: [
+          'Clear the table',
+          'Clear the table',
+          'Clear the table'
+        ]),
     EvaluateItem(
-        title: 'Closing', assetImage: 'assets/images/task_placeholder.jpg'),
+        title: 'Closing',
+        assetImage: 'assets/images/task_placeholder.jpg',
+        instructions: ['Close the cafe', 'Close the cafe', 'Close the cafe']),
     EvaluateItem(
-        title: 'Orders', assetImage: 'assets/images/task_placeholder.jpg'),
+        title: 'Orders',
+        assetImage: 'assets/images/task_placeholder.jpg',
+        instructions: ['Take an order', 'Take an order', 'Take an order']),
     EvaluateItem(
-        title: 'Opening', assetImage: 'assets/images/task_placeholder.jpg')
+        title: 'Opening',
+        assetImage: 'assets/images/task_placeholder.jpg',
+        instructions: ['Open the cafe', 'Open the dishes', 'Open the dishes'])
   ];
 }

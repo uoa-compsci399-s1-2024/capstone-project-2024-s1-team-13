@@ -71,9 +71,10 @@ class Login extends StatelessWidget {
         Text(
           "Username",
           style: TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 25,
-              fontWeight: FontWeight.w500),
+            fontFamily: "Lexend Exa",
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         TextFormField(
             controller: _usernameController,
@@ -82,6 +83,8 @@ class Login extends StatelessWidget {
                 fontSize: 25,
                 fontWeight: FontWeight.w500),
             decoration: InputDecoration(
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
               filled: true,
               fillColor: Colors.grey[300],
               hintText: "Enter username",
@@ -112,6 +115,8 @@ class Login extends StatelessWidget {
                 fontSize: 25,
                 fontWeight: FontWeight.w500),
             decoration: InputDecoration(
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
               filled: true,
               fillColor: Colors.grey[300],
               hintText: "Enter password",

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:inka_test/admin/admin_selection.dart';
-import 'package:inka_test/support/support_trainees.dart';
+import 'package:inka_test/admin/admin_change_login.dart';
 import 'package:inka_test/welcome/inka_welcome.dart';
 
-class SupportSettings extends StatelessWidget {
-  const SupportSettings({Key? key, required this.title}) : super(key: key);
+class AdminSettings extends StatelessWidget {
+  const AdminSettings({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -39,7 +38,7 @@ class SupportSettings extends StatelessWidget {
                 )),
             child: Center(
                 child: Text(
-              'S',
+              'A',
               style: TextStyle(
                   fontFamily: 'Lexend Exa',
                   fontSize: 100,
@@ -50,7 +49,7 @@ class SupportSettings extends StatelessWidget {
         SizedBox(height: 20),
 
         // Text
-        Text("Support Staff",
+        Text("Admin",
             style: TextStyle(
                 fontFamily: 'Lexend Exa',
                 fontSize: 40,
@@ -59,14 +58,14 @@ class SupportSettings extends StatelessWidget {
 
         SizedBox(height: 250),
 
-        // Switch Trainee Button
+        // Change Login Button
         ElevatedButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SupportTrainees(title: 'Trainees');
+                return AdminChangeLogin(title: 'Change Login'); // To change
               }));
             },
-            child: Text("Switch Trainee"),
+            child: Text("Change Login"),
             style: ElevatedButton.styleFrom(
                 minimumSize: Size(700, 100),
                 foregroundColor: Colors.white,
@@ -90,28 +89,6 @@ class SupportSettings extends StatelessWidget {
               }));
             },
             child: Text("Logout"),
-            style: ElevatedButton.styleFrom(
-                minimumSize: Size(700, 100),
-                foregroundColor: Colors.white,
-                textStyle: TextStyle(
-                  fontSize: 30,
-                  fontFamily: 'Lexend Exa',
-                  fontWeight: FontWeight.w500,
-                ),
-                backgroundColor: Colors.pink[900],
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)))),
-
-        SizedBox(height: 20),
-        // To admin [temporary]
-        ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return AdminSelection(title: 'Admin Home');
-              }));
-            },
-            child: Text("Admin"),
             style: ElevatedButton.styleFrom(
                 minimumSize: Size(700, 100),
                 foregroundColor: Colors.white,

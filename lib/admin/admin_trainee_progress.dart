@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:inka_test/admin/admin_settings.dart';
 import 'package:inka_test/items/progress_item.dart';
-import 'package:inka_test/support/support_settings.dart';
 
-class SupportTraineeProgress extends StatelessWidget {
-  SupportTraineeProgress({Key? key, required this.title}) : super(key: key);
+class AdminTraineeProgress extends StatelessWidget {
+  AdminTraineeProgress({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -21,10 +21,9 @@ class SupportTraineeProgress extends StatelessWidget {
           IconButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const SupportSettings(title: 'Settings');
+                return const AdminSettings(title: 'Settings');
               }));
             },
-            // To add functionality to settings
             iconSize: 45,
             icon: Icon(Icons.settings),
             padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -34,7 +33,6 @@ class SupportTraineeProgress extends StatelessWidget {
       body: Center(
           child: Column(
         children: [
-          //
           Expanded(
               child: ListView.builder(
             itemCount: mockProgress.length,
@@ -94,7 +92,6 @@ class SupportTraineeProgress extends StatelessWidget {
 
         // Container for Evaluation Count
         Container(
-          //decoration: BoxDecoration(color: Colors.white),
           child: RichText(
               text: TextSpan(children: [
             TextSpan(
@@ -119,7 +116,6 @@ class SupportTraineeProgress extends StatelessWidget {
 
         // Container for Recent Feedback
         Container(
-          //decoration: BoxDecoration(color: Colors.white),
           child: RichText(
               text: TextSpan(children: [
             TextSpan(
@@ -144,7 +140,6 @@ class SupportTraineeProgress extends StatelessWidget {
 
         // Container for Notes
         Container(
-            //decoration: BoxDecoration(color: Colors.white),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Notes: ',

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:inka_test/admin/admin_edit_recipes.dart';
+import 'package:inka_test/admin/admin_notifications.dart';
+import 'package:inka_test/admin/admin_tasks.dart';
+import 'package:inka_test/admin/admin_trainees.dart';
 import 'package:inka_test/modules/module_items/recipe_item.dart';
-import 'package:inka_test/modules/modules_notifications.dart';
-import 'package:inka_test/modules/modules_settings.dart';
 import 'package:inka_test/modules/selected_recipe.dart';
-import 'package:inka_test/modules/tasks_screen.dart';
-import 'package:inka_test/modules/training_modules.dart';
 
-class RecipesScreen extends StatefulWidget {
-  RecipesScreen({super.key, required this.title});
+class AdminRecipesScreen extends StatefulWidget {
+  AdminRecipesScreen({super.key, required this.title});
   final String title;
 
   @override
-  _RecipesScreenState createState() => _RecipesScreenState();
+  _AdminRecipesScreenState createState() => _AdminRecipesScreenState();
 }
 
-class _RecipesScreenState extends State<RecipesScreen> {
+class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
   final TextEditingController _textController = TextEditingController();
 
   // Bottom Bar Navigation
@@ -26,27 +26,27 @@ class _RecipesScreenState extends State<RecipesScreen> {
 
     switch (index) {
       case 0:
-        // Navigate to modules dashboard
+        // Navigate to trainees
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => TrainingModules(title: 'Modules')));
+                builder: (context) => AdminTrainees(title: 'Trainees')));
         break;
       case 1:
-        // Navigate to evaluate screen
+        // Navigate to tasks
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => TasksScreen(
+                builder: (context) => AdminTasksScreen(
                       title: "Tasks",
                     )));
         break;
       case 2:
-        // Navigate to profile screen
+        // Navigate to recipes
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => RecipesScreen(title: 'Recipes')));
+                builder: (context) => AdminRecipesScreen(title: 'Recipes')));
         break;
       default:
         break;
@@ -64,29 +64,29 @@ class _RecipesScreenState extends State<RecipesScreen> {
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ModulesNotifications(title: 'Notifications');
+                  return AdminNotifications(title: 'Notifications');
                 }));
               }),
           actions: [
             IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const ModulesSettings(title: 'Settings');
+                  return AdminEditRecipes(title: 'Edit Recipes');
                 }));
               }, // To add functionality to settings
               iconSize: 45,
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.edit_rounded),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             ),
           ],
         ),
 
-        // Bottom Navigation Bar -- needs working
+        // Bottom Navigation Bar
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'HOME',
+              icon: Icon(Icons.person_rounded),
+              label: 'TRAINEES',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.task_rounded),
@@ -100,8 +100,6 @@ class _RecipesScreenState extends State<RecipesScreen> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),
-
-        // Search
 
         // Grid View
         body: Column(children: <Widget>[

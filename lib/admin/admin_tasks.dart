@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:inka_test/modules/module_items/recipe_item.dart';
-import 'package:inka_test/modules/modules_notifications.dart';
-import 'package:inka_test/modules/modules_settings.dart';
-import 'package:inka_test/modules/selected_recipe.dart';
-import 'package:inka_test/modules/tasks_screen.dart';
-import 'package:inka_test/modules/training_modules.dart';
+import 'package:inka_test/admin/admin_edit_tasks.dart';
+import 'package:inka_test/admin/admin_notifications.dart';
+import 'package:inka_test/admin/admin_recipes.dart';
+import 'package:inka_test/admin/admin_trainees.dart';
+import 'package:inka_test/modules/module_items/task_item.dart';
+import 'package:inka_test/modules/selected_task.dart';
 
-class RecipesScreen extends StatefulWidget {
-  RecipesScreen({super.key, required this.title});
+class AdminTasksScreen extends StatefulWidget {
+  AdminTasksScreen({super.key, required this.title});
   final String title;
 
   @override
-  _RecipesScreenState createState() => _RecipesScreenState();
+  _AdminTasksScreenState createState() => _AdminTasksScreenState();
 }
 
-class _RecipesScreenState extends State<RecipesScreen> {
+class _AdminTasksScreenState extends State<AdminTasksScreen> {
   final TextEditingController _textController = TextEditingController();
 
   // Bottom Bar Navigation
-  int _selectedIndex = 2;
+  int _selectedIndex = 1;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -30,14 +30,14 @@ class _RecipesScreenState extends State<RecipesScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => TrainingModules(title: 'Modules')));
+                builder: (context) => AdminTrainees(title: 'Trainees')));
         break;
       case 1:
         // Navigate to evaluate screen
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => TasksScreen(
+                builder: (context) => AdminTasksScreen(
                       title: "Tasks",
                     )));
         break;
@@ -46,7 +46,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => RecipesScreen(title: 'Recipes')));
+                builder: (context) => AdminRecipesScreen(title: 'Recipes')));
         break;
       default:
         break;
@@ -64,18 +64,18 @@ class _RecipesScreenState extends State<RecipesScreen> {
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ModulesNotifications(title: 'Notifications');
+                  return AdminNotifications(title: 'Notifications');
                 }));
               }),
           actions: [
             IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const ModulesSettings(title: 'Settings');
+                  return AdminEditTasks(title: 'Edit Tasks');
                 }));
-              }, // To add functionality to settings
+              },
               iconSize: 45,
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.edit_rounded),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             ),
           ],
@@ -85,8 +85,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'HOME',
+              icon: Icon(Icons.person_rounded),
+              label: 'TRAINEES',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.task_rounded),
@@ -106,15 +106,14 @@ class _RecipesScreenState extends State<RecipesScreen> {
         // Grid View
         body: Column(children: <Widget>[
           Padding(
-              padding: EdgeInsets.all(25),
-              child: _buildRecipeSearchBar(context)),
+              padding: EdgeInsets.all(25), child: _buildTaskSearchBar(context)),
           Expanded(
               child: GridView.builder(
                   itemCount:
-                      mockRecipes.length, //Placeholder list - backend pending.
+                      mockTasks.length, //Placeholder list - backend pending.
                   itemBuilder: (context, index) {
-                    final recipe = mockRecipes[
-                        index]; //Placeholder list - backend pending.
+                    final task =
+                        mockTasks[index]; //Placeholder list - backend pending.
                     return GestureDetector(
                         onTap: () {
                           // Navigate to the desired screen when a task card is tapped
@@ -122,11 +121,11 @@ class _RecipesScreenState extends State<RecipesScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  SelectedRecipe(title: recipe.title),
+                                  SelectedTask(title: task.title),
                             ),
                           );
                         },
-                        child: _buildRecipeCard(recipe));
+                        child: _buildTaskCard(task));
                   },
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -138,7 +137,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
   }
 
   // Search Bar
-  Widget _buildRecipeSearchBar(context) => TextField(
+  Widget _buildTaskSearchBar(context) => TextField(
         controller: _textController,
         style: TextStyle(
             fontFamily: "Lexend Exa",
@@ -157,7 +156,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
               _textController.text = "";
             },
           ),
-          hintText: "Search Recipes",
+          hintText: "Search Tasks",
           hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
@@ -170,8 +169,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
         ),
       );
 
-  // Recipe Card
-  Widget _buildRecipeCard(task) => Card(
+  // Task Card
+  Widget _buildTaskCard(task) => Card(
       margin: EdgeInsets.all(20),
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -181,7 +180,6 @@ class _RecipesScreenState extends State<RecipesScreen> {
       child: Column(
         children: [
           Container(
-            width: 400,
             child: ClipRRect(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(50),
@@ -203,17 +201,13 @@ class _RecipesScreenState extends State<RecipesScreen> {
       ));
 
   //Mock Data
-  final List<RecipeItem> mockRecipes = [
-    RecipeItem(
-        title: 'Macarons', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Brownies', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Cupcakes', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Quiche', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Sausage Roll',
-        assetImage: 'assets/images/recipe_placeholder.jpeg')
+  final List<TaskItem> mockTasks = [
+    TaskItem(title: 'Dishes', assetImage: 'assets/images/task_placeholder.jpg'),
+    TaskItem(
+        title: 'Clear Table', assetImage: 'assets/images/task_placeholder.jpg'),
+    TaskItem(
+        title: 'Closing', assetImage: 'assets/images/task_placeholder.jpg'),
+    TaskItem(title: 'Orders', assetImage: 'assets/images/task_placeholder.jpg'),
+    TaskItem(title: 'Opening', assetImage: 'assets/images/task_placeholder.jpg')
   ];
 }

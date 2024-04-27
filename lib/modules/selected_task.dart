@@ -1,48 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:inka_test/modules/module_items/tasks_step.dart';
-import 'package:inka_test/support/support_settings.dart';
+import 'package:inka_test/modules/modules_settings.dart';
 
-class SelectedTask extends StatelessWidget {
+class SelectedTask extends StatefulWidget {
   SelectedTask({Key? key, required this.title}) : super(key: key);
 
   final String title;
+
+  @override
+  _SelectedTaskState createState() => _SelectedTaskState();
+}
+
+class _SelectedTaskState extends State<SelectedTask> {
+  int _currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-          leading: IconButton(
-              iconSize: 40,
-              icon: Icon(Icons.arrow_back_ios),
-              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const SupportSettings(title: 'Settings');
-                }));
-              },
-              // To add functionality to settings
-              iconSize: 45,
-              icon: Icon(Icons.settings),
-              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text(widget.title),
+        leading: IconButton(
+          iconSize: 40,
+          icon: Icon(Icons.arrow_back_ios),
+          padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: Column(
-          children: [
-            Expanded(
-                child: PageView.builder(
-                    itemCount: mockSteps.length,
-                    itemBuilder: (context, index) {
-                      return StepScreen(step: mockSteps[index]);
-                    }))
-          ],
-        ));
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const ModulesSettings(title: 'Settings');
+              }));
+            },
+            // To add functionality to settings
+            iconSize: 45,
+            icon: Icon(Icons.settings),
+            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              itemCount: mockSteps.length,
+              itemBuilder: (context, index) {
+                return StepScreen(step: mockSteps[index]);
+              },
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPageIndex = index;
+                });
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
+            child: Row(
+              children: [
+                Expanded(
+                  child: LinearProgressIndicator(
+                      value: (_currentPageIndex + 1) / mockSteps.length,
+                      borderRadius: BorderRadius.circular(50),
+                      minHeight: 30,
+                      backgroundColor: Colors.grey[350],
+                      color: Colors.pink[900]),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  '${(((_currentPageIndex + 1) / mockSteps.length) * 100).toInt()}%',
+                  style: TextStyle(
+                    fontFamily: "Lexend Exa",
+                    fontSize: 25,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   //Mock Data
@@ -122,49 +163,6 @@ class StepScreen extends StatelessWidget {
               height: 500,
               fit: BoxFit.cover,
             )),
-
-        // Next and Back Button
-        /*
-        SizedBox(height: 50),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          ElevatedButton(
-              onPressed: () {
-                // Navigate to the previous step
-                // Implement the logic for navigation here
-              },
-              child: Text('Back'),
-              style: ElevatedButton.styleFrom(
-                  minimumSize: Size(275, 100),
-                  foregroundColor: Colors.pink[900],
-                  textStyle: TextStyle(
-                    fontSize: 35,
-                    fontFamily: 'Lexend Exa',
-                    fontWeight: FontWeight.w500,
-                  ),
-                  backgroundColor: Colors.grey[200],
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)))),
-          SizedBox(width: 150),
-          ElevatedButton(
-              onPressed: () {
-                // Navigate to the next step
-                // Implement the logic for navigation here
-              },
-              child: Text('Next'),
-              style: ElevatedButton.styleFrom(
-                  minimumSize: Size(275, 100),
-                  foregroundColor: Colors.white,
-                  textStyle: TextStyle(
-                    fontSize: 35,
-                    fontFamily: 'Lexend Exa',
-                    fontWeight: FontWeight.w500,
-                  ),
-                  backgroundColor: Colors.pink[900],
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)))),
-        ]),*/
       ],
     );
   }

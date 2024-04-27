@@ -1,39 +1,122 @@
 import 'package:flutter/material.dart';
-import 'package:inka_test/support/support_settings.dart';
-import 'package:inka_test/support/support_trainee_dashboard.dart';
+import 'package:inka_test/admin/admin_add_trainee.dart';
+import 'package:inka_test/admin/admin_edit_trainees.dart';
+import 'package:inka_test/admin/admin_notifications.dart';
+import 'package:inka_test/admin/admin_recipes.dart';
+import 'package:inka_test/admin/admin_tasks.dart';
+import 'package:inka_test/admin/admin_trainee_profile.dart';
 import 'package:inka_test/items/trainee_item.dart';
 
-class SupportTrainees extends StatelessWidget {
-  SupportTrainees({Key? key, required this.title}) : super(key: key);
+class AdminTrainees extends StatefulWidget {
+  AdminTrainees({super.key, required this.title});
   final String title;
+
+  @override
+  _AdminTraineesState createState() => _AdminTraineesState();
+}
+
+class _AdminTraineesState extends State<AdminTrainees> {
   final TextEditingController _textController = TextEditingController();
+
+  // Bottom Bar Navigation
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate to trainees
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AdminTrainees(title: 'Trainees')));
+        break;
+      case 1:
+        // Navigate to tasks
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AdminTasksScreen(
+                      title: "Tasks",
+                    )));
+        break;
+      case 2:
+        // Navigate to recipes
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AdminRecipesScreen(title: 'Recipes')));
+        break;
+      default:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(widget.title),
           leading: IconButton(
               iconSize: 40,
-              icon: Icon(Icons.arrow_back_ios_rounded),
+              icon: Icon(Icons.notifications_rounded),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-          actions: [
-            IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const SupportSettings(title: 'Settings');
+                  return AdminNotifications(title: 'Notifications');
                 }));
-              },
-              // To add functionality to settings
-              iconSize: 45,
-              icon: Icon(Icons.settings),
-              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
+              }),
+          actions: [
+            Row(children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AdminAddTrainee(title: 'Add Trainee');
+                  }));
+                },
+                // To add functionality to settings
+                iconSize: 60,
+                icon: Icon(Icons.add_rounded),
+                padding: EdgeInsets.only(right: 30.0, bottom: 10.0),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AdminEditTrainees(title: 'Edit Trainees');
+                  }));
+                },
+                // To add functionality to settings
+                iconSize: 45,
+                icon: Icon(Icons.edit_rounded),
+                padding: EdgeInsets.only(right: 30.0, bottom: 10.0),
+              )
+            ])
           ],
         ),
+
+        // Bottom Navigation Bar
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: 'TRAINEES',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.task_rounded),
+              label: 'TASKS',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.grid_view_rounded),
+              label: 'RECIPES',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
+
+        // Body of screen
         body: Column(
           children: <Widget>[
             Padding(
@@ -49,8 +132,8 @@ class SupportTrainees extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                SupportTraineeDashboard(trainee: trainee)));
+                            builder: (context) => AdminTraineeProfile(
+                                title: 'Profile', trainee: trainee)));
                   },
                   child: _TraineeCard(trainee),
                 );

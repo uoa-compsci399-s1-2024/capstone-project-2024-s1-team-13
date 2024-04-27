@@ -27,7 +27,7 @@ class SupportSelectTrainee extends StatelessWidget {
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const SupportNotifications(title: 'Notifications');
+                  return SupportNotifications(title: 'Notifications');
                 }));
               }),
           actions: [
@@ -74,7 +74,5 @@ class SupportSelectTrainee extends StatelessWidget {
             ],
           ),
         ));
-
-    // Body of screen
   }
 }

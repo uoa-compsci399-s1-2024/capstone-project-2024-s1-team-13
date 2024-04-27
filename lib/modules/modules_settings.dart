@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:inka_test/admin/admin_selection.dart';
-import 'package:inka_test/support/support_trainees.dart';
 import 'package:inka_test/welcome/inka_welcome.dart';
 
-class SupportSettings extends StatelessWidget {
-  const SupportSettings({Key? key, required this.title}) : super(key: key);
+class ModulesSettings extends StatelessWidget {
+  const ModulesSettings({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -23,7 +21,7 @@ class SupportSettings extends StatelessWidget {
           child: Column(children: [
         SizedBox(height: 100),
 
-        // Support Staff Avatar
+        // Training Modules Avatar
         Container(
             width: 300,
             height: 300,
@@ -39,7 +37,7 @@ class SupportSettings extends StatelessWidget {
                 )),
             child: Center(
                 child: Text(
-              'S',
+              'G',
               style: TextStyle(
                   fontFamily: 'Lexend Exa',
                   fontSize: 100,
@@ -50,46 +48,23 @@ class SupportSettings extends StatelessWidget {
         SizedBox(height: 20),
 
         // Text
-        Text("Support Staff",
+        Text("Guest",
             style: TextStyle(
                 fontFamily: 'Lexend Exa',
                 fontSize: 40,
                 fontWeight: FontWeight.w500,
                 color: Colors.pink[900])),
 
-        SizedBox(height: 250),
+        SizedBox(height: 400),
 
         // Switch Trainee Button
-        ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SupportTrainees(title: 'Trainees');
-              }));
-            },
-            child: Text("Switch Trainee"),
-            style: ElevatedButton.styleFrom(
-                minimumSize: Size(700, 100),
-                foregroundColor: Colors.white,
-                textStyle: TextStyle(
-                  fontSize: 30,
-                  fontFamily: 'Lexend Exa',
-                  fontWeight: FontWeight.w500,
-                ),
-                backgroundColor: Colors.pink[900],
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50)))),
-
-        SizedBox(height: 20),
-
-        // Logout Button - pending backend functionality
         ElevatedButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return InkaWelcome(title: 'Welcome');
               }));
             },
-            child: Text("Logout"),
+            child: Text("Back to Welcome"),
             style: ElevatedButton.styleFrom(
                 minimumSize: Size(700, 100),
                 foregroundColor: Colors.white,
@@ -102,28 +77,6 @@ class SupportSettings extends StatelessWidget {
                 elevation: 2,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50)))),
-
-        SizedBox(height: 20),
-        // To admin [temporary]
-        ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return AdminSelection(title: 'Admin Home');
-              }));
-            },
-            child: Text("Admin"),
-            style: ElevatedButton.styleFrom(
-                minimumSize: Size(700, 100),
-                foregroundColor: Colors.white,
-                textStyle: TextStyle(
-                  fontSize: 30,
-                  fontFamily: 'Lexend Exa',
-                  fontWeight: FontWeight.w500,
-                ),
-                backgroundColor: Colors.pink[900],
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50))))
       ])),
     );
   }

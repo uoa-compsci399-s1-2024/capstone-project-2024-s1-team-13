@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:inka_test/modules/module_items/notification_item.dart';
 
 // Temporary screen for notifications - perhaps a Notification Listener should be used
-class ModulesNotifications extends StatelessWidget {
-  ModulesNotifications({super.key, required this.title});
+class AdminNotifications extends StatelessWidget {
+  AdminNotifications({super.key, required this.title});
   final String title;
 
   Widget build(BuildContext context) {
@@ -17,26 +17,6 @@ class ModulesNotifications extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             }),
-      ),
-
-      // Bottom Navigation Bar -- needs working
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'HOME',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.task_rounded),
-            label: 'TASKS',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view_rounded),
-            label: 'RECIPES',
-          ),
-        ],
-        //currentIndex: _selectedIndex,
-        //onTap: _onItemTapped,
       ),
 
       // Body of screen
@@ -88,37 +68,38 @@ class ModulesNotifications extends StatelessWidget {
               padding: EdgeInsets.only(left: 30, right: 30, bottom: 30),
               child: _getIcon(notification))));
 
-// Mock Data (temporary)
+// Mock Data
   final List<NotificationItem> mockNotifs = [
     NotificationItem(
-        type: 'task',
-        notificationTitle: 'Task Added',
+        type: 'trainee',
+        notificationTitle: 'Task Completion',
         dateTime: DateTime.now(),
-        description: 'Opening'),
+        description: 'John has successfully completed a task.'),
     NotificationItem(
-        type: 'recipe',
-        notificationTitle: 'Recipe Added',
+        type: 'trainee',
+        notificationTitle: 'Task Completion',
         dateTime: DateTime.now(),
-        description: 'Cupcakes'),
+        description: 'Tom has successfully completed a task.')
   ];
 
   // Mock Function
   Widget? _getIcon(notif) {
-    if (notif.type == 'recipe') {
+    if (notif.type == 'trainee') {
       return Row(
         children: [
-          Icon(
-            Icons.grid_view_rounded,
-            size: 50,
-            color: Colors.pink[900],
-          ),
-          SizedBox(width: 15),
-          Text("${notif.description}",
-              maxLines: 2,
-              style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 30,
-                  fontWeight: FontWeight.w500))
+          CircleAvatar(
+              foregroundImage:
+                  AssetImage('assets/images/trainee_placeholder.jpeg'),
+              radius: 40),
+          SizedBox(width: 50),
+          Text(
+            "${notif.description}",
+            maxLines: 3, // This property does not work - text overflow here?
+            style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 30,
+                fontWeight: FontWeight.w500),
+          )
         ],
       );
     } else {
@@ -131,7 +112,7 @@ class ModulesNotifications extends StatelessWidget {
           ),
           SizedBox(width: 15),
           Text("${notif.description}",
-              maxLines: 2,
+              maxLines: 3, // This property does not work - text overflow
               style: TextStyle(
                   fontFamily: 'Lexend Exa',
                   fontSize: 30,

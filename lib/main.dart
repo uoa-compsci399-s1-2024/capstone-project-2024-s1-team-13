@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:inka_test/welcome/inka_welcome.dart';
-//import 'support/support_trainee_profile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
             // App bar theme
             appBarTheme: const AppBarTheme(
                 toolbarHeight: 100,
-                elevation: 10, // No elevation
+                elevation: 10, // No elevation?
                 foregroundColor: Colors.white,
                 backgroundColor: Color.fromARGB(
                     255, 219, 75, 72), // This red does not look the same?
@@ -36,6 +35,7 @@ class MyApp extends StatelessWidget {
             // Bottom navigation bar theme
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
                 backgroundColor: const Color.fromARGB(255, 250, 250, 250),
+                elevation: 10, // No elevation?
 
                 // Theme for selected icon and labels
                 selectedLabelStyle: TextStyle(

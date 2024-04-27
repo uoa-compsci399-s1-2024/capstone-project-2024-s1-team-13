@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:inka_test/support/support_evaluate.dart';
+import 'package:inka_test/admin/admin_recipes.dart';
+import 'package:inka_test/admin/admin_settings.dart';
+import 'package:inka_test/admin/admin_tasks.dart';
+import 'package:inka_test/admin/admin_trainee_notes.dart';
+import 'package:inka_test/admin/admin_trainee_progress.dart';
+import 'package:inka_test/admin/admin_trainees.dart';
 import 'package:inka_test/items/trainee_item.dart';
-import 'package:inka_test/support/support_notifications.dart';
-import 'package:inka_test/support/support_trainee_dashboard.dart';
-import 'package:inka_test/support/support_trainee_notes.dart';
-import 'package:inka_test/support/support_trainee_progress.dart';
-import 'package:inka_test/support/support_settings.dart';
 
-class SupportTraineeProfile extends StatefulWidget {
-  SupportTraineeProfile(
-      {super.key, required this.title, required this.trainee});
+class AdminTraineeProfile extends StatefulWidget {
+  AdminTraineeProfile({super.key, required this.title, required this.trainee});
   final String title;
   final TraineeItem trainee;
 
   @override
-  _SupportTraineeProfileState createState() => _SupportTraineeProfileState();
+  _AdminTraineeProfileState createState() => _AdminTraineeProfileState();
 }
 
-class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
+class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
   // Bottom Bar Navigation
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -27,28 +26,27 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
 
     switch (index) {
       case 0:
-        // Navigate to trainee dashboard
+        // Navigate to trainees
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SupportTraineeDashboard(trainee: widget.trainee)));
+                builder: (context) => AdminTrainees(title: 'Trainees')));
         break;
       case 1:
-        // Navigate to evaluate screen
+        // Navigate to tasks
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => SupportEvaluate(
-                    title: "Evaluate", trainee: widget.trainee)));
+                builder: (context) => AdminTasksScreen(
+                      title: "Tasks",
+                    )));
         break;
       case 2:
-        // Navigate to profile screen
+        // Navigate to recipes
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => SupportTraineeProfile(
-                    title: 'Profile', trainee: widget.trainee)));
+                builder: (context) => AdminRecipesScreen(title: 'Recipes')));
         break;
       default:
         break;
@@ -62,39 +60,38 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
         title: Text(widget.title),
         leading: IconButton(
             iconSize: 40,
-            icon: Icon(Icons.notifications_rounded),
+            icon: Icon(Icons.arrow_back_ios),
             padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SupportNotifications(title: 'Notifications');
-              }));
+              Navigator.pop(context);
             }),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const SupportSettings(title: 'Settings');
+                return const AdminSettings(title: 'Settings');
               }));
-            }, // To add functionality to settings
+            },
             iconSize: 45,
             icon: Icon(Icons.settings),
             padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
         ],
       ),
+      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'HOME',
+            icon: Icon(Icons.person_rounded),
+            label: 'TRAINEES',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.task_rounded),
-            label: 'EVALUATE',
+            label: 'TASKS',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: 'PROFILE',
+            icon: Icon(Icons.grid_view_rounded),
+            label: 'RECIPES',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -108,7 +105,6 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
         children: [
           Padding(padding: EdgeInsets.all(50), child: _profileDetails()),
           SizedBox(height: 10),
-          //_progressButton(context),
           _progressButton(context),
           SizedBox(height: 50),
           _notesButton(context)
@@ -138,7 +134,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
   Widget _progressButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return SupportTraineeProgress(title: 'Progress');
+            return AdminTraineeProgress(title: 'Progress');
           }));
         },
         child: Container(
@@ -187,7 +183,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
   Widget _notesButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return SupportTraineeNotes(title: 'Notes');
+            return AdminTraineeNotes(title: 'Notes');
           }));
         },
         child: Container(

@@ -1,13 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inka_test/modules/modules_notifications.dart';
+import 'package:inka_test/modules/modules_settings.dart';
 import 'package:inka_test/modules/recipes_screen.dart';
 import 'package:inka_test/modules/tasks_screen.dart';
-import 'package:inka_test/support/support_settings.dart';
 
-class TrainingModules extends StatelessWidget {
-  const TrainingModules({super.key, required this.title});
+class TrainingModules extends StatefulWidget {
+  TrainingModules({super.key, required this.title});
   final String title;
+
+  @override
+  _TrainingModulesState createState() => _TrainingModulesState();
+}
+
+class _TrainingModulesState extends State<TrainingModules> {
+  // Bottom Bar Navigation
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate to modules dashboard
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TrainingModules(title: 'Modules')));
+        break;
+      case 1:
+        // Navigate to evaluate screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TasksScreen(
+                      title: "Tasks",
+                    )));
+        break;
+      case 2:
+        // Navigate to profile screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => RecipesScreen(title: 'Recipes')));
+        break;
+      default:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +67,14 @@ class TrainingModules extends StatelessWidget {
             padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const ModuleNotifications(title: 'Notifications');
+                return ModulesNotifications(title: 'Notifications');
               }));
             }),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const SupportSettings(title: 'Settings');
+                return const ModulesSettings(title: 'Settings');
               }));
             }, // To add functionality to settings
             iconSize: 45,
@@ -59,8 +100,8 @@ class TrainingModules extends StatelessWidget {
             label: 'RECIPES',
           ),
         ],
-        //currentIndex: _selectedIndex,
-        //onTap: _onItemTapped,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
 
       // Body of screen
