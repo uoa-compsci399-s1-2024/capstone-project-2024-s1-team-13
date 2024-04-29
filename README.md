@@ -31,7 +31,6 @@ Our capstone project focuses on the Te Tuhi Disability Training Cafe, in which w
 
 ## Videos
 
-# Frontend Resources
 ## Design Ideas
 
     
