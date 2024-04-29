@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "storage": {
+      "TaskNotes:@model(appsync)": [
+        "create"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

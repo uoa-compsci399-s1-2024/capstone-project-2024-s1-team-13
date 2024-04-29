@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "function": {
+      "viewNotif": [
+        "read"
+      ]
+    },
+    "storage": {
+      "Notifications:@model(appsync)": [
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

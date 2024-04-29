@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "function": {
+      "viewRecipe": [
+        "read"
+      ]
+    },
+    "storage": {
+      "Recipe:@model(appsync)": [
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

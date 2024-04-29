@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "storage": {
+      "CurrTask:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ],
+      "TaskNotes:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ],
+      "Support:@model(appsync)": [
+        "read",
+        "update"
+      ],
+      "Trainee:@model(appsync)": [
+        "read",
+        "update"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

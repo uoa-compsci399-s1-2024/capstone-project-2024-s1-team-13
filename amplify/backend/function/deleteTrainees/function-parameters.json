@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "function": {
+      "viewTrainees": [
+        "read"
+      ]
+    },
+    "storage": {
+      "Trainee:@model(appsync)": [
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

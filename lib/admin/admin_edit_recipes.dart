@@ -1,0 +1,302 @@
+import 'package:flutter/material.dart';
+import 'package:inka_test/admin/admin_add_recipe.dart';
+import 'package:inka_test/admin/admin_edit_selected_recipe.dart';
+import 'package:inka_test/models/Recipe.dart';
+import 'package:inka_test/modules/module_items/recipe_item.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_api/amplify_api.dart';
+
+class AdminEditRecipes extends StatefulWidget {
+  const AdminEditRecipes({super.key, required this.title});
+  final String title;
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _AdminRecipesScreenState createState() => _AdminRecipesScreenState();
+}
+
+class _AdminRecipesScreenState extends State<AdminEditRecipes> {
+  late List<Recipe> allRecipes = []; // List to store all tasks
+  @override
+  void initState() {
+    super.initState();
+    fetchAllRecipe(); // Call the function to fetch all task notes
+  }
+
+  Future<void> fetchAllRecipe() async {
+    try {
+      final task = await queryRecipe();
+
+      setState(() {
+        allRecipes = task.cast<Recipe>();
+      });
+    } catch (e) {
+      safePrint('Error fetching task notes: $e');
+    }
+  }
+
+  // Function to query all task notes
+  Future<List<Recipe>> queryRecipe() async {
+    try {
+      final request = ModelQueries.list(Recipe.classType);
+      final response = await Amplify.API.query(request: request).response;
+
+      final task = response.data?.items;
+      if (task == null) {
+        safePrint('errors: ${response.errors}');
+        return [];
+      }
+      return task.cast<Recipe>();
+    } catch (e) {
+      safePrint('Query failed: $e');
+      return [];
+    }
+  }
+
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+          leading: IconButton(
+              iconSize: 40,
+              icon: const Icon(Icons.arrow_back_ios),
+              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const AdminAddRecipe(
+                      title:
+                          'Add Recipe'); // To change route -- oops, should be recipe not task
+                }));
+              },
+              iconSize: 60,
+              icon: const Icon(Icons.add_rounded),
+              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            ),
+          ],
+        ),
+
+        // Grid View
+        body: Column(children: <Widget>[
+          Padding(
+              padding: const EdgeInsets.all(25),
+              child: _buildRecipeSearchBar(context)),
+          Expanded(
+              child: GridView.builder(
+                  itemCount:
+                      allRecipes.length, //Placeholder list - backend pending.
+                  itemBuilder: (context, index) {
+                    final recipe = allRecipes[index]; 
+                    return GestureDetector(
+                        onTap: () {
+                          // Navigate to the desired screen when a task card is tapped
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AdminEditSelectedRecipe(
+                                title: 'Edit ${recipe.recipeTitle}',
+                              ),
+                            ),
+                          );
+                        },
+                        child: _buildRecipeCard(recipe.recipeTitle ?? "Recipe Title Not Found", recipe.recipeCoverImage ?? ""),
+                        );
+
+                  },
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    //crossAxisSpacing: 5,
+                    //mainAxisSpacing: 5,
+                  ),
+                  scrollDirection: Axis.vertical))
+        ]));
+  }
+
+  // Search Bar
+  Widget _buildRecipeSearchBar(context) => TextField(
+        controller: _textController,
+        style: const TextStyle(
+            fontFamily: "Lexend Exa",
+            fontSize: 30,
+            fontWeight: FontWeight.w300),
+        decoration: InputDecoration(
+          prefixIcon: IconButton(
+              padding: const EdgeInsets.only(left: 20, right: 10),
+              icon:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+              onPressed: () => _textController.clear()),
+          suffixIcon: IconButton(
+            padding: const EdgeInsets.only(left: 10, right: 20),
+            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+            onPressed: () {
+              _textController.text = "";
+            },
+          ),
+          hintText: "Search Recipes",
+          hintStyle: const TextStyle(
+              fontFamily: "Lexend Exa",
+              fontSize: 30,
+              fontWeight: FontWeight.w300),
+          filled: true,
+          fillColor: Colors.grey[300],
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide.none),
+        ),
+      );
+
+  String _getTitle(int index) {
+    if (index < allRecipes.length) {
+      return allRecipes[index].recipeTitle ??
+          "Task Title Not Found"; // Providing a default value if taskTitle is null
+    } else {
+      return "Task Title Not Found"; // Fallback title if index exceeds the length of allTasks
+    }
+  }
+  String _getUrl(int index) {
+    if (index < allRecipes.length) {
+      String? imageUrl = allRecipes[index].recipeCoverImage;
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        return imageUrl;
+       // Return the task cover image URL if it's not null or empty
+      } else {
+        return ""; // Return an empty string as a fallback if the URL is null or empty
+      }
+    } else {
+      return ""; // Fallback if index exceeds the length of allTasks
+    }
+  }
+
+  // Recipe Card
+  Widget _buildRecipeCard(String title, String recipeCoverImageUrl) => Card(
+      margin: const EdgeInsets.all(20),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
+      ),
+      color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+              child: Image.network(recipeCoverImageUrl, fit: BoxFit.fill),
+            ),
+          ),
+          const SizedBox(height: 30),
+          Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.all(10),
+                        alignment: Alignment.center,
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                              fontFamily: 'Lexend Exa',
+                              fontSize: 30,
+                              fontWeight: FontWeight.w300),
+                        )),
+                    IconButton(
+                      onPressed: () =>
+                          _deleteRecipe(context, 0), // change this later
+                          //_deleteRecipe(context, mockRecipes.indexOf(arecipe)),
+                      icon: const Icon(Icons.remove_circle_rounded),
+                      iconSize: 50,
+                      color: Colors.red[600],
+                    )
+                  ])),
+        ],
+      ));
+
+  //Mock Data
+  final List<RecipeItem> mockRecipes = [
+    RecipeItem(
+        title: 'Macarons', assetImage: 'assets/images/recipe_placeholder.jpeg'),
+    RecipeItem(
+        title: 'Brownies', assetImage: 'assets/images/recipe_placeholder.jpeg'),
+    RecipeItem(
+        title: 'Cupcakes', assetImage: 'assets/images/recipe_placeholder.jpeg'),
+    RecipeItem(
+        title: 'Quiche', assetImage: 'assets/images/recipe_placeholder.jpeg'),
+    RecipeItem(
+        title: 'Sausage Roll',
+        assetImage: 'assets/images/recipe_placeholder.jpeg')
+  ];
+
+//Delete selected task - pending backend functionality
+  void _deleteRecipe(BuildContext context, index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          title: const Padding(
+              padding: EdgeInsets.all(30),
+              child: Text('Are you sure you want to delete this recipe?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 35,
+                      fontWeight: FontWeight.w500))),
+          actionsPadding: const EdgeInsets.only(bottom: 60),
+          actions: [
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 100),
+                      textStyle: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      backgroundColor: Colors.grey[300],
+                      foregroundColor: Colors.pink[900],
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50))),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text("NO")),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 100),
+                      textStyle: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      backgroundColor: Colors.pink[900],
+                      foregroundColor: Colors.white,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50))),
+                  // Mock functionality - pending backend functionality
+                  onPressed: () {
+                    mockRecipes.remove(mockRecipes[index]);
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text("YES"))
+            ])
+          ],
+        );
+      },
+    );
+  }
+}

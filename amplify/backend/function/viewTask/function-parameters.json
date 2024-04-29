@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "storage": {
+      "Task:@model(appsync)": [
+        "read"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

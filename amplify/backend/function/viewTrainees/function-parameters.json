@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "storage": {
+      "Trainee:@model(appsync)": [
+        "read"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

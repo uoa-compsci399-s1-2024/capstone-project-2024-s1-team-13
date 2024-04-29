@@ -1,0 +1,15 @@
+{
+  "resourceName": "s399f2fa15",
+  "policyUUID": "99f2fa15",
+  "bucketName": "inkaapp3fb50f42b4ea4491a9a1a5f65995bf57",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "READ",
+    "CREATE_AND_UPDATE",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE"
+}
