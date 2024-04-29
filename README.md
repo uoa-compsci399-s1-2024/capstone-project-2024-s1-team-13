@@ -1,16 +1,38 @@
-# inka_test
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/t8qno6SJ)
 
-A new Flutter project.
+# Capstone Project
+Te Tuhi Disability Training Cafe platform for trainees
 
-## Getting Started
+Our capstone project focuses on the Te Tuhi Disability Training Cafe, in which we build a platform for their cafe staff to use, particularly their trainees as these are people with intellectual impairments. 
 
-This project is a starting point for a Flutter application.
+## Contributors
+- Saacha (lead)
+- Eisen (backend developer)
+- Istefat Sawda (Full-Stack)
+- Zainab (full-stack)
+- Natania (project manager)
 
-A few resources to get you started if this is your first Flutter project:
+- Saacha Moyo (Team Lead)
+- Eisen Belleza (Backend Developer)
+- Istefat Sawda (Fullstack Developer)
+- Zainab Shehzad (Fullstack Developer)
+- Natania Thomas (Project Manager)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# Backend Resources
+## Document
+  [Backend Section Document](https://docs.google.com/document/d/1SDRM_Ymiu-dTaR5IqxHMonCC6Gumcb81q76EDuDEwJI/edit?usp=sharing) 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Videos
+- [AWS Full Web App Portfolio Project Tutorial](https://youtu.be/zuKu0VFiwas?si=QnAoLocDemAZlc-r)
+- [AWS DynamoDB Tutorial for Beginners](https://youtu.be/FQrN5aJWa_U?si=Y3kmW1Fro0TJwFDH)
+
+# Frontend Resources
+## Document
+
+## Videos
+
+# Frontend Resources
+## Design Ideas
+
+    
+
