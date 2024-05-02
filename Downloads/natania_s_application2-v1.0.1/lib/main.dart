@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'natania_s_application2',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.macaroonsAuditoryScreen,
+          initialRoute: AppRoutes.appNavigationScreen,
           routes: AppRoutes.routes,
         );
       },

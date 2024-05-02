@@ -219,7 +219,7 @@ class MacaroonsAuditoryScreen extends StatelessWidget {
               Container(
                 width: 32.adaptSize,
                 padding: EdgeInsets.symmetric(
-                  horizontal: 8.h,
+                  horizontal: 10.h,
                   vertical: 3.v,
                 ),
                 decoration: AppDecoration.fillGray.copyWith(
