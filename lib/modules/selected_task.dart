@@ -1,3 +1,4 @@
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/modules/modules_settings.dart';
 import 'package:inka_test/models/Task.dart';
@@ -61,7 +62,31 @@ class _SelectedTaskState extends State<SelectedTask> {
     return null;
   }
   }
-  
+
+
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
 
 
   int _currentPageIndex = 0;
@@ -109,20 +134,32 @@ Widget buildTaskContent() {
           itemCount: selectedTask!.taskStep?.length ?? 0,
           itemBuilder: (context, index) {
             String description = selectedTask!.taskStep != null && selectedTask!.taskStep!.isNotEmpty
-              ? selectedTask!.taskStep![index]
-              : ''; // Assign empty string if taskStep is null or empty
+                ? selectedTask!.taskStep![index]
+                : ''; // Assign empty string if taskStep is null or empty
 
-            String image = selectedTask!.taskStepImage != null && selectedTask!.taskStepImage!.isNotEmpty
-              ? selectedTask!.taskStepImage![index]
-              : ''; // Assign empty string if taskStepImage is null or empty
-
-            TasksStep step = TasksStep(
-              stepNumber: index + 1,
-              description: description,
-              stepImage: image,
+            Future<String> url = getDownloadUrl(
+              key: selectedTask!.taskStepImage![index] ?? "",
+              accessLevel: StorageAccessLevel.guest,
             );
 
-            return StepScreen(step: step);
+            return FutureBuilder<String>(
+              future: url,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  String image = snapshot.data ?? "";
+                  TasksStep step = TasksStep(
+                    stepNumber: index + 1,
+                    description: description,
+                    stepImage: image,
+                  );
+                  return StepScreen(step: step);
+                }
+              },
+            );
           },
           onPageChanged: (index) {
             setState(() {
@@ -131,33 +168,32 @@ Widget buildTaskContent() {
           },
         ),
       ),
-
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
         child: Row(
           children: [
             Expanded(
               child: selectedTask!.taskStep != null && selectedTask!.taskStep!.isNotEmpty
-                ? LinearProgressIndicator(
-                    value: (_currentPageIndex + 1) / selectedTask!.taskStep!.length,
-                    borderRadius: BorderRadius.circular(50),
-                    minHeight: 30,
-                    backgroundColor: Colors.grey[350],
-                    color: Colors.pink[900],
-                  )
-                : LinearProgressIndicator(
-                    value: 0.0, // Set value to 0 if taskStep is null or empty
-                    borderRadius: BorderRadius.circular(50),
-                    minHeight: 30,
-                    backgroundColor: Colors.grey[350],
-                    color: Colors.pink[900],
-                  ),
+                  ? LinearProgressIndicator(
+                      value: (_currentPageIndex + 1) / selectedTask!.taskStep!.length,
+                      borderRadius: BorderRadius.circular(50),
+                      minHeight: 30,
+                      backgroundColor: Colors.grey[350],
+                      color: Colors.pink[900],
+                    )
+                  : LinearProgressIndicator(
+                      value: 0.0, // Set value to 0 if taskStep is null or empty
+                      borderRadius: BorderRadius.circular(50),
+                      minHeight: 30,
+                      backgroundColor: Colors.grey[350],
+                      color: Colors.pink[900],
+                    ),
             ),
             const SizedBox(width: 10),
             Text(
               selectedTask?.taskStep != null && selectedTask!.taskStep!.isNotEmpty
-                ? '${(((_currentPageIndex + 1) / selectedTask!.taskStep!.length) * 100).toInt()}%'
-                : '0%', // Set text to '0%' if taskStep is null or empty
+                  ? '${(((_currentPageIndex + 1) / selectedTask!.taskStep!.length) * 100).toInt()}%'
+                  : '0%', // Set text to '0%' if taskStep is null or empty
               style: const TextStyle(
                 fontFamily: "Lexend Exa",
                 fontSize: 25,
@@ -167,7 +203,6 @@ Widget buildTaskContent() {
           ],
         ),
       )
-
     ],
   );
 }

@@ -1,3 +1,4 @@
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/modules/modules_notifications.dart';
 import 'package:inka_test/modules/modules_settings.dart';
@@ -99,81 +100,127 @@ class _TasksScreenState extends State<TasksScreen> {
     }
   }
 
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
   
   final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    print(allTasks); 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Tasks"),
-          leading: IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.notifications_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ModulesNotifications(title: 'Notifications');
-                }));
-
-              }),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const ModulesSettings(title: 'Settings');
-                }));
-              }, // To add functionality to settings
-              iconSize: 45,
-              icon: const Icon(Icons.settings),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+  print(allTasks); 
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text("Tasks"),
+      leading: IconButton(
+        iconSize: 40,
+        icon: const Icon(Icons.notifications_rounded),
+        padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return ModulesNotifications(title: 'Notifications');
+          }));
+        },
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const ModulesSettings(title: 'Settings');
+            }));
+          }, // To add functionality to settings
+          iconSize: 45,
+          icon: const Icon(Icons.settings),
+          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
         ),
-
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'HOME',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.task_rounded),
-              label: 'TASKS',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'RECIPES',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+      ],
+    ),
+    bottomNavigationBar: BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_rounded),
+          label: 'HOME',
         ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.task_rounded),
+          label: 'TASKS',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.grid_view_rounded),
+          label: 'RECIPES',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          _onItemTapped(index);
+        },
+      
 
-        // Grid View
-        body: Column(children: <Widget>[
+    ),
+    body: RefreshIndicator(
+      onRefresh: fetchAllTask,
+      child: Column(
+        children: <Widget>[
           Padding(
-              padding: const EdgeInsets.all(25), child: _buildTaskSearchBar(context)),
+            padding: const EdgeInsets.all(25),
+            child: _buildTaskSearchBar(context),
+          ),
           Expanded(
             child: GridView.builder(
               itemCount: allTasks.length,
               itemBuilder: (context, index) {
-                final task = allTasks[index]; // Use allTasks instead of mockTasks
+                final task = allTasks[index];
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to the desired screen when a task card is tapped
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SelectedTask(
                           title: task.taskTitle ?? "Task Title Not Found",
-                          taskId: task.id),
-                        
+                          taskId: task.id,
+                        ),
                       ),
                     );
                   },
-                  child: _buildTaskCard(task.taskTitle ?? "Task Title Not Found", task.taskCoverImage ?? ""),
+                  child: FutureBuilder<String>(
+                    future: getDownloadUrl(
+                      key: task.taskCoverImage ?? "",
+                      accessLevel: StorageAccessLevel.guest,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(); // Placeholder while loading
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        final url = snapshot.data;
+                        return _buildTaskCard(task.taskTitle ?? "Task Title Not Found", url ?? "");
+                      }
+                    },
+                  ),
                 );
               },
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -181,10 +228,12 @@ class _TasksScreenState extends State<TasksScreen> {
               ),
               scrollDirection: Axis.vertical,
             ),
-          )
-
-        ]));
-  }
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   // Search Bar
   Widget _buildTaskSearchBar(context) => TextField(

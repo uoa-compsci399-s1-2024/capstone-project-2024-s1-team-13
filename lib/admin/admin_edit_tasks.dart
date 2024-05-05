@@ -1,10 +1,18 @@
-import 'package:amplify_api/amplify_api.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_add_task.dart';
 import 'package:inka_test/admin/admin_edit_selected_task.dart';
-import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/modules/module_items/task_item.dart';
+
+//------------------------------------------------------------
+//AMPLIFY IMPORTS --------------------------------------------
+//------------------------------------------------------------
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:inka_test/models/Task.dart';
+
+//------------------------------------------------------------
 
 class AdminEditTasks extends StatefulWidget {
   const AdminEditTasks({super.key, required this.title});
@@ -16,12 +24,26 @@ class AdminEditTasks extends StatefulWidget {
 }
 
 class _AdminEditTasksState extends State<AdminEditTasks> {
+  //------------------------------------------------------------
+  //GLOBAL VARIABLES -------------------------------------------
+  //------------------------------------------------------------
   late List<Task> allTasks = []; // List to store all tasks
+  final TextEditingController _textController = TextEditingController();
+
+  //------------------------------------------------------------
+  //INITSTATE() ------------------------------------------------
+  //------------------------------------------------------------
+
   @override
   void initState() {
     super.initState();
     fetchAllTask(); // Call the function to fetch all task notes
   }
+
+  //------------------------------------------------------------
+  //FUNCTIONS SECTION ------------------------------------------
+  //------------------------------------------------------------
+
 
   Future<void> fetchAllTask() async {
     try {
@@ -52,69 +74,137 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
       return [];
     }
   }
+  Future<void> deleteTask(String taskId) async {
+    try {
+        final req = ModelMutations.deleteById(
+        Task.classType,
+        TaskModelIdentifier(id: taskId),
+      );
+
+      final res = await Amplify.API.mutate(request: req).response;
+      safePrint('The task has been deleted!: $res');
+
+      setState(() {
+        allTasks.removeWhere((task) => task.id == taskId);
+      });
+    } catch (e) {
+      safePrint('Error deleting task: $e');
+    }
+  }
+
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
 
   
-  final TextEditingController _textController = TextEditingController();
+  //------------------------------------------------------------
+  //SCREEN BUILD -----------------------------------------------
+  //------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
-    print(allTasks); 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          leading: IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.arrow_back_ios),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const AdminAddTask(title: 'Add Task'); // To change route
-                }));
-              },
-              iconSize: 60,
-              icon: const Icon(Icons.add_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text(widget.title),
+        leading: IconButton(
+          iconSize: 40,
+          icon: const Icon(Icons.arrow_back_ios),
+          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const AdminAddTask(title: 'Add Task');
+              }));
+            },
+            iconSize: 60,
+            icon: const Icon(Icons.add_rounded),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          ),
+        ],
+      ),
 
-        // Grid View
-        body: Column(children: <Widget>[
+      // Grid View
+      body: Column(
+        children: <Widget>[
           Padding(
-              padding: const EdgeInsets.all(25), child: _buildTaskSearchBar(context)),
+            padding: const EdgeInsets.all(25),
+            child: _buildTaskSearchBar(context),
+          ),
           Expanded(
-            child: GridView.builder(
-              itemCount: allTasks.length,
-              itemBuilder: (context, index) {
-                final task = allTasks[index]; // Use allTasks instead of mockTasks
-                return GestureDetector(
-                  onTap: () {
-                    // Navigate to the desired screen when a task card is tapped
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AdminEditSelectedTask(
-                          title: 'Edit ${task.taskTitle}',
-                        ),
-                      ),
-                    );
-                  },
-                  child: _buildTaskCard(task.taskTitle ?? "Task Title Not Found", task.taskCoverImage ?? ""),
-                );
-              },
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-              ),
-              scrollDirection: Axis.vertical,
+            child: RefreshIndicator(
+              onRefresh: fetchAllTask,
+              child: GridView.builder(
+  itemCount: allTasks.length,
+  itemBuilder: (context, index) {
+    final task = allTasks[index]; // Use allTasks instead of mockTasks
+    return FutureBuilder<String>(
+      future: getDownloadUrl(
+        key: task.taskCoverImage!,
+        accessLevel: StorageAccessLevel.guest,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return GestureDetector(
+            onTap: () {
+              // Navigate to the desired screen when a task card is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AdminEditSelectedTask(
+                    title: 'Edit ${task.taskTitle}', task: task
+                  ),
+                ),
+              );
+            },
+            child: _buildTaskCard(
+              task.taskTitle ?? "Task Title Not Found",
+              snapshot.data ?? "", // Use the URL from the snapshot
+              task.id
             ),
-          )
+          );
+        }
+      },
+    );
+  },
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+  ),
+  scrollDirection: Axis.vertical,
+),
 
-        ]));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Search Bar
@@ -173,7 +263,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
   }
 
   // Task Card
-  Widget _buildTaskCard(String title, String taskCoverImageUrl) => Card(
+  Widget _buildTaskCard(String title, String taskCoverImageUrl, String currTaskId) => Card(
   margin: const EdgeInsets.all(20),
   elevation: 2,
   shape: RoundedRectangleBorder(
@@ -210,7 +300,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
               ),
             ),
             IconButton(
-              onPressed: () => _deleteTask(context, 0), // change this later
+              onPressed: () => deleteTaskDialog(context, currTaskId), // change this later
               //_deleteTask(context, mockTasks.indexOf(atask)),
               icon: const Icon(Icons.remove_circle_rounded),
               iconSize: 50,
@@ -240,7 +330,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
   ];
 
   //Delete selected task - pending backend functionality
-  void _deleteTask(BuildContext context, index) {
+  void deleteTaskDialog(BuildContext context, String currTaskId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -291,8 +381,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50))),
                   onPressed: () {
-                    // Remove the note from the list
-                    mockTasks.remove(mockTasks[index]);
+                    deleteTask(currTaskId);
                     Navigator.of(context).pop(); // Close the dialog
                   },
                   child: const Text("YES"))

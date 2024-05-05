@@ -3,11 +3,17 @@ type CurrTask @model @auth(rules: [{allow: public}]) {
   taskFeeling: String
   taskPassed: String
   taskProgress: String
-  taskSteps: String
+  taskSteps: [String]
   currTaskName: String
-  currTaskTaNo: TaskNotes @hasOne
+  currTaskTaNo: [TaskNotes] @hasMany(indexName: "byCurrTask", fields: ["id"])
   supportID: ID! @index(name: "bySupport")
   currTaskSupp: Support @belongsTo(fields: ["supportID"])
+  checkedStepsCount: Int
+  timesEvaluated: Int
+  traineeCurrTask: Trainee @belongsTo
+  taskStepImage: [String]
+  taskCoverImage: String
+  traineeID: ID
 }
 
 type Notifications @model @auth(rules: [{allow: public}]) {
@@ -23,8 +29,8 @@ type Recipe @model @auth(rules: [{allow: public}]) {
   recipeTitle: String
   recipeStep: [String]
   adminID: ID! @index(name: "byAdmin")
-  recipeStepImage: [AWSURL]
-  recipeCoverImage: AWSURL
+  recipeStepImage: [String]
+  recipeCoverImage: String
 }
 
 type TraineeNotes @model @auth(rules: [{allow: public}]) {
@@ -42,10 +48,9 @@ type TaskNotes @model @auth(rules: [{allow: public}]) {
   taskDesc: String
   supportID: ID @index(name: "bySupport")
   adminID: ID @index(name: "byAdmin")
-  traineeID: ID @index(name: "byTrainee")
   taskID: ID @index(name: "byTask")
-  trainee: Trainee @hasOne(fields: ["traineeID"]) 
-
+  traineeID: ID @index(name: "byTrainee")
+  currtaskID: ID @index(name: "byCurrTask")
 }
 
 type Task @model @auth(rules: [{allow: public}]) {
@@ -53,8 +58,8 @@ type Task @model @auth(rules: [{allow: public}]) {
   taskTitle: String
   taskStep: [String]
   adminID: ID! @index(name: "byAdmin")
-  taskStepImage: [AWSURL]
-  taskCoverImage: AWSURL
+  taskStepImage: [String]
+  taskCoverImage: String
   taskTaskNotes: [TaskNotes] @hasMany(indexName: "byTask", fields: ["id"])
 }
 
@@ -82,13 +87,13 @@ type Support @model @auth(rules: [{allow: public}]) {
 
 type Trainee @model @auth(rules: [{allow: public}]) {
   id: ID!
-  traineePhoto: AWSURL
+  traineePhoto: String
   firstName: String
   lastName: String
   traineesCT: CurrTask @hasOne
   traineesTrNo: TraineeNotes @hasOne
   supportID: ID! @index(name: "bySupport")
   adminID: ID! @index(name: "byAdmin")
-  traineeTaskNote: [TaskNotes] @hasMany(indexName: "byTrainee", fields: ["id"])
+  TrTaskNotes: [TaskNotes] @hasMany(indexName: "byTrainee", fields: ["id"])
 }
  

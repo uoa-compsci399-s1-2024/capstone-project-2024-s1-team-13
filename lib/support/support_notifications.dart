@@ -6,15 +6,14 @@ class SupportNotifications extends StatelessWidget {
   SupportNotifications({super.key, required this.title});
   final String title;
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
         leading: IconButton(
             iconSize: 40,
-            icon: const Icon(Icons.arrow_back_ios_rounded),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
               Navigator.pop(context);
             }),
@@ -40,19 +39,19 @@ class SupportNotifications extends StatelessWidget {
   // Widgets
   // Notification Widget
   Widget _NotifCard(notification) => Card(
-      margin: const EdgeInsets.all(15),
+      margin: EdgeInsets.all(15),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
       elevation: 2,
       color: Colors.white,
       child: ListTile(
           title: Padding(
-              padding: const EdgeInsets.all(30),
+              padding: EdgeInsets.all(30),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('${notification.notificationTitle}',
                         textAlign: TextAlign.left,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: "Lexend Exa",
                           fontSize: 35,
                           fontWeight: FontWeight.w500,
@@ -66,7 +65,7 @@ class SupportNotifications extends StatelessWidget {
                             color: Colors.grey[400]))
                   ])),
           subtitle: Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 30),
+              padding: EdgeInsets.only(left: 30, right: 30, bottom: 30),
               child: _getIcon(notification))));
 
 // Mock Data
@@ -93,14 +92,14 @@ class SupportNotifications extends StatelessWidget {
     if (notif.type == 'trainee') {
       return Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
               foregroundImage:
                   AssetImage('assets/images/trainee_placeholder.jpeg'),
               radius: 40),
-          const SizedBox(width: 50),
+          SizedBox(width: 50),
           Text("${notif.description}",
               maxLines: 2,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'Lexend Exa',
                   fontSize: 30,
                   fontWeight: FontWeight.w500))
@@ -114,10 +113,10 @@ class SupportNotifications extends StatelessWidget {
             size: 50,
             color: Colors.pink[900],
           ),
-          const SizedBox(width: 15),
+          SizedBox(width: 15),
           Text("${notif.description}",
               maxLines: 2,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'Lexend Exa',
                   fontSize: 30,
                   fontWeight: FontWeight.w500))

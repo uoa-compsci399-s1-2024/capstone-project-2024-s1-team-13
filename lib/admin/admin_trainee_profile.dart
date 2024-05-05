@@ -1,3 +1,5 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_recipes.dart';
 import 'package:inka_test/admin/admin_settings.dart';
@@ -6,11 +8,12 @@ import 'package:inka_test/admin/admin_trainee_notes.dart';
 import 'package:inka_test/admin/admin_trainee_progress.dart';
 import 'package:inka_test/admin/admin_trainees.dart';
 import 'package:inka_test/items/trainee_item.dart';
+import 'package:inka_test/models/Trainee.dart';
 
 class AdminTraineeProfile extends StatefulWidget {
   const AdminTraineeProfile({super.key, required this.title, required this.trainee});
   final String title;
-  final TraineeItem trainee;
+  final Trainee trainee;
 
   @override
   _AdminTraineeProfileState createState() => _AdminTraineeProfileState();
@@ -113,22 +116,67 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
     );
   }
 
+Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      print('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
   // Widgets
 
-  Widget _profileDetails() => Row(
-        children: [
-          CircleAvatar(
-              foregroundImage: AssetImage(widget.trainee.assetImage),
-              radius: 100),
-          const SizedBox(width: 50),
-          Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
-              maxLines: 2,
-              style: const TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 50,
-                  fontWeight: FontWeight.w500))
-        ],
-      );
+Widget _profileDetails() => Row(
+  children: [
+    FutureBuilder<String>(
+      future: getDownloadUrl(
+        key: widget.trainee.traineePhoto!,
+        accessLevel: StorageAccessLevel.guest,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircleAvatar(
+            radius: 100,
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (snapshot.hasError) {
+          return CircleAvatar(
+            radius: 100,
+            backgroundColor: Colors.grey,
+            child: Icon(Icons.error),
+          );
+        }
+        return CircleAvatar(
+          radius: 100,
+          backgroundImage: NetworkImage(snapshot.data!),
+        );
+      },
+    ),
+    const SizedBox(width: 50),
+    Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
+      maxLines: 2,
+      style: const TextStyle(
+        fontFamily: 'Lexend Exa',
+        fontSize: 50,
+        fontWeight: FontWeight.w500))
+  ],
+);
+
 
   // Progress Button
   Widget _progressButton(context) => GestureDetector(
@@ -183,7 +231,7 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
   Widget _notesButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AdminTraineeNotes(title: 'Notes');
+            return AdminTraineeNotes(title: 'Notes', trainee: widget.trainee,);
           }));
         },
         child: Container(

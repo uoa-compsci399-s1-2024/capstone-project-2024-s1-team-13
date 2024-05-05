@@ -1,3 +1,5 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/support/support_select_trainee.dart';
 
@@ -152,4 +154,56 @@ class Login extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50))),
         child: const Text('Login'),
       );
+
+
+//with auth:
+
+  //Login Button
+  //Widget _LoginButton(context) => ElevatedButton(
+        //onPressed: () {
+          // to change
+          //_LogIn(context);
+        //},
+        //child: Text('Login'),
+        //style: ElevatedButton.styleFrom(
+            //minimumSize: Size(400, 80),
+            //foregroundColor: Colors.white,
+            //textStyle: TextStyle(
+              //fontSize: 30,
+              //fontFamily: 'Lexend Exa',
+              //fontWeight: FontWeight.w500,
+            //),
+            //backgroundColor: Colors.pink[900],
+            //elevation: 2,
+            //shape: RoundedRectangleBorder(
+                //borderRadius: BorderRadius.circular(50))),
+      //);
+
+
+
+
+
+    // Mock Functionality
+  void _LogIn(context) async {
+    try {
+      SignInResult result = await Amplify.Auth.signIn(
+        username: _usernameController.text,
+        password: _passwordController.text,
+      );
+      if (result.isSignedIn) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return SupportSelectTrainee(title: 'Select Trainee');
+        }));
+      }
+      if (result != null) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return SupportSelectTrainee(title: 'Select Trainee');
+        }));
+      } else
+        (print("eRRRRRROR !!!!"));
+      // User is signed in
+    } catch (error) {
+      print('Error signing in: $error');
+    }
+  }
 }

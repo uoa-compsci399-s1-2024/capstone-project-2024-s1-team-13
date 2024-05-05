@@ -56,7 +56,7 @@ class AdminSettings extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: Colors.pink[900])),
 
-        const SizedBox(height: 250),
+        const SizedBox(height: 200),
 
         // Change Login Button
         ElevatedButton(

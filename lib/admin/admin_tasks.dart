@@ -1,8 +1,12 @@
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_edit_tasks.dart';
 import 'package:inka_test/admin/admin_notifications.dart';
 import 'package:inka_test/admin/admin_recipes.dart';
 import 'package:inka_test/admin/admin_trainees.dart';
+import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/modules/module_items/task_item.dart';
 import 'package:inka_test/modules/selected_task.dart';
 
@@ -15,6 +19,70 @@ class AdminTasksScreen extends StatefulWidget {
 }
 
 class _AdminTasksScreenState extends State<AdminTasksScreen> {
+
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
+
+  late List<Task> allTasks = []; // List to store all tasks
+  @override
+  void initState() {
+    super.initState();
+    fetchAllTask(); // Call the function to fetch all task notes
+  }
+
+  Future<void> fetchAllTask() async {
+    try {
+      final task = await queryTask();
+
+      setState(() {
+        allTasks = task.cast<Task>();
+      });
+    } catch (e) {
+      safePrint('Error fetching task notes: $e');
+    }
+  }
+
+  // Function to query all task notes
+  Future<List<Task>> queryTask() async {
+    try {
+      final request = ModelQueries.list(Task.classType);
+      final response = await Amplify.API.query(request: request).response;
+
+      final task = response.data?.items;
+      if (task == null) {
+        safePrint('errors: ${response.errors}');
+        return [];
+      }
+      return task.cast<Task>();
+    } catch (e) {
+      safePrint('Query failed: $e');
+      return [];
+    }
+  }
+
+  
+
   final TextEditingController _textController = TextEditingController();
 
   // Bottom Bar Navigation
@@ -55,86 +123,109 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          leading: IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.notifications_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return AdminNotifications(title: 'Notifications');
-                }));
-              }),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const AdminEditTasks(title: 'Edit Tasks');
-                }));
-              },
-              iconSize: 45,
-              icon: const Icon(Icons.edit_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(widget.title),
+      leading: IconButton(
+        iconSize: 40,
+        icon: const Icon(Icons.notifications_rounded),
+        padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return AdminNotifications(title: 'Notifications');
+          }));
+        },
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const AdminEditTasks(title: 'Edit Tasks');
+            }));
+          },
+          iconSize: 45,
+          icon: const Icon(Icons.edit_rounded),
+          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
         ),
+      ],
+    ),
 
-        // Bottom Navigation Bar -- needs working
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: 'TRAINEES',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.task_rounded),
-              label: 'TASKS',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'RECIPES',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+    // Bottom Navigation Bar
+    bottomNavigationBar: BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_rounded),
+          label: 'TRAINEES',
         ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.task_rounded),
+          label: 'TASKS',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.grid_view_rounded),
+          label: 'RECIPES',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+    ),
 
-        // Search
+    // Body
+    body: Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(25),
+          child: _buildTaskSearchBar(context),
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: fetchAllTask,
+            child: GridView.builder(
+  itemCount: allTasks.length,
+  itemBuilder: (context, index) {
+    final task = allTasks[index]; // Use allTasks instead of mockTasks
+    return FutureBuilder<String>(
+      future: getDownloadUrl(
+        key: task.taskCoverImage!,
+        accessLevel: StorageAccessLevel.guest,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return GestureDetector(
+            onTap: () {
+              // Navigate to the desired screen when a task card is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectedTask(title: task.taskTitle!, taskId: task.id)
+                ),
+              );
+            },
+            child: _buildTaskCard(
+              task.taskTitle ?? "Task Title Not Found",
+              snapshot.data ?? "", // Use the URL from the snapshot
+            ),
+          );
+        }
+      },
+    );
+  },
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+  ),
+  scrollDirection: Axis.vertical,
+),
 
-        // Grid View
-        body: Column(children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.all(25), child: _buildTaskSearchBar(context)),
-          Expanded(
-              child: GridView.builder(
-                  itemCount:
-                      mockTasks.length, //Placeholder list - backend pending.
-                  itemBuilder: (context, index) {
-                    final task =
-                        mockTasks[index]; //Placeholder list - backend pending.
-                    return GestureDetector(
-                        onTap: () {
-                          // Navigate to the desired screen when a task card is tapped
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  SelectedTask(title: task.title, taskId: ""),
-                            ),
-                          );
-                        },
-                        child: _buildTaskCard(task));
-                  },
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    //crossAxisSpacing: 5,
-                    //mainAxisSpacing: 5,
-                  ),
-                  scrollDirection: Axis.vertical))
-        ]));
-  }
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   // Search Bar
   Widget _buildTaskSearchBar(context) => TextField(
@@ -169,45 +260,71 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
         ),
       );
 
-  // Task Card
-  Widget _buildTaskCard(task) => Card(
-      margin: const EdgeInsets.all(20),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(50),
-      ),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Container(
-            child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50)),
-                child: Image.asset(task.assetImage, fit: BoxFit.fill)),
+
+  String _getTitle(int index) {
+    if (index < allTasks.length) {
+      return allTasks[index].taskTitle ??
+          "Task Title Not Found"; // Providing a default value if taskTitle is null
+    } else {
+      return "Task Title Not Found"; // Fallback title if index exceeds the length of allTasks
+    }
+  }
+  String _getUrl(int index) {
+    if (index < allTasks.length) {
+      String? imageUrl = allTasks[index].taskCoverImage;
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        return imageUrl;
+       // Return the task cover image URL if it's not null or empty
+      } else {
+        return ""; // Return an empty string as a fallback if the URL is null or empty
+      }
+    } else {
+      return ""; // Fallback if index exceeds the length of allTasks
+    }
+  }
+
+   // Task Card
+  Widget _buildTaskCard(String title, String taskCoverImageUrl) => Card(
+  margin: const EdgeInsets.all(20),
+  elevation: 2,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(50),
+  ),
+  color: Colors.white,
+  child: Column(
+    children: [
+      Container(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
           ),
-          const SizedBox(height: 30),
-          Container(
+          child: Image.network(taskCoverImageUrl, fit: BoxFit.fill),
+        ),
+      ),
+      const SizedBox(height: 30),
+      Padding(
+        padding: const EdgeInsets.only(left: 20, right: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
               padding: const EdgeInsets.all(10),
               alignment: Alignment.center,
               child: Text(
-                task.title,
+                title,
                 style: const TextStyle(
-                    fontFamily: 'Lexend Exa',
-                    fontSize: 30,
-                    fontWeight: FontWeight.w300),
-              ))
-        ],
-      ));
-
-  //Mock Data
-  final List<TaskItem> mockTasks = [
-    TaskItem(title: 'Dishes', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(
-        title: 'Clear Table', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(
-        title: 'Closing', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(title: 'Orders', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(title: 'Opening', assetImage: 'assets/images/task_placeholder.jpg')
-  ];
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 30,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ),
+            
+          ],
+        ),
+      ),
+    ],
+  ),
+);
 }

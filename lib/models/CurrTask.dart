@@ -21,6 +21,7 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
+import 'package:collection/collection.dart';
 
 
 /** This is an auto generated class representing the CurrTask type in your schema. */
@@ -30,13 +31,18 @@ class CurrTask extends amplify_core.Model {
   final String? _taskFeeling;
   final String? _taskPassed;
   final String? _taskProgress;
-  final String? _taskSteps;
+  final List<String>? _taskSteps;
   final String? _currTaskName;
-  final TaskNotes? _currTaskTaNo;
+  final List<TaskNotes>? _currTaskTaNo;
   final Support? _currTaskSupp;
+  final int? _checkedStepsCount;
+  final int? _timesEvaluated;
+  final Trainee? _traineeCurrTask;
+  final List<String>? _taskStepImage;
+  final String? _taskCoverImage;
+  final String? _traineeID;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
-  final String? _currTaskCurrTaskTaNoId;
 
   @override
   getInstanceType() => classType;
@@ -63,7 +69,7 @@ class CurrTask extends amplify_core.Model {
     return _taskProgress;
   }
   
-  String? get taskSteps {
+  List<String>? get taskSteps {
     return _taskSteps;
   }
   
@@ -71,12 +77,36 @@ class CurrTask extends amplify_core.Model {
     return _currTaskName;
   }
   
-  TaskNotes? get currTaskTaNo {
+  List<TaskNotes>? get currTaskTaNo {
     return _currTaskTaNo;
   }
   
   Support? get currTaskSupp {
     return _currTaskSupp;
+  }
+  
+  int? get checkedStepsCount {
+    return _checkedStepsCount;
+  }
+  
+  int? get timesEvaluated {
+    return _timesEvaluated;
+  }
+  
+  Trainee? get traineeCurrTask {
+    return _traineeCurrTask;
+  }
+  
+  List<String>? get taskStepImage {
+    return _taskStepImage;
+  }
+  
+  String? get taskCoverImage {
+    return _taskCoverImage;
+  }
+  
+  String? get traineeID {
+    return _traineeID;
   }
   
   amplify_core.TemporalDateTime? get createdAt {
@@ -87,23 +117,24 @@ class CurrTask extends amplify_core.Model {
     return _updatedAt;
   }
   
-  String? get currTaskCurrTaskTaNoId {
-    return _currTaskCurrTaskTaNoId;
-  }
+  const CurrTask._internal({required this.id, taskFeeling, taskPassed, taskProgress, taskSteps, currTaskName, currTaskTaNo, currTaskSupp, checkedStepsCount, timesEvaluated, traineeCurrTask, taskStepImage, taskCoverImage, traineeID, createdAt, updatedAt}): _taskFeeling = taskFeeling, _taskPassed = taskPassed, _taskProgress = taskProgress, _taskSteps = taskSteps, _currTaskName = currTaskName, _currTaskTaNo = currTaskTaNo, _currTaskSupp = currTaskSupp, _checkedStepsCount = checkedStepsCount, _timesEvaluated = timesEvaluated, _traineeCurrTask = traineeCurrTask, _taskStepImage = taskStepImage, _taskCoverImage = taskCoverImage, _traineeID = traineeID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  const CurrTask._internal({required this.id, taskFeeling, taskPassed, taskProgress, taskSteps, currTaskName, currTaskTaNo, currTaskSupp, createdAt, updatedAt, currTaskCurrTaskTaNoId}): _taskFeeling = taskFeeling, _taskPassed = taskPassed, _taskProgress = taskProgress, _taskSteps = taskSteps, _currTaskName = currTaskName, _currTaskTaNo = currTaskTaNo, _currTaskSupp = currTaskSupp, _createdAt = createdAt, _updatedAt = updatedAt, _currTaskCurrTaskTaNoId = currTaskCurrTaskTaNoId;
-  
-  factory CurrTask({String? id, String? taskFeeling, String? taskPassed, String? taskProgress, String? taskSteps, String? currTaskName, TaskNotes? currTaskTaNo, Support? currTaskSupp, String? currTaskCurrTaskTaNoId}) {
+  factory CurrTask({String? id, String? taskFeeling, String? taskPassed, String? taskProgress, List<String>? taskSteps, String? currTaskName, List<TaskNotes>? currTaskTaNo, Support? currTaskSupp, int? checkedStepsCount, int? timesEvaluated, Trainee? traineeCurrTask, List<String>? taskStepImage, String? taskCoverImage, String? traineeID}) {
     return CurrTask._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       taskFeeling: taskFeeling,
       taskPassed: taskPassed,
       taskProgress: taskProgress,
-      taskSteps: taskSteps,
+      taskSteps: taskSteps != null ? List<String>.unmodifiable(taskSteps) : taskSteps,
       currTaskName: currTaskName,
-      currTaskTaNo: currTaskTaNo,
+      currTaskTaNo: currTaskTaNo != null ? List<TaskNotes>.unmodifiable(currTaskTaNo) : currTaskTaNo,
       currTaskSupp: currTaskSupp,
-      currTaskCurrTaskTaNoId: currTaskCurrTaskTaNoId);
+      checkedStepsCount: checkedStepsCount,
+      timesEvaluated: timesEvaluated,
+      traineeCurrTask: traineeCurrTask,
+      taskStepImage: taskStepImage != null ? List<String>.unmodifiable(taskStepImage) : taskStepImage,
+      taskCoverImage: taskCoverImage,
+      traineeID: traineeID);
   }
   
   bool equals(Object other) {
@@ -118,11 +149,16 @@ class CurrTask extends amplify_core.Model {
       _taskFeeling == other._taskFeeling &&
       _taskPassed == other._taskPassed &&
       _taskProgress == other._taskProgress &&
-      _taskSteps == other._taskSteps &&
+      DeepCollectionEquality().equals(_taskSteps, other._taskSteps) &&
       _currTaskName == other._currTaskName &&
-      _currTaskTaNo == other._currTaskTaNo &&
+      DeepCollectionEquality().equals(_currTaskTaNo, other._currTaskTaNo) &&
       _currTaskSupp == other._currTaskSupp &&
-      _currTaskCurrTaskTaNoId == other._currTaskCurrTaskTaNoId;
+      _checkedStepsCount == other._checkedStepsCount &&
+      _timesEvaluated == other._timesEvaluated &&
+      _traineeCurrTask == other._traineeCurrTask &&
+      DeepCollectionEquality().equals(_taskStepImage, other._taskStepImage) &&
+      _taskCoverImage == other._taskCoverImage &&
+      _traineeID == other._traineeID;
   }
   
   @override
@@ -137,18 +173,23 @@ class CurrTask extends amplify_core.Model {
     buffer.write("taskFeeling=" + "$_taskFeeling" + ", ");
     buffer.write("taskPassed=" + "$_taskPassed" + ", ");
     buffer.write("taskProgress=" + "$_taskProgress" + ", ");
-    buffer.write("taskSteps=" + "$_taskSteps" + ", ");
+    buffer.write("taskSteps=" + (_taskSteps != null ? _taskSteps!.toString() : "null") + ", ");
     buffer.write("currTaskName=" + "$_currTaskName" + ", ");
     buffer.write("currTaskSupp=" + (_currTaskSupp != null ? _currTaskSupp!.toString() : "null") + ", ");
+    buffer.write("checkedStepsCount=" + (_checkedStepsCount != null ? _checkedStepsCount!.toString() : "null") + ", ");
+    buffer.write("timesEvaluated=" + (_timesEvaluated != null ? _timesEvaluated!.toString() : "null") + ", ");
+    buffer.write("traineeCurrTask=" + (_traineeCurrTask != null ? _traineeCurrTask!.toString() : "null") + ", ");
+    buffer.write("taskStepImage=" + (_taskStepImage != null ? _taskStepImage!.toString() : "null") + ", ");
+    buffer.write("taskCoverImage=" + "$_taskCoverImage" + ", ");
+    buffer.write("traineeID=" + "$_traineeID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
-    buffer.write("currTaskCurrTaskTaNoId=" + "$_currTaskCurrTaskTaNoId");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  CurrTask copyWith({String? taskFeeling, String? taskPassed, String? taskProgress, String? taskSteps, String? currTaskName, TaskNotes? currTaskTaNo, Support? currTaskSupp, String? currTaskCurrTaskTaNoId}) {
+  CurrTask copyWith({String? taskFeeling, String? taskPassed, String? taskProgress, List<String>? taskSteps, String? currTaskName, List<TaskNotes>? currTaskTaNo, Support? currTaskSupp, int? checkedStepsCount, int? timesEvaluated, Trainee? traineeCurrTask, List<String>? taskStepImage, String? taskCoverImage, String? traineeID}) {
     return CurrTask._internal(
       id: id,
       taskFeeling: taskFeeling ?? this.taskFeeling,
@@ -158,18 +199,28 @@ class CurrTask extends amplify_core.Model {
       currTaskName: currTaskName ?? this.currTaskName,
       currTaskTaNo: currTaskTaNo ?? this.currTaskTaNo,
       currTaskSupp: currTaskSupp ?? this.currTaskSupp,
-      currTaskCurrTaskTaNoId: currTaskCurrTaskTaNoId ?? this.currTaskCurrTaskTaNoId);
+      checkedStepsCount: checkedStepsCount ?? this.checkedStepsCount,
+      timesEvaluated: timesEvaluated ?? this.timesEvaluated,
+      traineeCurrTask: traineeCurrTask ?? this.traineeCurrTask,
+      taskStepImage: taskStepImage ?? this.taskStepImage,
+      taskCoverImage: taskCoverImage ?? this.taskCoverImage,
+      traineeID: traineeID ?? this.traineeID);
   }
   
   CurrTask copyWithModelFieldValues({
     ModelFieldValue<String?>? taskFeeling,
     ModelFieldValue<String?>? taskPassed,
     ModelFieldValue<String?>? taskProgress,
-    ModelFieldValue<String?>? taskSteps,
+    ModelFieldValue<List<String>?>? taskSteps,
     ModelFieldValue<String?>? currTaskName,
-    ModelFieldValue<TaskNotes?>? currTaskTaNo,
+    ModelFieldValue<List<TaskNotes>?>? currTaskTaNo,
     ModelFieldValue<Support?>? currTaskSupp,
-    ModelFieldValue<String?>? currTaskCurrTaskTaNoId
+    ModelFieldValue<int?>? checkedStepsCount,
+    ModelFieldValue<int?>? timesEvaluated,
+    ModelFieldValue<Trainee?>? traineeCurrTask,
+    ModelFieldValue<List<String>?>? taskStepImage,
+    ModelFieldValue<String?>? taskCoverImage,
+    ModelFieldValue<String?>? traineeID
   }) {
     return CurrTask._internal(
       id: id,
@@ -180,7 +231,12 @@ class CurrTask extends amplify_core.Model {
       currTaskName: currTaskName == null ? this.currTaskName : currTaskName.value,
       currTaskTaNo: currTaskTaNo == null ? this.currTaskTaNo : currTaskTaNo.value,
       currTaskSupp: currTaskSupp == null ? this.currTaskSupp : currTaskSupp.value,
-      currTaskCurrTaskTaNoId: currTaskCurrTaskTaNoId == null ? this.currTaskCurrTaskTaNoId : currTaskCurrTaskTaNoId.value
+      checkedStepsCount: checkedStepsCount == null ? this.checkedStepsCount : checkedStepsCount.value,
+      timesEvaluated: timesEvaluated == null ? this.timesEvaluated : timesEvaluated.value,
+      traineeCurrTask: traineeCurrTask == null ? this.traineeCurrTask : traineeCurrTask.value,
+      taskStepImage: taskStepImage == null ? this.taskStepImage : taskStepImage.value,
+      taskCoverImage: taskCoverImage == null ? this.taskCoverImage : taskCoverImage.value,
+      traineeID: traineeID == null ? this.traineeID : traineeID.value
     );
   }
   
@@ -189,20 +245,30 @@ class CurrTask extends amplify_core.Model {
       _taskFeeling = json['taskFeeling'],
       _taskPassed = json['taskPassed'],
       _taskProgress = json['taskProgress'],
-      _taskSteps = json['taskSteps'],
+      _taskSteps = json['taskSteps']?.cast<String>(),
       _currTaskName = json['currTaskName'],
-      _currTaskTaNo = json['currTaskTaNo']?['serializedData'] != null
-        ? TaskNotes.fromJson(new Map<String, dynamic>.from(json['currTaskTaNo']['serializedData']))
+      _currTaskTaNo = json['currTaskTaNo'] is List
+        ? (json['currTaskTaNo'] as List)
+          .where((e) => e?['serializedData'] != null)
+          .map((e) => TaskNotes.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .toList()
         : null,
       _currTaskSupp = json['currTaskSupp']?['serializedData'] != null
         ? Support.fromJson(new Map<String, dynamic>.from(json['currTaskSupp']['serializedData']))
         : null,
+      _checkedStepsCount = (json['checkedStepsCount'] as num?)?.toInt(),
+      _timesEvaluated = (json['timesEvaluated'] as num?)?.toInt(),
+      _traineeCurrTask = json['traineeCurrTask']?['serializedData'] != null
+        ? Trainee.fromJson(new Map<String, dynamic>.from(json['traineeCurrTask']['serializedData']))
+        : null,
+      _taskStepImage = json['taskStepImage']?.cast<String>(),
+      _taskCoverImage = json['taskCoverImage'],
+      _traineeID = json['traineeID'],
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null,
-      _currTaskCurrTaskTaNoId = json['currTaskCurrTaskTaNoId'];
+      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'taskFeeling': _taskFeeling, 'taskPassed': _taskPassed, 'taskProgress': _taskProgress, 'taskSteps': _taskSteps, 'currTaskName': _currTaskName, 'currTaskTaNo': _currTaskTaNo?.toJson(), 'currTaskSupp': _currTaskSupp?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'currTaskCurrTaskTaNoId': _currTaskCurrTaskTaNoId
+    'id': id, 'taskFeeling': _taskFeeling, 'taskPassed': _taskPassed, 'taskProgress': _taskProgress, 'taskSteps': _taskSteps, 'currTaskName': _currTaskName, 'currTaskTaNo': _currTaskTaNo?.map((TaskNotes? e) => e?.toJson()).toList(), 'currTaskSupp': _currTaskSupp?.toJson(), 'checkedStepsCount': _checkedStepsCount, 'timesEvaluated': _timesEvaluated, 'traineeCurrTask': _traineeCurrTask?.toJson(), 'taskStepImage': _taskStepImage, 'taskCoverImage': _taskCoverImage, 'traineeID': _traineeID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -214,9 +280,14 @@ class CurrTask extends amplify_core.Model {
     'currTaskName': _currTaskName,
     'currTaskTaNo': _currTaskTaNo,
     'currTaskSupp': _currTaskSupp,
+    'checkedStepsCount': _checkedStepsCount,
+    'timesEvaluated': _timesEvaluated,
+    'traineeCurrTask': _traineeCurrTask,
+    'taskStepImage': _taskStepImage,
+    'taskCoverImage': _taskCoverImage,
+    'traineeID': _traineeID,
     'createdAt': _createdAt,
-    'updatedAt': _updatedAt,
-    'currTaskCurrTaskTaNoId': _currTaskCurrTaskTaNoId
+    'updatedAt': _updatedAt
   };
 
   static final amplify_core.QueryModelIdentifier<CurrTaskModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<CurrTaskModelIdentifier>();
@@ -232,7 +303,14 @@ class CurrTask extends amplify_core.Model {
   static final CURRTASKSUPP = amplify_core.QueryField(
     fieldName: "currTaskSupp",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Support'));
-  static final CURRTASKCURRTASKTANOID = amplify_core.QueryField(fieldName: "currTaskCurrTaskTaNoId");
+  static final CHECKEDSTEPSCOUNT = amplify_core.QueryField(fieldName: "checkedStepsCount");
+  static final TIMESEVALUATED = amplify_core.QueryField(fieldName: "timesEvaluated");
+  static final TRAINEECURRTASK = amplify_core.QueryField(
+    fieldName: "traineeCurrTask",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Trainee'));
+  static final TASKSTEPIMAGE = amplify_core.QueryField(fieldName: "taskStepImage");
+  static final TASKCOVERIMAGE = amplify_core.QueryField(fieldName: "taskCoverImage");
+  static final TRAINEEID = amplify_core.QueryField(fieldName: "traineeID");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "CurrTask";
     modelSchemaDefinition.pluralName = "CurrTasks";
@@ -275,7 +353,8 @@ class CurrTask extends amplify_core.Model {
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: CurrTask.TASKSTEPS,
       isRequired: false,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.collection, ofModelName: amplify_core.ModelFieldTypeEnum.string.name)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
@@ -284,11 +363,11 @@ class CurrTask extends amplify_core.Model {
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasOne(
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
       key: CurrTask.CURRTASKTANO,
       isRequired: false,
       ofModelName: 'TaskNotes',
-      associatedKey: TaskNotes.ID
+      associatedKey: TaskNotes.CURRTASKID
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(
@@ -296,6 +375,44 @@ class CurrTask extends amplify_core.Model {
       isRequired: false,
       targetNames: ['supportID'],
       ofModelName: 'Support'
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: CurrTask.CHECKEDSTEPSCOUNT,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: CurrTask.TIMESEVALUATED,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(
+      key: CurrTask.TRAINEECURRTASK,
+      isRequired: false,
+      targetNames: ['currTaskTraineeCurrTaskId'],
+      ofModelName: 'Trainee'
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: CurrTask.TASKSTEPIMAGE,
+      isRequired: false,
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.collection, ofModelName: amplify_core.ModelFieldTypeEnum.string.name)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: CurrTask.TASKCOVERIMAGE,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: CurrTask.TRAINEEID,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
@@ -310,12 +427,6 @@ class CurrTask extends amplify_core.Model {
       isRequired: false,
       isReadOnly: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: CurrTask.CURRTASKCURRTASKTANOID,
-      isRequired: false,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
   });
 }

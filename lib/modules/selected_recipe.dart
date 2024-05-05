@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/modules/modules_settings.dart';
-
-
 import 'package:inka_test/models/Recipe.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-
-
-
-
-
-
-
-
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 
 
 class SelectedRecipe extends StatefulWidget {
@@ -64,6 +55,29 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
     return null;
   }
   }
+
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
   
 
 
@@ -96,7 +110,7 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
           ),
         ],
       ),
-      body: selectedRecipe != null ? buildTaskContent() : buildLoadingIndicator(), // Check if selectedTask is null
+      body: selectedRecipe != null ? buildRecipeContent() : buildLoadingIndicator(), // Check if selectedTask is null
       
     );
   }
@@ -104,7 +118,7 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
 
   // Build task content
   // Build task content
-Widget buildTaskContent() {
+Widget buildRecipeContent() {
   return Column(
     children: [
       Expanded(
@@ -115,17 +129,29 @@ Widget buildTaskContent() {
               ? selectedRecipe!.recipeStep![index]
               : ''; // Assign empty string if taskStep is null or empty
 
-            String image = selectedRecipe!.recipeStepImage != null && selectedRecipe!.recipeStepImage!.isNotEmpty
-              ? selectedRecipe!.recipeStepImage![index]
-              : ''; // Assign empty string if taskStepImage is null or empty
+            Future<String> url = getDownloadUrl(
+              key: selectedRecipe!.recipeStepImage![index] ?? "",
+              accessLevel: StorageAccessLevel.guest,
+            );// Assign empty string if taskStepImage is null or empty
 
-            RecipesStep step = RecipesStep(
-              stepNumber: index + 1,
-              description: description,
-              stepImage: image,
+            return FutureBuilder<String>(
+              future: url,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  String image = snapshot.data ?? "";
+                  RecipesStep step = RecipesStep(
+                    stepNumber: index + 1,
+                    description: description,
+                    stepImage: image,
+                  );
+                  return StepScreen(step: step);
+                }
+              },
             );
-
-            return StepScreen(step: step);
           },
           onPageChanged: (index) {
             setState(() {

@@ -1,8 +1,12 @@
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_edit_recipes.dart';
 import 'package:inka_test/admin/admin_notifications.dart';
 import 'package:inka_test/admin/admin_tasks.dart';
 import 'package:inka_test/admin/admin_trainees.dart';
+import 'package:inka_test/models/Recipe.dart';
 import 'package:inka_test/modules/module_items/recipe_item.dart';
 import 'package:inka_test/modules/selected_recipe.dart';
 
@@ -15,9 +19,71 @@ class AdminRecipesScreen extends StatefulWidget {
 }
 
 class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
-  final TextEditingController _textController = TextEditingController();
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
 
-  // Bottom Bar Navigation
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
+  late List<Recipe> allRecipes = []; // List to store all tasks
+  @override
+  void initState() {
+    super.initState();
+    fetchAllRecipe(); // Call the function to fetch all task notes
+  
+  }
+
+  Future<void> fetchAllRecipe() async {
+    try {
+      final recipe = await queryRecipe();
+
+      setState(() {
+        allRecipes = recipe.cast<Recipe>();
+      });
+    } catch (e) {
+      safePrint('Error fetching task notes: $e');
+    }
+  }
+
+  // Function to query all task notes
+  Future<List<Recipe>> queryRecipe() async {
+    try {
+      final request = ModelQueries.list(Recipe.classType);
+      final response = await Amplify.API.query(request: request).response;
+
+      final task = response.data?.items;
+      if (task == null) {
+        safePrint('errors: ${response.errors}');
+        return [];
+      }
+      return task.cast<Recipe>();
+    } catch (e) {
+      safePrint('Query failed: $e');
+      return [];
+    }
+  }
+
+  
+
+  final TextEditingController _textController = TextEditingController();
+// Bottom Bar Navigation
   int _selectedIndex = 2;
   void _onItemTapped(int index) {
     setState(() {
@@ -26,14 +92,14 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
 
     switch (index) {
       case 0:
-        // Navigate to trainees
+        // Navigate to modules dashboard
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => const AdminTrainees(title: 'Trainees')));
         break;
       case 1:
-        // Navigate to tasks
+        // Navigate to evaluate screen
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -42,7 +108,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
                     )));
         break;
       case 2:
-        // Navigate to recipes
+        // Navigate to profile screen
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -52,7 +118,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
         break;
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,38 +168,63 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
         ),
 
         // Grid View
-        body: Column(children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.all(25),
-              child: _buildRecipeSearchBar(context)),
-          Expanded(
-              child: GridView.builder(
-                  itemCount:
-                      mockRecipes.length, //Placeholder list - backend pending.
-                  itemBuilder: (context, index) {
-                    final recipe = mockRecipes[
-                        index]; //Placeholder list - backend pending.
-                    return GestureDetector(
-                        onTap: () {
-                          // Navigate to the desired screen when a task card is tapped
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  SelectedRecipe(title: recipe.title, recipeId: ""),
-                            ),
-                          );
-                        },
-                        child: _buildRecipeCard(recipe));
-                  },
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    //crossAxisSpacing: 5,
-                    //mainAxisSpacing: 5,
-                  ),
-                  scrollDirection: Axis.vertical))
-        ]));
-  }
+        // Body
+    body: Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(25),
+          child: _buildRecipeSearchBar(context),
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: fetchAllRecipe,
+            child: GridView.builder(
+  itemCount: allRecipes.length,
+  itemBuilder: (context, index) {
+    final recipe = allRecipes[index]; // Use allTasks instead of mockTasks
+    return FutureBuilder<String>(
+      future: getDownloadUrl(
+        key: recipe.recipeCoverImage!,
+        accessLevel: StorageAccessLevel.guest,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return GestureDetector(
+            onTap: () {
+              // Navigate to the desired screen when a task card is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectedRecipe(title: recipe.recipeTitle!, recipeId: recipe.id)
+                ),
+              );
+            },
+            child: _buildRecipeCard(
+              recipe.recipeTitle ?? "Recipe Title Not Found",
+              snapshot.data ?? "", // Use the URL from the snapshot
+            ),
+          );
+        }
+      },
+    );
+  },
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+  ),
+  scrollDirection: Axis.vertical,
+),
+
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   // Search Bar
   Widget _buildRecipeSearchBar(context) => TextField(
@@ -169,7 +260,30 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
       );
 
   // Recipe Card
-  Widget _buildRecipeCard(task) => Card(
+  String _getRecipe(int index) {
+    if (index < allRecipes.length) {
+      return allRecipes[index].recipeTitle ??
+          "Recipe Title Not Found"; // Providing a default value if taskTitle is null
+    } else {
+      return "Recipe Title Not Found"; // Fallback title if index exceeds the length of allTasks
+    }
+  }
+  String _getUrl(int index) {
+    if (index < allRecipes.length) {
+      String? imageUrl = allRecipes[index].recipeCoverImage;
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        return imageUrl;
+       // Return the task cover image URL if it's not null or empty
+      } else {
+        return ""; // Return an empty string as a fallback if the URL is null or empty
+      }
+    } else {
+      return ""; // Fallback if index exceeds the length of allTasks
+    }
+  }
+
+  // Recipe Card
+  Widget _buildRecipeCard(String title, String recipeCoverImageUrl) => Card(
       margin: const EdgeInsets.all(20),
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -178,40 +292,36 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
       color: Colors.white,
       child: Column(
         children: [
-          SizedBox(
-            width: 400,
+          Container(
             child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50)),
-                child: Image.asset(task.assetImage, fit: BoxFit.fill)),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+              child: Image.network(recipeCoverImageUrl, fit: BoxFit.fill),
+            ),
           ),
           const SizedBox(height: 30),
-          Container(
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.center,
-              child: Text(
-                task.title,
-                style: const TextStyle(
-                    fontFamily: 'Lexend Exa',
-                    fontSize: 30,
-                    fontWeight: FontWeight.w300),
-              ))
+          Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.all(10),
+                        alignment: Alignment.center,
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                              fontFamily: 'Lexend Exa',
+                              fontSize: 30,
+                              fontWeight: FontWeight.w300),
+                        )),
+          
+                  ])),
         ],
       ));
 
   //Mock Data
-  final List<RecipeItem> mockRecipes = [
-    RecipeItem(
-        title: 'Macarons', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Brownies', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Cupcakes', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Quiche', assetImage: 'assets/images/recipe_placeholder.jpeg'),
-    RecipeItem(
-        title: 'Sausage Roll',
-        assetImage: 'assets/images/recipe_placeholder.jpeg')
-  ];
+  
 }

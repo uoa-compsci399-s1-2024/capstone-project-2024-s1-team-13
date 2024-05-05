@@ -31,9 +31,9 @@ class TaskNotes extends amplify_core.Model {
   final String? _taskDesc;
   final String? _supportID;
   final String? _adminID;
-  final String? _traineeID;
   final String? _taskID;
-  final Trainee? _trainee;
+  final String? _traineeID;
+  final String? _currtaskID;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -66,16 +66,16 @@ class TaskNotes extends amplify_core.Model {
     return _adminID;
   }
   
-  String? get traineeID {
-    return _traineeID;
-  }
-  
   String? get taskID {
     return _taskID;
   }
   
-  Trainee? get trainee {
-    return _trainee;
+  String? get traineeID {
+    return _traineeID;
+  }
+  
+  String? get currtaskID {
+    return _currtaskID;
   }
   
   amplify_core.TemporalDateTime? get createdAt {
@@ -86,18 +86,18 @@ class TaskNotes extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const TaskNotes._internal({required this.id, taskTitle, taskDesc, supportID, adminID, traineeID, taskID, trainee, createdAt, updatedAt}): _taskTitle = taskTitle, _taskDesc = taskDesc, _supportID = supportID, _adminID = adminID, _traineeID = traineeID, _taskID = taskID, _trainee = trainee, _createdAt = createdAt, _updatedAt = updatedAt;
+  const TaskNotes._internal({required this.id, taskTitle, taskDesc, supportID, adminID, taskID, traineeID, currtaskID, createdAt, updatedAt}): _taskTitle = taskTitle, _taskDesc = taskDesc, _supportID = supportID, _adminID = adminID, _taskID = taskID, _traineeID = traineeID, _currtaskID = currtaskID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory TaskNotes({String? id, String? taskTitle, String? taskDesc, String? supportID, String? adminID, String? traineeID, String? taskID, Trainee? trainee}) {
+  factory TaskNotes({String? id, String? taskTitle, String? taskDesc, String? supportID, String? adminID, String? taskID, String? traineeID, String? currtaskID}) {
     return TaskNotes._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       taskTitle: taskTitle,
       taskDesc: taskDesc,
       supportID: supportID,
       adminID: adminID,
-      traineeID: traineeID,
       taskID: taskID,
-      trainee: trainee);
+      traineeID: traineeID,
+      currtaskID: currtaskID);
   }
   
   bool equals(Object other) {
@@ -113,9 +113,9 @@ class TaskNotes extends amplify_core.Model {
       _taskDesc == other._taskDesc &&
       _supportID == other._supportID &&
       _adminID == other._adminID &&
-      _traineeID == other._traineeID &&
       _taskID == other._taskID &&
-      _trainee == other._trainee;
+      _traineeID == other._traineeID &&
+      _currtaskID == other._currtaskID;
   }
   
   @override
@@ -131,8 +131,9 @@ class TaskNotes extends amplify_core.Model {
     buffer.write("taskDesc=" + "$_taskDesc" + ", ");
     buffer.write("supportID=" + "$_supportID" + ", ");
     buffer.write("adminID=" + "$_adminID" + ", ");
-    buffer.write("traineeID=" + "$_traineeID" + ", ");
     buffer.write("taskID=" + "$_taskID" + ", ");
+    buffer.write("traineeID=" + "$_traineeID" + ", ");
+    buffer.write("currtaskID=" + "$_currtaskID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -140,16 +141,16 @@ class TaskNotes extends amplify_core.Model {
     return buffer.toString();
   }
   
-  TaskNotes copyWith({String? taskTitle, String? taskDesc, String? supportID, String? adminID, String? traineeID, String? taskID, Trainee? trainee}) {
+  TaskNotes copyWith({String? taskTitle, String? taskDesc, String? supportID, String? adminID, String? taskID, String? traineeID, String? currtaskID}) {
     return TaskNotes._internal(
       id: id,
       taskTitle: taskTitle ?? this.taskTitle,
       taskDesc: taskDesc ?? this.taskDesc,
       supportID: supportID ?? this.supportID,
       adminID: adminID ?? this.adminID,
-      traineeID: traineeID ?? this.traineeID,
       taskID: taskID ?? this.taskID,
-      trainee: trainee ?? this.trainee);
+      traineeID: traineeID ?? this.traineeID,
+      currtaskID: currtaskID ?? this.currtaskID);
   }
   
   TaskNotes copyWithModelFieldValues({
@@ -157,9 +158,9 @@ class TaskNotes extends amplify_core.Model {
     ModelFieldValue<String?>? taskDesc,
     ModelFieldValue<String?>? supportID,
     ModelFieldValue<String?>? adminID,
-    ModelFieldValue<String?>? traineeID,
     ModelFieldValue<String?>? taskID,
-    ModelFieldValue<Trainee?>? trainee
+    ModelFieldValue<String?>? traineeID,
+    ModelFieldValue<String?>? currtaskID
   }) {
     return TaskNotes._internal(
       id: id,
@@ -167,9 +168,9 @@ class TaskNotes extends amplify_core.Model {
       taskDesc: taskDesc == null ? this.taskDesc : taskDesc.value,
       supportID: supportID == null ? this.supportID : supportID.value,
       adminID: adminID == null ? this.adminID : adminID.value,
-      traineeID: traineeID == null ? this.traineeID : traineeID.value,
       taskID: taskID == null ? this.taskID : taskID.value,
-      trainee: trainee == null ? this.trainee : trainee.value
+      traineeID: traineeID == null ? this.traineeID : traineeID.value,
+      currtaskID: currtaskID == null ? this.currtaskID : currtaskID.value
     );
   }
   
@@ -179,16 +180,14 @@ class TaskNotes extends amplify_core.Model {
       _taskDesc = json['taskDesc'],
       _supportID = json['supportID'],
       _adminID = json['adminID'],
-      _traineeID = json['traineeID'],
       _taskID = json['taskID'],
-      _trainee = json['trainee']?['serializedData'] != null
-        ? Trainee.fromJson(new Map<String, dynamic>.from(json['trainee']['serializedData']))
-        : null,
+      _traineeID = json['traineeID'],
+      _currtaskID = json['currtaskID'],
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'taskTitle': _taskTitle, 'taskDesc': _taskDesc, 'supportID': _supportID, 'adminID': _adminID, 'traineeID': _traineeID, 'taskID': _taskID, 'trainee': _trainee?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'taskTitle': _taskTitle, 'taskDesc': _taskDesc, 'supportID': _supportID, 'adminID': _adminID, 'taskID': _taskID, 'traineeID': _traineeID, 'currtaskID': _currtaskID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -197,9 +196,9 @@ class TaskNotes extends amplify_core.Model {
     'taskDesc': _taskDesc,
     'supportID': _supportID,
     'adminID': _adminID,
-    'traineeID': _traineeID,
     'taskID': _taskID,
-    'trainee': _trainee,
+    'traineeID': _traineeID,
+    'currtaskID': _currtaskID,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -210,11 +209,9 @@ class TaskNotes extends amplify_core.Model {
   static final TASKDESC = amplify_core.QueryField(fieldName: "taskDesc");
   static final SUPPORTID = amplify_core.QueryField(fieldName: "supportID");
   static final ADMINID = amplify_core.QueryField(fieldName: "adminID");
-  static final TRAINEEID = amplify_core.QueryField(fieldName: "traineeID");
   static final TASKID = amplify_core.QueryField(fieldName: "taskID");
-  static final TRAINEE = amplify_core.QueryField(
-    fieldName: "trainee",
-    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Trainee'));
+  static final TRAINEEID = amplify_core.QueryField(fieldName: "traineeID");
+  static final CURRTASKID = amplify_core.QueryField(fieldName: "currtaskID");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "TaskNotes";
     modelSchemaDefinition.pluralName = "TaskNotes";
@@ -233,8 +230,9 @@ class TaskNotes extends amplify_core.Model {
     modelSchemaDefinition.indexes = [
       amplify_core.ModelIndex(fields: const ["supportID"], name: "bySupport"),
       amplify_core.ModelIndex(fields: const ["adminID"], name: "byAdmin"),
+      amplify_core.ModelIndex(fields: const ["taskID"], name: "byTask"),
       amplify_core.ModelIndex(fields: const ["traineeID"], name: "byTrainee"),
-      amplify_core.ModelIndex(fields: const ["taskID"], name: "byTask")
+      amplify_core.ModelIndex(fields: const ["currtaskID"], name: "byCurrTask")
     ];
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
@@ -264,22 +262,21 @@ class TaskNotes extends amplify_core.Model {
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: TaskNotes.TASKID,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: TaskNotes.TRAINEEID,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: TaskNotes.TASKID,
+      key: TaskNotes.CURRTASKID,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasOne(
-      key: TaskNotes.TRAINEE,
-      isRequired: false,
-      ofModelName: 'Trainee',
-      associatedKey: Trainee.ID
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

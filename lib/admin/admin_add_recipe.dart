@@ -38,7 +38,7 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
   }
 
   //createTask section
-  Future<void> createRecipe(String recipeTitle, List<String> recipeStep, String imageUrl, List<String> taskStepImage) async {
+  Future<void> createRecipe(String recipeTitle, List<String> recipeStep, String imageKey, List<String> taskStepImage) async {
     try {
       safePrint('DOES IT TRIGGER THE EVENT?');
 
@@ -50,10 +50,10 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
         recipeTitle: recipeTitle, 
         recipeStep: recipeStep,
         adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b',
-        recipeCoverImage: imageUrl, 
+        recipeCoverImage: imageKey, 
         recipeStepImage: stepImageUrls,
       );
-      safePrint('This is the current task: $aRecipe');
+      safePrint('This is the current recipe: $aRecipe');
 
       final req = ModelMutations.create(aRecipe);
       final res = await Amplify.API.mutate(request: req).response;
@@ -95,15 +95,13 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
         },
       ).result;
 
-      final url = await getDownloadUrl(key: platformFile.name, accessLevel: StorageAccessLevel.guest);
-      print('Uploaded image URL: $url');
-      
-      // Update the state with the uploaded image URL
+      // Set the uploaded image key in the state
       setState(() {
-        uploadedImageUrl = url;
+        uploadedImageKey = platformFile.name;
       });
 
-      return url;
+      // Return the key instead of the URL
+      return platformFile.name;
     } on StorageException catch (e) {
       safePrint('Error uploading file: $e');
       rethrow;
@@ -134,8 +132,7 @@ Future<String> getDownloadUrl({
 
   
   final TextEditingController _taskTitleController = TextEditingController();
-  
-  String? _imagePath; // Fetches from backend?
+
 
   @override
   Widget build(BuildContext context) {
@@ -158,8 +155,8 @@ Future<String> getDownloadUrl({
                 List<String> recipeStep = steps;
                 List<String> taskStepImage = stepImageUrls;
                 print('Type of taskStep: ${recipeStep.runtimeType}');
-                if (uploadedImageUrl != null) {
-                  createRecipe(recipeTitle, steps, uploadedImageUrl!, stepImageUrls);
+                if (uploadedImageKey != null) {
+                  createRecipe(recipeTitle, steps, uploadedImageKey!, stepImageUrls);
                 } else {
                   print('Image upload failed.');  
                 }
@@ -207,7 +204,7 @@ Future<String> getDownloadUrl({
   }
 
   // Recipe Title - text form field and image
-  String? uploadedImageUrl;
+  String? uploadedImageKey;
   //List<String> stepImageUrls = [];
   //List<String> steps = [];
 
@@ -240,83 +237,82 @@ Future<String> getDownloadUrl({
 
           // Task Image
           const SizedBox(width: 20),
-          if (_imagePath == null && uploadedImageUrl == null)
-            InkWell(
-              onTap: () async {
-                // Implement image uploading functionality
-                await uploadImage();
-              },
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                  color: Colors.grey[300],
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.add_a_photo,
-                    size: 40,
-                    color: Colors.grey[600],
+          // Conditionally render the image container based on whether an image is uploaded
+          uploadedImageKey == null
+              ? InkWell(
+                  onTap: () async {
+                    String? key = await uploadImage();
+                    if (key != null) {
+                      setState(() {
+                        uploadedImageKey = key;
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: 180,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(35),
+                      color: Colors.grey[300],
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.add_a_photo,
+                        size: 40,
+                        color: Colors.grey[600],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            )
-          else if (_imagePath != null)
-            Stack(
-              children: [
-                Container(
-                  height: 180, // Adjusted height to match the default container
-                  width: 180, // Adjusted width to match the default container
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(35),
-                    image: DecorationImage(
-                      image: AssetImage(_imagePath!),
-                      fit: BoxFit.cover,
+                )
+              : // If an image is already uploaded, allow re-uploading by clicking on the image
+              InkWell(
+                  onTap: () async {
+                    String? key = await uploadImage();
+                    if (key != null) {
+                      setState(() {
+                        uploadedImageKey = key;
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: 180,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(35),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(35),
+                      child: FutureBuilder<String>(
+                        future: getDownloadUrl(
+                            key: uploadedImageKey!,
+                            accessLevel: StorageAccessLevel.guest),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _imagePath = null;
-                      });
-                    },
-                    child: const Icon(Icons.close, color: Colors.white),
-                  ),
-                ),
-              ],
-            )
-          else if (uploadedImageUrl != null)
-            Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(35),
-                child: Image.network(
-                  uploadedImageUrl!,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),            
         ],
       );
-
-  // Step Card
 
   List<String> stepImageUrls = [];
   
   List<String> steps = [];
 
   Widget _StepCard(BuildContext context, String step, int stepNumber) {
-  String? stepImageUrl = stepImageUrls.length >= stepNumber ? stepImageUrls[stepNumber - 1] : null;
-
   return Card(
     margin: const EdgeInsets.all(10),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
@@ -336,7 +332,7 @@ Future<String> getDownloadUrl({
               ),
               child: Center(
                 child: Text(
-                  '$stepNumber', // Pending backend functionality
+                  '$stepNumber',
                   style: const TextStyle(
                     fontFamily: "Lexend Exa",
                     fontSize: 30,
@@ -348,7 +344,7 @@ Future<String> getDownloadUrl({
             ),
             const SizedBox(width: 20),
             Text(
-              'Step $stepNumber', // Pending backend functionality
+              'Step $stepNumber',
               style: const TextStyle(
                 fontFamily: "Lexend Exa",
                 fontSize: 40,
@@ -361,142 +357,119 @@ Future<String> getDownloadUrl({
       subtitle: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: _stepDesc(stepNumber),
-        
       ),
-      
     ),
-
-    
   );
 }
 
 
 // Step Card helper widget - text field
   Widget _stepDesc(int stepNumber) {
-    String? stepImageUrl = stepImageUrls.length >= stepNumber ? stepImageUrls[stepNumber - 1] : null;
   return Row(
-    
-        children: [
-          // Text Form Field - pending backend functionality
-          Expanded(
-  child: TextFormField(
-    initialValue: steps[stepNumber - 1], // Set initial value based on step text
-    onChanged: (value) {
-      setState(() {
-        steps[stepNumber - 1] = value; // Update step text in the data structure
-      });
-    },
-    maxLines: 4,
-    style: const TextStyle(
-      fontFamily: "Lexend Exa",
-      fontSize: 25,
-      fontWeight: FontWeight.w500,
-    ),
-    decoration: InputDecoration(
-      contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-      filled: true,
-      fillColor: Colors.grey[300],
-      hintText: "Enter instruction",
-      hintStyle: TextStyle(
-        fontFamily: "Lexend Exa",
-        fontSize: 25,
-        fontWeight: FontWeight.w500,
-        color: Colors.grey[400],
+    children: [
+      Expanded(
+        child: TextFormField(
+          initialValue: steps[stepNumber - 1],
+          onChanged: (value) {
+            setState(() {
+              steps[stepNumber - 1] = value;
+            });
+          },
+          maxLines: 4,
+          style: const TextStyle(
+            fontFamily: "Lexend Exa",
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+          ),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+            filled: true,
+            fillColor: Colors.grey[300],
+            hintText: "Enter instruction",
+            hintStyle: TextStyle(
+              fontFamily: "Lexend Exa",
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[400],
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
       ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(50),
-        borderSide: BorderSide.none,
-      ),
-    ),
-  ),
-),
-
-
-                  const SizedBox(width: 20),
-          
-          if (_imagePath == null && stepImageUrl == null)
-            InkWell(
+      const SizedBox(width: 20),
+      if (stepImageUrls.isNotEmpty && stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null)
+        SizedBox(
+          width: 180,
+          height: 180,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(35),
+            child: InkWell(
               onTap: () async {
-                // Implement image uploading functionality
-                String? url = await uploadStepImage(stepNumber);
-                if (url != null) {
+                String? key = await uploadStepImage(stepNumber);
+                if (key != null) {
                   setState(() {
-                    if (stepImageUrls.length >= stepNumber) {
-                      stepImageUrls[stepNumber - 1] = url;
-                    } else {
-                      stepImageUrls.add(url);
-                    }
+                    stepImageUrls[stepNumber - 1] = key;
                   });
                 }
               },
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                  color: Colors.grey[300],
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.add_a_photo,
-                    size: 40,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-            )
-          else if (_imagePath != null)
-            Stack(
-              children: [
-                Container(
-                  height: 180, // Adjusted height to match the default container
-                  width: 180, // Adjusted width to match the default container
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(35),
-                    image: DecorationImage(
-                      image: AssetImage(_imagePath!),
+              child: FutureBuilder<String>(
+                future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Image.network(
+                      snapshot.data!,
                       fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _imagePath = null;
-                      });
-                    },
-                    child: const Icon(Icons.close, color: Colors.white),
-                  ),
-                ),
-              ],
-            )
-          else if (stepImageUrl != null)
-            Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(35),
-                child: Image.network(
-                  stepImageUrl,
-                  fit: BoxFit.cover,
-                ),
+                    );
+                  }
+                },
               ),
             ),
+          ),
+        )
+      else // Show upload button if no image is uploaded
+        InkWell(
+          onTap: () async {
+            String? key = await uploadStepImage(stepNumber);
+            if (key != null) {
+              setState(() {
+                if (stepImageUrls.length >= stepNumber) {
+                  stepImageUrls[stepNumber - 1] = key;
+                } else {
+                  stepImageUrls.add(key);
+                }
+              });
+            }
+          },
+          child: Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(35),
+              color: Colors.grey[300],
+            ),
+            child: Center(
+              child: Icon(
+                Icons.add_a_photo,
+                size: 40,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+}
 
-          // Image insertion - will insert default image if image not provided
-        ],
-        
-      );
-
-  }
-
-  Future<String?> uploadStepImage(int stepNumber) async {
+Future<String?> uploadStepImage(int stepNumber) async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     withData: false,
@@ -524,7 +497,9 @@ Future<String> getDownloadUrl({
 
     final url = await getDownloadUrl(key: platformFile.name, accessLevel: StorageAccessLevel.guest);
     print('Uploaded image URL for Step $stepNumber: $url');
-    return url;
+    
+    // Return the key instead of the URL
+    return platformFile.name;
   } on StorageException catch (e) {
     safePrint('Error uploading file: $e');
     rethrow;
@@ -534,40 +509,39 @@ Future<String> getDownloadUrl({
 // Add Step Button
 
   Widget _AddStepButton() => ElevatedButton(
-        onPressed: () {
-          setState(() {
-            steps.add('');
-          });
-        },
-        style: ElevatedButton.styleFrom(
-            minimumSize: const Size(800, 100),
-            foregroundColor: Colors.pink[900],
-            textStyle: const TextStyle(
-              fontSize: 35,
-              fontFamily: 'Lexend Exa',
-              fontWeight: FontWeight.w500,
-            ),
-            backgroundColor: Colors.white,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50))),
-        child: const Text('+ ADD STEP'),
-      );
-
-  void saveTask() {
+    onPressed: () {
+      setState(() {
+        steps.add('');
+      });
+    },
+    style: ElevatedButton.styleFrom(
+      minimumSize: const Size(800, 100),
+      foregroundColor: Colors.pink[900],
+      textStyle: const TextStyle(
+        fontSize: 35,
+        fontFamily: 'Lexend Exa',
+        fontWeight: FontWeight.w500,
+      ),
+      backgroundColor: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50)
+      )
+    ),
+    child: const Text('+ ADD STEP'),
+  );
+void saveTask() {
     String recipeName = _taskTitleController.text;
 
-    // Here you can implement your desired functionality to handle task saving,
-    // whether it's storing data locally, using a different API, or any other logic.
-    // For example, you can print the task details:
     print('Task Name: $recipeName');
     print('Steps: $steps');
 
-    // You can also show a message to indicate successful saving:
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Recipe saved successfully')),
+      const SnackBar(content: Text('Task saved successfully')),
     );
   }
+
+  
 
 
 }

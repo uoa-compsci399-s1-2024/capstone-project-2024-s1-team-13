@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inka_test/support/support_items/support_greeting_text.dart';
 import 'package:inka_test/support/support_notifications.dart';
@@ -8,6 +9,7 @@ import 'package:inka_test/support/support_trainees.dart';
 class SupportSelectTrainee extends StatelessWidget {
   const SupportSelectTrainee({super.key, required this.title});
   final String title;
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +24,8 @@ class SupportSelectTrainee extends StatelessWidget {
           ),
           leading: IconButton(
               iconSize: 40,
-              icon: const Icon(Icons.notifications_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+              icon: Icon(Icons.notifications_rounded),
+              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return SupportNotifications(title: 'Notifications');
@@ -37,8 +39,8 @@ class SupportSelectTrainee extends StatelessWidget {
                 }));
               }, // To add functionality to settings
               iconSize: 45,
-              icon: const Icon(Icons.settings),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+              icon: Icon(Icons.settings),
+              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             ),
           ],
         ),
@@ -46,20 +48,21 @@ class SupportSelectTrainee extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Padding(
+              Padding(
                   padding: EdgeInsets.only(left: 100, right: 100),
                   child: SupportGreetingText()),
-              const SizedBox(height: 50),
+              SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return SupportTrainees(title: 'Trainees');
                   }));
                 },
+                child: Text('Select Trainee'),
                 style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(500, 100),
+                    minimumSize: Size(500, 100),
                     foregroundColor: Colors.white,
-                    textStyle: const TextStyle(
+                    textStyle: TextStyle(
                       fontSize: 35,
                       fontFamily: 'Lexend Exa',
                       fontWeight: FontWeight.w500,
@@ -68,7 +71,6 @@ class SupportSelectTrainee extends StatelessWidget {
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50))),
-                child: const Text('Select Trainee'),
               )
             ],
           ),

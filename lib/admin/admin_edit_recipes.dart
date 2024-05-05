@@ -1,10 +1,16 @@
+
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_add_recipe.dart';
 import 'package:inka_test/admin/admin_edit_selected_recipe.dart';
-import 'package:inka_test/models/Recipe.dart';
+import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/modules/module_items/recipe_item.dart';
+
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_api/amplify_api.dart';
+import 'package:inka_test/models/Recipe.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+
+//------------------------------------------------------------
 
 class AdminEditRecipes extends StatefulWidget {
   const AdminEditRecipes({super.key, required this.title});
@@ -16,12 +22,26 @@ class AdminEditRecipes extends StatefulWidget {
 }
 
 class _AdminRecipesScreenState extends State<AdminEditRecipes> {
+  //------------------------------------------------------------
+  //GLOBAL VARIABLES -------------------------------------------
+  //------------------------------------------------------------
+
   late List<Recipe> allRecipes = []; // List to store all tasks
+  final TextEditingController _textController = TextEditingController();
+
+  //------------------------------------------------------------
+  //INITSTATE() ------------------------------------------------
+  //------------------------------------------------------------
   @override
   void initState() {
     super.initState();
     fetchAllRecipe(); // Call the function to fetch all task notes
+  
   }
+
+  //------------------------------------------------------------
+  //FUNCTIONS SECTION ------------------------------------------
+  //------------------------------------------------------------
 
   Future<void> fetchAllRecipe() async {
     try {
@@ -53,70 +73,141 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
     }
   }
 
-  final TextEditingController _textController = TextEditingController();
+  //DELETERECIPE (SINGULAR)
+  Future<void> deleteRecipe(String recipeId) async {
+    try {
+        final req = ModelMutations.deleteById(
+        Recipe.classType,
+        RecipeModelIdentifier(id: recipeId),
+      );
+
+      final res = await Amplify.API.mutate(request: req).response;
+      safePrint('The recipe has been deleted!: $res');
+
+      setState(() {
+        allRecipes.removeWhere((recipe) => recipe.id == recipeId);
+      });
+    } catch (e) {
+      safePrint('Error deleting recipe: $e');
+    }
+  }
+
+
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
+
+  
+  //------------------------------------------------------------
+  //SCREEN BUILD -----------------------------------------------
+  //------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          leading: IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.arrow_back_ios),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const AdminAddRecipe(
-                      title:
-                          'Add Recipe'); // To change route -- oops, should be recipe not task
-                }));
-              },
-              iconSize: 60,
-              icon: const Icon(Icons.add_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text(widget.title),
+        leading: IconButton(
+          iconSize: 40,
+          icon: const Icon(Icons.arrow_back_ios),
+          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const AdminAddRecipe(title: 'Add Recipe');
+              }));
+            },
+            iconSize: 60,
+            icon: const Icon(Icons.add_rounded),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          ),
+        ],
+      ),
 
-        // Grid View
-        body: Column(children: <Widget>[
+      
+      // Grid View
+      body: Column(
+        children: <Widget>[
           Padding(
-              padding: const EdgeInsets.all(25),
-              child: _buildRecipeSearchBar(context)),
+            padding: const EdgeInsets.all(25),
+            child: _buildRecipeSearchBar(context),
+          ),
           Expanded(
+            child: RefreshIndicator(
+              onRefresh: fetchAllRecipe,
               child: GridView.builder(
-                  itemCount:
-                      allRecipes.length, //Placeholder list - backend pending.
-                  itemBuilder: (context, index) {
-                    final recipe = allRecipes[index]; 
-                    return GestureDetector(
-                        onTap: () {
-                          // Navigate to the desired screen when a task card is tapped
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AdminEditSelectedRecipe(
-                                title: 'Edit ${recipe.recipeTitle}',
-                              ),
-                            ),
-                          );
-                        },
-                        child: _buildRecipeCard(recipe.recipeTitle ?? "Recipe Title Not Found", recipe.recipeCoverImage ?? ""),
-                        );
-
-                  },
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    //crossAxisSpacing: 5,
-                    //mainAxisSpacing: 5,
+  itemCount: allRecipes.length,
+  itemBuilder: (context, index) {
+    final recipe = allRecipes[index]; // Use allTasks instead of mockTasks
+    return FutureBuilder<String>(
+      future: getDownloadUrl(
+        key: recipe.recipeCoverImage!,
+        accessLevel: StorageAccessLevel.guest,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return GestureDetector(
+            onTap: () {
+              // Navigate to the desired screen when a task card is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AdminEditSelectedRecipe(
+                    title: 'Edit ${recipe.recipeTitle}', recipe: recipe,
                   ),
-                  scrollDirection: Axis.vertical))
-        ]));
+                ),
+              );
+            },
+            child: _buildRecipeCard(
+              recipe.recipeTitle ?? "Task Title Not Found",
+              snapshot.data ?? "", // Use the URL from the snapshot
+              recipe.id
+            ),
+          );
+        }
+      },
+    );
+  },
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+  ),
+  scrollDirection: Axis.vertical,
+),
+
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Search Bar
@@ -155,9 +246,9 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
   String _getTitle(int index) {
     if (index < allRecipes.length) {
       return allRecipes[index].recipeTitle ??
-          "Task Title Not Found"; // Providing a default value if taskTitle is null
+          "Recipe Title Not Found"; // Providing a default value if taskTitle is null
     } else {
-      return "Task Title Not Found"; // Fallback title if index exceeds the length of allTasks
+      return "Recipe Title Not Found"; // Fallback title if index exceeds the length of allTasks
     }
   }
   String _getUrl(int index) {
@@ -175,7 +266,7 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
   }
 
   // Recipe Card
-  Widget _buildRecipeCard(String title, String recipeCoverImageUrl) => Card(
+  Widget _buildRecipeCard(String title, String recipeCoverImageUrl, String currRecipeId) => Card(
       margin: const EdgeInsets.all(20),
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -211,7 +302,7 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
                         )),
                     IconButton(
                       onPressed: () =>
-                          _deleteRecipe(context, 0), // change this later
+                          deleteRecipeDialog(context, currRecipeId), 
                           //_deleteRecipe(context, mockRecipes.indexOf(arecipe)),
                       icon: const Icon(Icons.remove_circle_rounded),
                       iconSize: 50,
@@ -236,8 +327,11 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
         assetImage: 'assets/images/recipe_placeholder.jpeg')
   ];
 
-//Delete selected task - pending backend functionality
-  void _deleteRecipe(BuildContext context, index) {
+  //------------------------------------------------------------
+  //POP-UP DIALOG ----------------------------------------------
+  //------------------------------------------------------------    
+
+  void deleteRecipeDialog(BuildContext context, String currentRecipeId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -287,9 +381,8 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
                       elevation: 1,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50))),
-                  // Mock functionality - pending backend functionality
                   onPressed: () {
-                    mockRecipes.remove(mockRecipes[index]);
+                    deleteRecipe(currentRecipeId);
                     Navigator.of(context).pop(); // Close the dialog
                   },
                   child: const Text("YES"))

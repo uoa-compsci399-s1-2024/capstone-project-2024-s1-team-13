@@ -1,6 +1,7 @@
 class NoteItem {
-  final String noteTitle;
-  final String noteDescription;
+  String noteTitle;
+  String noteDescription;
+  
 
   NoteItem(this.noteTitle, this.noteDescription);
 }
