@@ -18,6 +18,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  String _errorMessage = '';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -92,8 +93,14 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-//start of checking
-class SignInScreen extends StatelessWidget {
+//start of checking - ORIGINAL (KEEP)
+
+class SignInScreen extends StatefulWidget {
+  @override
+  _SignInScreenState createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -110,7 +117,8 @@ class SignInScreen extends StatelessWidget {
         }));
       }
     } catch (e) {
-      print('Error signing in: $e');
+      //print('Error signing in: $e');
+      print('ERROR');
     }
   }
 
