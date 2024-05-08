@@ -30,15 +30,13 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
   late Trainee selectedTrainee;
   bool isLoading = true;
 
-
   @override
   void initState() {
     super.initState();
     fetchAllData();
-
   }
 
-   Future<void> fetchAllData() async {
+  Future<void> fetchAllData() async {
     await Future.delayed(Duration(seconds: 2)); // Simulating fetch delay
     await fetchCurrentTask();
     await fetchAllTask();
@@ -139,25 +137,25 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
 
   // Function to fetch the latest task note
   Future<void> fetchLatestTaskNote(List<CurrTask?> currentTasks) async {
-  try {
-    if (currentTasks.isNotEmpty) {
-      final List<TaskNotes?> taskNotes = await queryTaskNoteListItem(widget.trainee.id, currentTasks.last!);
-      if (taskNotes.isNotEmpty) {
-        taskNotes.sort((a, b) => b!.createdAt!.compareTo(a!.createdAt!));
-        setState(() {
-          taskNote = taskNotes.first!;
-        });
+    try {
+      if (currentTasks.isNotEmpty) {
+        final List<TaskNotes?> taskNotes =
+            await queryTaskNoteListItem(widget.trainee.id, currentTasks.last!);
+        if (taskNotes.isNotEmpty) {
+          taskNotes.sort((a, b) => b!.createdAt!.compareTo(a!.createdAt!));
+          setState(() {
+            taskNote = taskNotes.first!;
+          });
+        } else {
+          safePrint('No task notes found for the current task');
+        }
       } else {
-        safePrint('No task notes found for the current task');
+        safePrint('No current tasks to fetch notes for');
       }
-    } else {
-      safePrint('No current tasks to fetch notes for');
+    } catch (e) {
+      print('Error fetching task note: $e');
     }
-  } catch (e) {
-    print('Error fetching task note: $e');
   }
-}
-
 
   // Function to query all task
   Future<List<Task>> queryTask() async {
@@ -205,11 +203,12 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
         appBar: AppBar(
           title: Text(widget.title),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+              iconSize: 40,
+              icon: Icon(Icons.arrow_back_ios),
+              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
           actions: [
             IconButton(
               onPressed: () {
@@ -242,7 +241,6 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
     }
   }
 
-
   // Widgets
 
   // Method to build widgets for tasks
@@ -272,122 +270,119 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
       ),
     );
   }
-Widget _ProgressCard(Task task, CurrTask? currTask) {
-    double percentage = double.parse(currentTasks!.last.taskProgress!.replaceAll('%', ''));
-  double actualPercentage = percentage / 100;
-  if (currTask != null) {
-    // If there is a corresponding CurrTask object
-    return Card(
-      margin: EdgeInsets.all(15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      elevation: 2,
-      color: Colors.white,
-      child: ListTile(
-        title: Padding(
-          padding: EdgeInsets.all(30),
-          child: Text(
-            task.taskTitle ?? '',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 35,
-              fontWeight: FontWeight.w500,
+
+  Widget _ProgressCard(Task task, CurrTask? currTask) {
+    double percentage =
+        double.parse(currentTasks!.last.taskProgress!.replaceAll('%', ''));
+    double actualPercentage = percentage / 100;
+    if (currTask != null) {
+      // If there is a corresponding CurrTask object
+      return Card(
+        margin: EdgeInsets.all(15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        elevation: 2,
+        color: Colors.white,
+        child: ListTile(
+          title: Padding(
+            padding: EdgeInsets.all(30),
+            child: Text(
+              task.taskTitle ?? '',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontFamily: "Lexend Exa",
+                fontSize: 35,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
-        subtitle: Padding(
-          padding: EdgeInsets.only(left: 30, right: 30, bottom: 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('${currTask.taskProgress} Completed',
-                style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500
+          subtitle: Padding(
+            padding: EdgeInsets.only(left: 30, right: 30, bottom: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${currTask.taskProgress} Completed',
+                  style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500),
                 ),
-              ),
-              LinearProgressIndicator(
-                value: actualPercentage!, // / 100,
-                borderRadius: BorderRadius.circular(50),
-                minHeight: 30,
-                backgroundColor: Colors.grey[350],
-                color: Colors.pink[900]
-              ),
-              SizedBox(height: 20),
-              RichText(
-                text: TextSpan(
-                  children: [
+                LinearProgressIndicator(
+                    value: actualPercentage!, // / 100,
+                    borderRadius: BorderRadius.circular(50),
+                    minHeight: 30,
+                    backgroundColor: Colors.grey[350],
+                    color: Colors.pink[900]),
+                SizedBox(height: 20),
+                RichText(
+                  text: TextSpan(children: [
                     TextSpan(
                       text: 'Times Evaluated: ',
                       style: TextStyle(
-                        fontFamily: 'Lexend Exa',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black
-                      ),
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
                     ),
                     TextSpan(
                       text: '${currTask.timesEvaluated}',
                       style: TextStyle(
-                        fontFamily: 'Lexend Exa',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.pink[900]
-                      ),
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.pink[900]),
                     )
-                  ]
+                  ]),
                 ),
+                SizedBox(height: 20),
+                // Display recent feedback here
+                Text(
+                  'Recent Feedback: ${currTask.taskFeeling}',
+                  style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      // If there is no corresponding CurrTask object
+      return Card(
+        margin: EdgeInsets.all(15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        elevation: 2,
+        color: Colors.white,
+        child: ListTile(
+          title: Padding(
+            padding: EdgeInsets.all(30),
+            child: Text(
+              task.taskTitle ?? '',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontFamily: "Lexend Exa",
+                fontSize: 35,
+                fontWeight: FontWeight.w500,
               ),
-              SizedBox(height: 20),
-              // Display recent feedback here
-              Text('Recent Feedback: ${currTask.taskFeeling}',
-                style: TextStyle(
+            ),
+          ),
+          subtitle: Padding(
+            padding: EdgeInsets.only(left: 30, right: 30, bottom: 30),
+            child: Text(
+              'No progress available for this task.',
+              style: TextStyle(
                   fontFamily: 'Lexend Exa',
                   fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  } else {
-    // If there is no corresponding CurrTask object
-    return Card(
-      margin: EdgeInsets.all(15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      elevation: 2,
-      color: Colors.white,
-      child: ListTile(
-        title: Padding(
-          padding: EdgeInsets.all(30),
-          child: Text(
-            task.taskTitle ?? '',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 35,
-              fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w500),
             ),
           ),
         ),
-        subtitle: Padding(
-          padding: EdgeInsets.only(left: 30, right: 30, bottom: 30),
-          child: Text('No progress available for this task.',
-            style: TextStyle(
-              fontFamily: 'Lexend Exa',
-              fontSize: 20,
-              fontWeight: FontWeight.w500
-            ),
-          ),
-        ),
-      ),
-    );
+      );
+    }
   }
-}
 
 // Mock Data
 
