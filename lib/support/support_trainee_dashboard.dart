@@ -285,128 +285,123 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        
         body: Center(
           child: CircularProgressIndicator(),
         ),
       );
-    }
-    else{
-
-
-    return Scaffold(
-      appBar: AppBar(
-        title: SizedBox(
-          height: 250,
-          child:
-              SvgPicture.asset('assets/images/inka.svg', color: Colors.white),
-        ),
-        leading: IconButton(
-          iconSize: 40,
-          icon: Icon(Icons.notifications_rounded),
-          padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return SupportNotifications(title: 'Notifications');
-            }));
-          },
-        ),
-        actions: [
-          IconButton(
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: SizedBox(
+            height: 250,
+            child:
+                SvgPicture.asset('assets/images/inka.svg', color: Colors.white),
+          ),
+          leading: IconButton(
+            iconSize: 40,
+            icon: Icon(Icons.notifications_rounded),
+            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const SupportSettings(title: 'Settings');
+                return SupportNotifications(title: 'Notifications');
               }));
             },
-            iconSize: 45,
-            icon: Icon(Icons.settings),
-            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'HOME',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.task_rounded),
-            label: 'EVALUATE',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: 'PROFILE',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-      body: RefreshIndicator(
-        onRefresh: _refreshData,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(50),
-                child: Text(
-                  "${widget.trainee.firstName}'s Summary",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontFamily: 'Lexend Exa',
-                    fontSize: 55,
-                    fontWeight: FontWeight.w500,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const SupportSettings(title: 'Settings');
+                }));
+              },
+              iconSize: 45,
+              icon: Icon(Icons.settings),
+              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            ),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded),
+              label: 'HOME',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.task_rounded),
+              label: 'EVALUATE',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: 'PROFILE',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(50),
+                  child: Text(
+                    "${widget.trainee.firstName}'s Summary",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 55,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 50, bottom: 10),
-                child: Text(
-                  "Progress",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontFamily: 'Lexend Exa',
-                    fontSize: 30,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.pink[900],
+                Padding(
+                  padding: EdgeInsets.only(left: 50, bottom: 10),
+                  child: Text(
+                    "Progress",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 30,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.pink[900],
+                    ),
                   ),
                 ),
-              ),
-              _buildProgressCard(
-                
-                context,
-                currentTasks!.isNotEmpty
-                    ? currentTasks?.last?.taskProgress
-                    : '0.0',
-                currentTasks!.isNotEmpty
-                    ? currentTasks?.last.currTaskName ?? "No Current Task"
-                    : "No Current Task",
-              ),
-              SizedBox(height: 50),
-              Padding(
-                padding: EdgeInsets.only(left: 50, bottom: 10),
-                child: Text(
-                  "Notes",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontFamily: 'Lexend Exa',
-                    fontSize: 30,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.pink[900],
+                _buildProgressCard(
+                  context,
+                  currentTasks!.isNotEmpty
+                      ? currentTasks?.last?.taskProgress
+                      : '0.0',
+                  currentTasks!.isNotEmpty
+                      ? currentTasks?.last.currTaskName ?? "No Current Task"
+                      : "No Current Task",
+                ),
+                SizedBox(height: 50),
+                Padding(
+                  padding: EdgeInsets.only(left: 50, bottom: 10),
+                  child: Text(
+                    "Notes",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 30,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.pink[900],
+                    ),
                   ),
                 ),
-              ),
-              //_buildNotesCard(context, generalNote),
-              _buildNotesCard(context, generalNote),
-              SizedBox(height: 30),
+                //_buildNotesCard(context, generalNote),
+                _buildNotesCard(context, generalNote),
+                SizedBox(height: 30),
 
-              _buildAnotherNotesWidget(context, "Trainee Note"),
-            ],
+                _buildAnotherNotesWidget(context, "Trainee Note"),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
     }
   }
 
@@ -608,174 +603,178 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
-    }) async {
-      try {
-        final result = await Amplify.Storage.getUrl(
-          key: key,
-          options: const StorageGetUrlOptions(
-            accessLevel: StorageAccessLevel.guest,
-            pluginOptions: S3GetUrlPluginOptions(
-              validateObjectExistence: true,
-              expiresIn: Duration(days: 7),
-            ),
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
           ),
-        ).result;
-        return result.url.toString();
-      } on StorageException catch (e) {
-        safePrint('Could not get a downloadable URL: ${e.message}');
-        rethrow;
-      }
+        ),
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
   }
 
   // Recent Progress
-  Widget _buildProgressCard(BuildContext context, progress, currentTaskTitle) => Center(
-  child: GestureDetector(
-    onTap: () {
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return SupportTraineeProgress(title: 'Progress', trainee: widget.trainee,);
-      }));
-    },
-    child: currentTasks != null && currentTasks!.isNotEmpty
-        ? FutureBuilder<String>(
-            future: getDownloadUrl(
-              key: currentTasks!.last.taskCoverImage!,
-              accessLevel: StorageAccessLevel.guest,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container( // Return a container with a loading indicator
-                  width: 750,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.grey[200],
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
+  Widget _buildProgressCard(BuildContext context, progress, currentTaskTitle) =>
+      Center(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return SupportTraineeProgress(
+                title: 'Progress',
+                trainee: widget.trainee,
+              );
+            }));
+          },
+          child: currentTasks != null && currentTasks!.isNotEmpty
+              ? FutureBuilder<String>(
+                  future: getDownloadUrl(
+                    key: currentTasks!.last.taskCoverImage!,
+                    accessLevel: StorageAccessLevel.guest,
                   ),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (snapshot.hasData) {
-                return Container(
-                  width: 750,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(50),
-                    image: DecorationImage(
-                      image: NetworkImage(snapshot.data!),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Color.fromARGB(130, 0, 0, 0),
-                        BlendMode.multiply,
-                      ),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 50, right: 50),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '$currentTaskTitle',
-                          style: TextStyle(
-                            fontFamily: 'Lexend Exa',
-                            fontSize: 39,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        // Return a container with a loading indicator
+                        width: 750,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.grey[200],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        currentTasks != null && currentTasks!.isNotEmpty
-                            ? _circularProgress(currentTasks!.last.taskProgress)
-                            : Container(
-                                width: 175,
-                                height: 175,
-                                child: Center(
-                                  child: Text(
-                                    '0%',
-                                    style: TextStyle(
-                                      fontFamily: 'Lexend Exa',
-                                      fontSize: 50,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return Container(
+                        width: 750,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(50),
+                          image: DecorationImage(
+                            image: NetworkImage(snapshot.data!),
+                            fit: BoxFit.cover,
+                            colorFilter: ColorFilter.mode(
+                              Color.fromARGB(130, 0, 0, 0),
+                              BlendMode.multiply,
+                            ),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 50, right: 50),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '$currentTaskTitle',
+                                style: TextStyle(
+                                  fontFamily: 'Lexend Exa',
+                                  fontSize: 39,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
                                 ),
                               ),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return Container(); // Return an empty container if no data is available yet
-              }
-            },
-          )
-        : Container(),
-  ),
-);
-
+                              currentTasks != null && currentTasks!.isNotEmpty
+                                  ? _circularProgress(
+                                      currentTasks!.last.taskProgress)
+                                  : Container(
+                                      width: 175,
+                                      height: 175,
+                                      child: Center(
+                                        child: Text(
+                                          '0%',
+                                          style: TextStyle(
+                                            fontFamily: 'Lexend Exa',
+                                            fontSize: 50,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container(); // Return an empty container if no data is available yet
+                    }
+                  },
+                )
+              : Container(),
+        ),
+      );
 
 // Circular Progress Indicator
-Widget _circularProgress(String? progress) {
-  double percentage = double.parse(progress!.replaceAll('%', ''));
-  double actualPercentage = percentage / 100;
-  //double progressValue = double.parse(progress);
+  Widget _circularProgress(String? progress) {
+    double percentage = double.parse(progress!.replaceAll('%', ''));
+    double actualPercentage = percentage / 100;
+    //double progressValue = double.parse(progress);
 
-  return Stack(
-    alignment: AlignmentDirectional.center,
-    children: <Widget>[
-      Center(
-        child: SizedBox(
-          width: 175,
-          height: 175,
-          child: CircularProgressIndicator(
-            strokeWidth: 15,
-            strokeCap: StrokeCap.round,
-            value: actualPercentage,
-            color: Colors.pink[900],
-            backgroundColor: Colors.grey[300],
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: <Widget>[
+        Center(
+          child: SizedBox(
+            width: 175,
+            height: 175,
+            child: CircularProgressIndicator(
+              strokeWidth: 15,
+              strokeCap: StrokeCap.round,
+              value: actualPercentage,
+              color: Colors.pink[900],
+              backgroundColor: Colors.grey[300],
+            ),
           ),
         ),
-      ),
-      Center(
-          child: Text(
-        progress,
-        style: TextStyle(
-            fontFamily: 'Lexend Exa',
-            fontSize: 30,
-            fontWeight: FontWeight.w500,
-            color: Colors.white),
-      )),
-    ],
-  );
-}
+        Center(
+            child: Text(
+          progress,
+          style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 30,
+              fontWeight: FontWeight.w500,
+              color: Colors.white),
+        )),
+      ],
+    );
+  }
 
-// Mock Data (temporary)
+// Mock Data (temporary) HIIIII
 
-final NoteItem recentNote = NoteItem('General',
-    'Maecenas malesuada, mi vitae placerat rhoncus, quam risus condimentum enim, id feugiat quam turpis ultrices turpis.');
+  final NoteItem recentNote = NoteItem('General',
+      'Maecenas malesuada, mi vitae placerat rhoncus, quam risus condimentum enim, id feugiat quam turpis ultrices turpis.');
 
-final ProgressItem recentProgress =
-    ProgressItem('Dishes', 0.7, 3, 'Bad', 'null');
-
+  final ProgressItem recentProgress =
+      ProgressItem('Dishes', 0.7, 3, 'Bad', 'null');
 }
