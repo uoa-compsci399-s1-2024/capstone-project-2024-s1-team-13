@@ -14,7 +14,8 @@ class AdminNotifications extends StatelessWidget {
         leading: IconButton(
             iconSize: 40,
             icon: const Icon(Icons.arrow_back_ios_rounded),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
               Navigator.pop(context);
             }),
@@ -57,7 +58,7 @@ class AdminNotifications extends StatelessWidget {
                           fontSize: 35,
                           fontWeight: FontWeight.w500,
                         )),
-                    Text('${notification.dateTime}',
+                    Text('${notification.dateTime}', // current time
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             fontFamily: "Lexend Exa",
@@ -103,7 +104,8 @@ class AdminNotifications extends StatelessWidget {
           )
         ],
       );
-    } else {
+    } else // In the case that the notificatiion is not related to a trainee.
+    {
       return Row(
         children: [
           Icon(
