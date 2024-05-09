@@ -36,6 +36,7 @@ class Trainee extends amplify_core.Model {
   final String? _supportID;
   final String? _adminID;
   final List<TaskNotes>? _TrTaskNotes;
+  final String? _traineeNote;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
   final String? _traineeTraineesCTId;
@@ -104,6 +105,10 @@ class Trainee extends amplify_core.Model {
     return _TrTaskNotes;
   }
   
+  String? get traineeNote {
+    return _traineeNote;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -120,9 +125,9 @@ class Trainee extends amplify_core.Model {
     return _traineeTraineesTrNoId;
   }
   
-  const Trainee._internal({required this.id, traineePhoto, firstName, lastName, traineesCT, traineesTrNo, required supportID, required adminID, TrTaskNotes, createdAt, updatedAt, traineeTraineesCTId, traineeTraineesTrNoId}): _traineePhoto = traineePhoto, _firstName = firstName, _lastName = lastName, _traineesCT = traineesCT, _traineesTrNo = traineesTrNo, _supportID = supportID, _adminID = adminID, _TrTaskNotes = TrTaskNotes, _createdAt = createdAt, _updatedAt = updatedAt, _traineeTraineesCTId = traineeTraineesCTId, _traineeTraineesTrNoId = traineeTraineesTrNoId;
+  const Trainee._internal({required this.id, traineePhoto, firstName, lastName, traineesCT, traineesTrNo, required supportID, required adminID, TrTaskNotes, traineeNote, createdAt, updatedAt, traineeTraineesCTId, traineeTraineesTrNoId}): _traineePhoto = traineePhoto, _firstName = firstName, _lastName = lastName, _traineesCT = traineesCT, _traineesTrNo = traineesTrNo, _supportID = supportID, _adminID = adminID, _TrTaskNotes = TrTaskNotes, _traineeNote = traineeNote, _createdAt = createdAt, _updatedAt = updatedAt, _traineeTraineesCTId = traineeTraineesCTId, _traineeTraineesTrNoId = traineeTraineesTrNoId;
   
-  factory Trainee({String? id, String? traineePhoto, String? firstName, String? lastName, CurrTask? traineesCT, TraineeNotes? traineesTrNo, required String supportID, required String adminID, List<TaskNotes>? TrTaskNotes, String? traineeTraineesCTId, String? traineeTraineesTrNoId}) {
+  factory Trainee({String? id, String? traineePhoto, String? firstName, String? lastName, CurrTask? traineesCT, TraineeNotes? traineesTrNo, required String supportID, required String adminID, List<TaskNotes>? TrTaskNotes, String? traineeNote, String? traineeTraineesCTId, String? traineeTraineesTrNoId}) {
     return Trainee._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       traineePhoto: traineePhoto,
@@ -133,6 +138,7 @@ class Trainee extends amplify_core.Model {
       supportID: supportID,
       adminID: adminID,
       TrTaskNotes: TrTaskNotes != null ? List<TaskNotes>.unmodifiable(TrTaskNotes) : TrTaskNotes,
+      traineeNote: traineeNote,
       traineeTraineesCTId: traineeTraineesCTId,
       traineeTraineesTrNoId: traineeTraineesTrNoId);
   }
@@ -154,6 +160,7 @@ class Trainee extends amplify_core.Model {
       _supportID == other._supportID &&
       _adminID == other._adminID &&
       DeepCollectionEquality().equals(_TrTaskNotes, other._TrTaskNotes) &&
+      _traineeNote == other._traineeNote &&
       _traineeTraineesCTId == other._traineeTraineesCTId &&
       _traineeTraineesTrNoId == other._traineeTraineesTrNoId;
   }
@@ -172,6 +179,7 @@ class Trainee extends amplify_core.Model {
     buffer.write("lastName=" + "$_lastName" + ", ");
     buffer.write("supportID=" + "$_supportID" + ", ");
     buffer.write("adminID=" + "$_adminID" + ", ");
+    buffer.write("traineeNote=" + "$_traineeNote" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("traineeTraineesCTId=" + "$_traineeTraineesCTId" + ", ");
@@ -181,7 +189,7 @@ class Trainee extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Trainee copyWith({String? traineePhoto, String? firstName, String? lastName, CurrTask? traineesCT, TraineeNotes? traineesTrNo, String? supportID, String? adminID, List<TaskNotes>? TrTaskNotes, String? traineeTraineesCTId, String? traineeTraineesTrNoId}) {
+  Trainee copyWith({String? traineePhoto, String? firstName, String? lastName, CurrTask? traineesCT, TraineeNotes? traineesTrNo, String? supportID, String? adminID, List<TaskNotes>? TrTaskNotes, String? traineeNote, String? traineeTraineesCTId, String? traineeTraineesTrNoId}) {
     return Trainee._internal(
       id: id,
       traineePhoto: traineePhoto ?? this.traineePhoto,
@@ -192,6 +200,7 @@ class Trainee extends amplify_core.Model {
       supportID: supportID ?? this.supportID,
       adminID: adminID ?? this.adminID,
       TrTaskNotes: TrTaskNotes ?? this.TrTaskNotes,
+      traineeNote: traineeNote ?? this.traineeNote,
       traineeTraineesCTId: traineeTraineesCTId ?? this.traineeTraineesCTId,
       traineeTraineesTrNoId: traineeTraineesTrNoId ?? this.traineeTraineesTrNoId);
   }
@@ -205,6 +214,7 @@ class Trainee extends amplify_core.Model {
     ModelFieldValue<String>? supportID,
     ModelFieldValue<String>? adminID,
     ModelFieldValue<List<TaskNotes>?>? TrTaskNotes,
+    ModelFieldValue<String?>? traineeNote,
     ModelFieldValue<String?>? traineeTraineesCTId,
     ModelFieldValue<String?>? traineeTraineesTrNoId
   }) {
@@ -218,6 +228,7 @@ class Trainee extends amplify_core.Model {
       supportID: supportID == null ? this.supportID : supportID.value,
       adminID: adminID == null ? this.adminID : adminID.value,
       TrTaskNotes: TrTaskNotes == null ? this.TrTaskNotes : TrTaskNotes.value,
+      traineeNote: traineeNote == null ? this.traineeNote : traineeNote.value,
       traineeTraineesCTId: traineeTraineesCTId == null ? this.traineeTraineesCTId : traineeTraineesCTId.value,
       traineeTraineesTrNoId: traineeTraineesTrNoId == null ? this.traineeTraineesTrNoId : traineeTraineesTrNoId.value
     );
@@ -242,13 +253,14 @@ class Trainee extends amplify_core.Model {
           .map((e) => TaskNotes.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
+      _traineeNote = json['traineeNote'],
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null,
       _traineeTraineesCTId = json['traineeTraineesCTId'],
       _traineeTraineesTrNoId = json['traineeTraineesTrNoId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'traineePhoto': _traineePhoto, 'firstName': _firstName, 'lastName': _lastName, 'traineesCT': _traineesCT?.toJson(), 'traineesTrNo': _traineesTrNo?.toJson(), 'supportID': _supportID, 'adminID': _adminID, 'TrTaskNotes': _TrTaskNotes?.map((TaskNotes? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'traineeTraineesCTId': _traineeTraineesCTId, 'traineeTraineesTrNoId': _traineeTraineesTrNoId
+    'id': id, 'traineePhoto': _traineePhoto, 'firstName': _firstName, 'lastName': _lastName, 'traineesCT': _traineesCT?.toJson(), 'traineesTrNo': _traineesTrNo?.toJson(), 'supportID': _supportID, 'adminID': _adminID, 'TrTaskNotes': _TrTaskNotes?.map((TaskNotes? e) => e?.toJson()).toList(), 'traineeNote': _traineeNote, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'traineeTraineesCTId': _traineeTraineesCTId, 'traineeTraineesTrNoId': _traineeTraineesTrNoId
   };
   
   Map<String, Object?> toMap() => {
@@ -261,6 +273,7 @@ class Trainee extends amplify_core.Model {
     'supportID': _supportID,
     'adminID': _adminID,
     'TrTaskNotes': _TrTaskNotes,
+    'traineeNote': _traineeNote,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt,
     'traineeTraineesCTId': _traineeTraineesCTId,
@@ -283,6 +296,7 @@ class Trainee extends amplify_core.Model {
   static final TRTASKNOTES = amplify_core.QueryField(
     fieldName: "TrTaskNotes",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'TaskNotes'));
+  static final TRAINEENOTE = amplify_core.QueryField(fieldName: "traineeNote");
   static final TRAINEETRAINEESCTID = amplify_core.QueryField(fieldName: "traineeTraineesCTId");
   static final TRAINEETRAINEESTRNOID = amplify_core.QueryField(fieldName: "traineeTraineesTrNoId");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
@@ -356,6 +370,12 @@ class Trainee extends amplify_core.Model {
       isRequired: false,
       ofModelName: 'TaskNotes',
       associatedKey: TaskNotes.TRAINEEID
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Trainee.TRAINEENOTE,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

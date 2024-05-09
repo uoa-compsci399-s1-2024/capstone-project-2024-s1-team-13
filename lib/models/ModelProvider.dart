@@ -42,7 +42,7 @@ export 'TraineeNotes.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "b5009e378afc9737f9dda2c1210f9f3f";
+  String version = "be8e039e3fb57fb7b331be73d398a7f6";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [Admin.schema, CurrTask.schema, Notifications.schema, Recipe.schema, Support.schema, Task.schema, TaskNotes.schema, Trainee.schema, TraineeNotes.schema];
   @override

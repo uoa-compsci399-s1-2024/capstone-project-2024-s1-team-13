@@ -61,6 +61,11 @@ type Task @model @auth(rules: [{allow: public}]) {
   taskStepImage: [String]
   taskCoverImage: String
   taskTaskNotes: [TaskNotes] @hasMany(indexName: "byTask", fields: ["id"])
+  taskSteps: [String]
+  taskProgress: String
+  taskPassed: String
+  taskFeeling: String
+  timesEvaluated: Int
 }
 
 type Admin @model @auth(rules: [{allow: public}]) {
@@ -95,5 +100,6 @@ type Trainee @model @auth(rules: [{allow: public}]) {
   supportID: ID! @index(name: "bySupport")
   adminID: ID! @index(name: "byAdmin")
   TrTaskNotes: [TaskNotes] @hasMany(indexName: "byTrainee", fields: ["id"])
+  traineeNote: String
 }
  

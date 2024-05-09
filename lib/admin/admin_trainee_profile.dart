@@ -182,7 +182,7 @@ Widget _profileDetails() => Row(
   Widget _progressButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AdminTraineeProgress(title: 'Progress');
+            return AdminTraineeProgress(title: 'Progress', trainee: widget.trainee,);
           }));
         },
         child: Container(

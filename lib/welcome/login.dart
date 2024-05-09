@@ -134,41 +134,16 @@ class Login extends StatelessWidget {
       ]);
 
 //Login Button
-  Widget _LoginButton(context) => ElevatedButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const SupportSelectTrainee(title: 'Select Trainee');
-          }));
-        },
-        style: ElevatedButton.styleFrom(
-            minimumSize: const Size(400, 80),
-            foregroundColor: Colors.white,
-            textStyle: const TextStyle(
-              fontSize: 30,
-              fontFamily: 'Lexend Exa',
-              fontWeight: FontWeight.w500,
-            ),
-            backgroundColor: Colors.pink[900],
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50))),
-        child: const Text('Login'),
-      );
-
-
-//with auth:
-
-  //Login Button
   //Widget _LoginButton(context) => ElevatedButton(
         //onPressed: () {
-          // to change
-          //_LogIn(context);
+          //Navigator.push(context, MaterialPageRoute(builder: (context) {
+            //return const SupportSelectTrainee(title: 'Select Trainee');
+          //}));
         //},
-        //child: Text('Login'),
         //style: ElevatedButton.styleFrom(
-            //minimumSize: Size(400, 80),
+            //minimumSize: const Size(400, 80),
             //foregroundColor: Colors.white,
-            //textStyle: TextStyle(
+            //textStyle: const TextStyle(
               //fontSize: 30,
               //fontFamily: 'Lexend Exa',
               //fontWeight: FontWeight.w500,
@@ -177,7 +152,32 @@ class Login extends StatelessWidget {
             //elevation: 2,
             //shape: RoundedRectangleBorder(
                 //borderRadius: BorderRadius.circular(50))),
+        //child: const Text('Login'),
       //);
+
+
+//with auth:
+
+  //Login Button
+  Widget _LoginButton(context) => ElevatedButton(
+        onPressed: () {
+          // to change
+          _LogIn(context);
+        },
+        child: Text('Login'),
+        style: ElevatedButton.styleFrom(
+            minimumSize: Size(400, 80),
+            foregroundColor: Colors.white,
+            textStyle: TextStyle(
+              fontSize: 30,
+              fontFamily: 'Lexend Exa',
+              fontWeight: FontWeight.w500,
+            ),
+            backgroundColor: Colors.pink[900],
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50))),
+      );
 
 
 

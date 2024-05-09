@@ -42,7 +42,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    SupportTraineeDashboard(trainee: widget.trainee, task: widget.task,)));
+                    SupportTraineeDashboard(trainee: widget.trainee, task: widget.task)));
         break;
       case 1:
         // Navigate to evaluate screen
@@ -164,7 +164,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
       maxLines: 2,
       style: const TextStyle(
         fontFamily: 'Lexend Exa',
-        fontSize: 50,
+        fontSize: 45,
         fontWeight: FontWeight.w500))
   ],
       );

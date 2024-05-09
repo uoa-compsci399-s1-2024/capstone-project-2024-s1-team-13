@@ -15,10 +15,18 @@ import 'package:inka_test/support/support_trainee_progress.dart';
 import 'package:inka_test/support/support_settings.dart';
 
 class SupportTraineeDashboard extends StatefulWidget {
+
   // ignore: prefer_const_constructors_in_immutables
-  SupportTraineeDashboard({super.key, required this.trainee, this.task});
-  final Trainee trainee;
+  
+  SupportTraineeDashboard({
+    super.key, 
+    required this.trainee, 
+    this.task});
+  Trainee trainee;
   final Task? task;
+
+  
+  
   //final String traineeID;
 
   @override
@@ -27,7 +35,8 @@ class SupportTraineeDashboard extends StatefulWidget {
 }
 
 class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
-  TextEditingController _notesController = TextEditingController(); // Step 1
+  final TextEditingController _traineeNotesController = TextEditingController(); 
+  
   bool isEditing = false; // Step 2
 
   String generalNote = ''; // Placeholder for the latest trainee note text
@@ -47,8 +56,8 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
             adminID:
                 "e7bd6941-2f8f-4949-a4ed-6803cd2ab42b"); // Provide a default task if widget.task is null
 
-    fetchLatestTraineeNote(); // Fetch the latest trainee note when the widget is initialized
-    _notesController.text = '';
+
+    _traineeNotesController.text = widget.trainee.traineeNote ?? '';
   }
 
   Future<void> fetchAllData() async {
@@ -218,28 +227,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
     }
   }
 
-  // Function to fetch the latest trainee note
-  Future<void> fetchLatestTraineeNote() async {
-    try {
-      // Query all trainee notes
-      final List<TraineeNotes?> traineeNotes = await queryTraineeNoteListItem();
-
-      if (mounted && traineeNotes.isNotEmpty) {
-        final traineeGeneralNotes = traineeNotes.where(
-            (note) => note!.traineeNotesTrainee?.id == widget.trainee.id);
-
-        // Sort trainee notes by date or timestamp
-        traineeNotes.sort((a, b) => b!.createdAt!.compareTo(a!.createdAt!));
-
-        // Update generalNote with the latest note
-        setState(() {
-          generalNote = traineeNotes.first!.noteDesc!;
-        });
-      }
-    } catch (e) {
-      print('Error fetching trainee note: $e');
-    }
-  }
+  
 
 // Bottom Bar Navigation
   int _selectedIndex = 0;
@@ -255,7 +243,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    SupportTraineeDashboard(trainee: widget.trainee)));
+                    SupportTraineeDashboard(trainee: widget.trainee,)));
         break;
       case 1:
         // Navigate to evaluate screen
@@ -448,162 +436,193 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
         updateCurrentTask(currentTasks!, "0%");
       });
       await fetchLatestTaskNote(currentTasks!);
-    }
 
-    // Fetch latest trainee note
-    await fetchLatestTraineeNote();
+      
+    }
+    await fetchSelectedTrainee();
+
   }
 
   Widget _buildAnotherNotesWidget(BuildContext context, String title) {
-    return Center(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            isEditing = true; // Enter editing mode when tapped
-          });
-        },
-        child: Padding(
-          padding: EdgeInsets.all(20), // Add padding here
-          child: SizedBox(
-            width: 750,
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: Colors.grey[200],
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // Shadow color
-                      spreadRadius: 1, // Spread radius
-                      blurRadius: 5, // Blur radius
-                      offset: Offset(0, 3), // Offset in the x and y direction
+  return Center(
+    child: Padding(
+      padding: EdgeInsets.all(20),
+      child: SizedBox(
+        width: 750,
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: Colors.grey[200],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 35,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
+                    IconButton(
+  icon: isEditing
+      ? Icon(Icons.check) // Change to tick icon in edit mode
+      : Icon(Icons.edit), // Default to edit icon
+  onPressed: () async {
+    if (isEditing) {
+      setState(() {
+        isEditing = false; // Exit editing mode
+        // Update trainee note in widget
+        widget.trainee = widget.trainee.copyWith(
+          traineeNote: _traineeNotesController.text,
+        );
+      });
+      // Update the UI immediately with the edited note
+      await updateTraineeNote(_traineeNotesController.text);
+    } else {
+      setState(() {
+        isEditing = true; // Enter editing mode
+        // Populate the text field with existing note if not empty
+        _traineeNotesController.text = widget.trainee.traineeNote ?? '';
+      });
+    }
+  },
+),
+
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 30), // Add left padding for the title
-                          child: Text(
-                            title,
-                            style: TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 35,
-                              fontWeight: FontWeight.w500,
-                            ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: isEditing
+                      ? TextField(
+                          controller: _traineeNotesController,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            hintText: 'Enter your note...',
+                            border: InputBorder.none,
+                          ),
+                        )
+                      : Text(
+                          // Display the trainee note if available, otherwise show default text
+                          widget.trainee.traineeNote != null &&
+                                  widget.trainee.traineeNote!.isNotEmpty
+                              ? widget.trainee.traineeNote!
+                              : 'Enter your note...',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'Lexend Exa',
+                            fontWeight: FontWeight.w500,
+                            color: Colors.pink[900],
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            setState(() {
-                              isEditing = !isEditing; // Toggle editing mode
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal:
-                              30), // Use the same padding as _buildNotesCard
-                      child: isEditing
-                          ? TextField(
-                              controller: _notesController,
-                              maxLines: null,
-                              onChanged: (value) {
-                                setState(() {
-                                  generalNote = value; // Update note text
-                                });
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'Edit your note...',
-                                border: InputBorder.none,
-                              ),
-                            )
-                          : Text(
-                              generalNote,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'Lexend Exa',
-                                fontWeight: FontWeight.w500,
-                                color: Colors.pink[900],
-                              ),
-                            ),
-                    ),
-                  ],
                 ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+
+
+
+
+Future<void> updateTraineeNote(String trainee_note) async {
+  final originalTraineeNote = widget.trainee.traineeNote;
+  final updatedTraineeNote =
+      trainee_note.isNotEmpty ? trainee_note : originalTraineeNote;
+
+  final updatedTrainee = widget.trainee.copyWith(
+    traineeNote: updatedTraineeNote,
+  );
+
+  final request = ModelMutations.update(updatedTrainee); // Pass updatedTrainee here
+  try {
+    final response = await Amplify.API.mutate(request: request).response;
+    print('Response: $response');
+  } catch (e) {
+    print('Error updating trainee note: $e');
+  }
+}
+  // Recent Notes
+Widget _buildNotesCard(BuildContext context, note) => Center(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return SupportTraineeNotes(
+              title: 'Notes',
+              trainee: widget.trainee,
+            );
+          }));
+        },
+        child: Container(
+          width: 750,
+          height: 190, // Start with a fixed height
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(50),
+            color: Colors.grey[200],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5), // Shadow color
+                spreadRadius: 1, // Spread radius
+                blurRadius: 5, // Blur radius
+                offset: Offset(0, 3), // Offset in the x and y direction
               ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Task Notes',
+                  style: TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 35,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      "Latest Note: ${taskNote.taskTitle != null ? '${taskNote.taskTitle}\n' : ''}${taskNote.taskDesc ?? 'No Note'}", // Display the fetched note here
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.pink[900],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  // Recent Notes
-  Widget _buildNotesCard(context, note) => Center(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return SupportTraineeNotes(
-                title: 'Notes',
-                trainee: widget.trainee,
-              );
-            }));
-          },
-          child: Container(
-            width: 750,
-            height: 190,
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(50),
-              color: Colors.grey[200],
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // Shadow color
-                  spreadRadius: 1, // Spread radius
-                  blurRadius: 5, // Blur radius
-                  offset: Offset(0, 3), // Offset in the x and y direction
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Task Notes',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 35,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    "Latest Note: ${taskNote.taskTitle != null ? '${taskNote.taskTitle}\n' : ''}${taskNote.taskDesc ?? 'No Note'}", // Display the fetched note here
-                    maxLines: 4,
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.pink[900],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
 
   Future<String> getDownloadUrl({
     required String key,
