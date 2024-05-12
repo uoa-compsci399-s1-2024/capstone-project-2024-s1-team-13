@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:inka_test/support/support_select_trainee.dart';
 import 'package:inka_test/support/support_trainees.dart';
 import 'package:inka_test/welcome/inka_welcome.dart';
@@ -97,11 +98,38 @@ class SupportSettings extends StatelessWidget {
         SizedBox(height: 20),
 
         // Logout Button - pending backend functionality
-        ElevatedButton(
+        /*ElevatedButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return InkaWelcome(title: 'Welcome');
               }));
+            },
+            child: Text("Logout"),
+            style: ElevatedButton.styleFrom(
+                minimumSize: Size(700, 100),
+                foregroundColor: Colors.white,
+                textStyle: TextStyle(
+                  fontSize: 30,
+                  fontFamily: 'Lexend Exa',
+                  fontWeight: FontWeight.w500,
+                ),
+                backgroundColor: Colors.pink[900],
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50))))
+      ])),*/
+        // Logout Button - pending backend functionality
+        ElevatedButton(
+            onPressed: () async {
+              try {
+                await Amplify.Auth.signOut();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) {
+                  return InkaWelcome(title: 'Welcome');
+                }));
+              } catch (e) {
+                print('Error signing out: $e');
+              }
             },
             child: Text("Logout"),
             style: ElevatedButton.styleFrom(

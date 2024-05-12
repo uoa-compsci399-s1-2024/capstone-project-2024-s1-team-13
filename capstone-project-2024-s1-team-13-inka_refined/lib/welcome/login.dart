@@ -1,7 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
+//import 'package:amplify_core/amplify_core.dart';
 import 'package:inka_test/support/support_select_trainee.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
@@ -31,32 +31,20 @@ class _LoginState extends State<Login> {
     String password = _passwordController.text;
   }*/
 
-  void _logIn(context) async {
+  /*Future<void> getUserAttributes() async {
     try {
-      SignInResult result = await Amplify.Auth.signIn(
-        username: _usernameController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-      if (result.isSignedIn) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return SupportSelectTrainee(title: 'Select Trainee');
-        }));
-      } else {
-        setState(() {
-          _errorMessage = 'Invalid username or password';
-        });
+      AuthUser user = await Amplify.Auth.getCurrentUser();
+      List<AuthUserAttribute> attributes =
+          await Amplify.Auth.getUserAttributes(user: user);
+      // Now you can access the user attributes
+      for (AuthUserAttribute attribute in attributes) {
+        print(
+            'Attribute: ${attribute.userAttributeKey}, Value: ${attribute.value}');
       }
-    } catch (error) {
-      print('Error signing in: $error');
-      setState(() {
-        if (error is AuthException) {
-          _errorMessage = 'Error signing in: ${error.message}';
-        } else {
-          _errorMessage = 'Error signing in: $error';
-        }
-      });
+    } catch (e) {
+      print('Error getting user attributes: $e');
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +76,131 @@ class _LoginState extends State<Login> {
       ],
     ))));
   }
+
+  /*void _logIn(BuildContext context) async {
+    try {
+      print('step 1');
+      SignInResult result = await Amplify.Auth.signIn(
+        username: _usernameController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      print('Sign in result: $result'); // Check the result object
+      if (result.isSignedIn) {
+        print('step 2');
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          print('step 3');
+          return SupportSelectTrainee(title: 'Select Trainee');
+        }));
+        print('step 4');
+      } else {
+        print('step 5');
+        setState(() {
+          print('step 6');
+          _errorMessage = 'Invalid username or password';
+        });
+      }
+    } catch (error) {
+      print('Error signing in: $error');
+      setState(() {
+        if (error is AuthException) {
+          _errorMessage = 'Error signing in: ${error.message}';
+        } else {
+          _errorMessage = 'Error signing in: $error';
+        }
+      });
+    }
+  }*/
+  void _logIn(context) async {
+    try {
+      // Check if a user is already signed in
+      var authSession = await Amplify.Auth.fetchAuthSession();
+      if (authSession.isSignedIn) {
+        // If a user is signed in, sign them out first
+        await Amplify.Auth.signOut();
+      }
+
+      print('step 1');
+      SignInResult result = await Amplify.Auth.signIn(
+        username: _usernameController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      if (result.isSignedIn) {
+        print('step 2');
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          print('step 3');
+          return SupportSelectTrainee(title: 'Select Trainee');
+        }));
+        print('step 4');
+      } else if (result.nextStep.signInStep == 'confirmSignInWithNewPassword') {
+        // Handle confirmSignInWithNewPassword step
+        print('step 5');
+
+        setState(() {
+          print('step 6');
+
+          _errorMessage = 'Additional information required';
+        });
+
+        // Prompt the user to provide the required attributes (preferred username and name)
+        // and call confirmSignIn method to confirm the sign-in with the new password and additional attributes
+      } else {
+        print('step 5');
+        setState(() {
+          print('step 6');
+
+          _errorMessage = 'Invalid username or password';
+        });
+      }
+    } catch (error) {
+      print('Error signing in: $error');
+      setState(() {
+        if (error is AuthException) {
+          _errorMessage = 'Error signing in: ${error.message}';
+        } else {
+          _errorMessage = 'Error signing in: $error';
+        }
+      });
+    }
+  }
+
+  /*void _logIn(context) async {
+    try {
+      SignInResult result = await Amplify.Auth.signIn(
+        username: _usernameController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      if (result.isSignedIn) {
+        // Get user attributes to determine role
+        var user = await Amplify.Auth.getCurrentUser();
+        var attributes = user.attributes;
+        /*if (attributes['custom:role'] == 'admin') {
+          // Redirect to admin interface
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return AdminDashboard();
+          }));
+        } */
+        if (attributes['custom:role'] == 'support') {
+          // Redirect to support interface
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return SupportSelectTrainee(title: 'Select Trainee');
+          }));
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'Invalid username or password';
+        });
+      }
+    } catch (error) {
+      print('Error signing in: $error');
+      setState(() {
+        if (error is AuthException) {
+          _errorMessage = 'Error signing in: ${error.message}';
+        } else {
+          _errorMessage = 'Error signing in: $error';
+        }
+      });
+    }
+  }*/
 
   Widget _LoginTitle() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
