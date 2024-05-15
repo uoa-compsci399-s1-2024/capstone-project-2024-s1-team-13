@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/support_evaluate.dart';
-import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/support/support_notifications.dart';
 import 'package:inka_test/support/support_trainee_dashboard.dart';
 import 'package:inka_test/support/support_trainee_notes.dart';
@@ -24,7 +23,6 @@ class SupportTraineeProfile extends StatefulWidget {
   @override
   _SupportTraineeProfileState createState() => _SupportTraineeProfileState();
 }
-
 
 class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
   //late final Task task;

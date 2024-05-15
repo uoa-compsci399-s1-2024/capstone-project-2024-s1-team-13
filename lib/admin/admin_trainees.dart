@@ -8,7 +8,7 @@ import 'package:inka_test/admin/admin_notifications.dart';
 import 'package:inka_test/admin/admin_recipes.dart';
 import 'package:inka_test/admin/admin_tasks.dart';
 import 'package:inka_test/admin/admin_trainee_profile.dart';
-import 'package:inka_test/items/trainee_item.dart';
+import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/models/Trainee.dart';
 
 class AdminTrainees extends StatefulWidget {
@@ -20,12 +20,9 @@ class AdminTrainees extends StatefulWidget {
 }
 
 class _AdminTraineesState extends State<AdminTrainees> {
-
   late final String title;
   final TextEditingController _textController = TextEditingController();
   late List<Trainee> allTrainees = [];
-  
-  
 
   @override
   void initState() {
@@ -41,7 +38,6 @@ class _AdminTraineesState extends State<AdminTrainees> {
 
       setState(() {
         allTrainees = trainees;
-        
       });
     } catch (e) {
       print('Error fetching trainees: $e');
@@ -64,9 +60,7 @@ class _AdminTraineesState extends State<AdminTrainees> {
       safePrint('Query failed: $e');
       return [];
     }
-
   }
-
 
   Future<String> getDownloadUrl({
     required String key,
@@ -89,8 +83,6 @@ class _AdminTraineesState extends State<AdminTrainees> {
       rethrow;
     }
   }
-  
-  
 
   // Bottom Bar Navigation
   int _selectedIndex = 0;
@@ -121,7 +113,8 @@ class _AdminTraineesState extends State<AdminTrainees> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const AdminRecipesScreen(title: 'Recipes')));
+                builder: (context) =>
+                    const AdminRecipesScreen(title: 'Recipes')));
         break;
       default:
         break;
@@ -261,57 +254,52 @@ class _AdminTraineesState extends State<AdminTrainees> {
         ),
       );
 
-  // Trainee Card
-  // Trainee Card
 // Trainee Card
-Widget _TraineeCard(Trainee trainee) => Card(
-  margin: EdgeInsets.all(10),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-  elevation: 2,
-  color: Colors.white,
-  child: ListTile(
-    // Avatar containing image - set as leading for Card instance, needs fixing
-    leading: FutureBuilder<String>(
-      future: getDownloadUrl(
-        key: trainee.traineePhoto!,
-        accessLevel: StorageAccessLevel.guest,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircleAvatar(
-            radius: 60,
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasError) {
-          return CircleAvatar(
-            radius: 60,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.error),
-          );
-        }
-        return CircleAvatar(
-          radius: 60,
-          backgroundImage: NetworkImage(snapshot.data!),
-        );
-      },
-    ),
-    title: Padding(
-      padding: EdgeInsets.only(top: 100, bottom: 100),
-      child: Text(
-        '${trainee.firstName} ${trainee.lastName}',
-        style: const TextStyle(
-          fontFamily: "Lexend Exa",
-          fontSize: 40,
-          fontWeight: FontWeight.w500,
+  Widget _TraineeCard(Trainee trainee) => Card(
+        margin: EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        elevation: 2,
+        color: trainee.isWorking == true ? Colors.white : Colors.grey[400],
+        child: ListTile(
+          // Avatar containing image - set as leading for Card instance, needs fixing
+          leading: FutureBuilder<String>(
+            future: getDownloadUrl(
+              key: trainee.traineePhoto!,
+              accessLevel: StorageAccessLevel.guest,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircleAvatar(
+                  radius: 60,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasError) {
+                return CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.error),
+                );
+              }
+              return CircleAvatar(
+                radius: 60,
+                backgroundImage: NetworkImage(snapshot.data!),
+              );
+            },
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 100, bottom: 100),
+            child: Text(
+              '${trainee.firstName} ${trainee.lastName}',
+              style: TextStyle(
+                  fontFamily: "Lexend Exa",
+                  fontSize: 40,
+                  fontWeight: FontWeight.w500,
+                  color: trainee.isWorking == true
+                      ? Colors.black
+                      : Colors.grey[600]),
+            ),
+          ),
         ),
-      ),
-    ),
-  ),
-);
-
-
-
-  //Mock Data
-  
+      );
 }

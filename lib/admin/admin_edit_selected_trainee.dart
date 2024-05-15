@@ -5,7 +5,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/models/Trainee.dart';
 
 class AdminEditSelectedTrainee extends StatefulWidget {
@@ -19,7 +18,8 @@ class AdminEditSelectedTrainee extends StatefulWidget {
   final Trainee trainee;
 
   @override
-  AdminEditSelectedTraineeState createState() => AdminEditSelectedTraineeState();
+  AdminEditSelectedTraineeState createState() =>
+      AdminEditSelectedTraineeState();
 }
 
 class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
@@ -110,7 +110,8 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
     }
   }
 
-  Future<void> updateTrainee(String first, String last, String? imagePath) async {
+  Future<void> updateTrainee(
+      String first, String last, String? imagePath) async {
     final originalFirstName = widget.trainee.firstName;
     final originalLastName = widget.trainee.lastName;
 
@@ -161,7 +162,8 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
             },
             iconSize: 50,
             icon: const Icon(Icons.done_rounded),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
         ],
       ),
@@ -281,7 +283,8 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
             filled: true,
             fillColor: Colors.grey[300],
             hintText: widget.trainee.firstName,
@@ -313,7 +316,8 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
             filled: true,
             fillColor: Colors.grey[300],
             hintText: widget.trainee.lastName,

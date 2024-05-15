@@ -6,7 +6,6 @@ import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/support_settings.dart';
 import 'package:inka_test/support/support_trainee_dashboard.dart';
-import 'package:inka_test/items/trainee_item.dart';
 
 class SupportTrainees extends StatefulWidget {
   const SupportTrainees({
@@ -110,7 +109,6 @@ class _SupportTrainees extends State<SupportTrainees> {
                         MaterialPageRoute(
                             builder: (context) => SupportTraineeDashboard(
                                   trainee: allTrainees[index],
-
                                 )));
                   },
                   child: _TraineeCard(trainee),
@@ -177,49 +175,52 @@ class _SupportTrainees extends State<SupportTrainees> {
       rethrow;
     }
   }
+
   Widget _TraineeCard(Trainee trainee) => Card(
-  margin: EdgeInsets.all(10),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-  elevation: 2,
-  color: Colors.white,
-  child: ListTile(
-    // Avatar containing image - set as leading for Card instance, needs fixing
-    leading: FutureBuilder<String>(
-      future: getDownloadUrl(
-        key: trainee.traineePhoto!,
-        accessLevel: StorageAccessLevel.guest,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircleAvatar(
-            radius: 60,
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasError) {
-          return CircleAvatar(
-            radius: 60,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.error),
-          );
-        }
-        return CircleAvatar(
-          radius: 60,
-          backgroundImage: NetworkImage(snapshot.data!),
-        );
-      },
-    ),
-    title: Padding(
-      padding: EdgeInsets.only(top: 100, bottom: 100),
-      child: Text(
-        '${trainee.firstName} ${trainee.lastName}',
-        style: const TextStyle(
-          fontFamily: "Lexend Exa",
-          fontSize: 40,
-          fontWeight: FontWeight.w500,
+        margin: EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        elevation: 2,
+        color: trainee.isWorking == true ? Colors.white : Colors.grey[400],
+        child: ListTile(
+          // Avatar containing image - set as leading for Card instance, needs fixing
+          leading: FutureBuilder<String>(
+            future: getDownloadUrl(
+              key: trainee.traineePhoto!,
+              accessLevel: StorageAccessLevel.guest,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircleAvatar(
+                  radius: 60,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasError) {
+                return CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.error),
+                );
+              }
+              return CircleAvatar(
+                radius: 60,
+                backgroundImage: NetworkImage(snapshot.data!),
+              );
+            },
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 100, bottom: 100),
+            child: Text(
+              '${trainee.firstName} ${trainee.lastName}',
+              style: TextStyle(
+                  fontFamily: "Lexend Exa",
+                  fontSize: 40,
+                  fontWeight: FontWeight.w500,
+                  color: trainee.isWorking == true
+                      ? Colors.black
+                      : Colors.grey[600]),
+            ),
+          ),
         ),
-      ),
-    ),
-  ),
-);
+      );
 }

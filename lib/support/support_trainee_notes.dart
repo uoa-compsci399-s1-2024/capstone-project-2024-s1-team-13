@@ -10,9 +10,8 @@ import 'package:inka_test/items/note_item.dart';
 import '../models/TraineeNotes.dart';
 
 class SupportTraineeNotes extends StatefulWidget {
-  late final String title; 
+  late final String title;
   final Trainee trainee;
-
 
   SupportTraineeNotes({super.key, required this.title, required this.trainee});
 
@@ -25,16 +24,27 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
   final TextEditingController _searchController = TextEditingController();
   String generalNote = ''; // Placeholder for the latest trainee note text
   late List<TaskNotes> allTaskNotes = []; // List to store all task notes
-    late List<Trainee> allTrainees = [];
-    late Trainee selectedTrainee; 
+  late List<Trainee> allTrainees = [];
+  late Trainee selectedTrainee;
 
+  // To store all grouped tasks notes (grouped by name)
+  late Map<String, List<TaskNotes>> groupedTaskNotes;
 
+  late String selectedTask = groupedTaskNotes
+      .keys.first; // Variable to track the currently selected task
 
-    @override
+  // Function to update the selected task
+  void updateSelectedTask(String taskName) {
+    setState(() {
+      selectedTask = taskName;
+    });
+  }
+
+  @override
   void initState() {
     super.initState();
     title = widget.title;
-    
+
     fetchSelectedTrainee();
     fetchLatestTraineeNote(); // Call the function to fetch the latest trainee note
     fetchAllTaskNotes(); // Call the function to fetch all task notes
@@ -46,7 +56,8 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
           widget.trainee.id); // Query for the trainee by ID
 
       setState(() {
-              assert(trainee != null, 'Trainee is null after fetching'); // Add assertion
+        assert(
+            trainee != null, 'Trainee is null after fetching'); // Add assertion
 
         selectedTrainee = trainee!; // Store the selected trainee in the state
       });
@@ -73,7 +84,8 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
       return null;
     }
   }
-     // Function to fetch all trainees
+
+  // Function to fetch all trainees
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
@@ -81,7 +93,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
       setState(() {
         allTrainees = trainees;
         //final List<TraineeItem> traineesList = allTrainees.map((trainee) => TraineeItem.fromTrainee(trainee)).toList();
-
       });
     } catch (e) {
       print('Error fetching trainees: $e');
@@ -105,7 +116,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
       return [];
     }
   }
-
 
   // Function to fetch all task notes
   Future<void> fetchAllTaskNotes() async {
@@ -174,25 +184,27 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
 
   @override
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text(title),
-      leading: IconButton(
-        iconSize: 40,
-        icon: Icon(Icons.arrow_back_ios),
-        padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-        onPressed: () {
-          Navigator.pop(context);
-        }
-      ),
-      actions: [
-        Row(
-          children: [
+  Widget build(BuildContext context) {
+    // Group task notes by some criteria (e.g., task category)
+    groupedTaskNotes = groupTaskNotesByName(allTaskNotes);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        leading: IconButton(
+            iconSize: 40,
+            icon: Icon(Icons.arrow_back_ios),
+            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        actions: [
+          Row(children: [
             IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return SupportAddNotes(title: 'Add Note', trainee: selectedTrainee);
+                  return SupportAddNotes(
+                      title: 'Add Note', trainee: selectedTrainee);
                 }));
               },
               iconSize: 60,
@@ -202,49 +214,119 @@ Widget build(BuildContext context) {
             IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return SupportEditNotes(title: 'Edit Note', trainee: selectedTrainee,);
+                  return SupportEditNotes(
+                    title: 'Edit Note',
+                    trainee: selectedTrainee,
+                  );
                 }));
               },
               iconSize: 45,
               icon: Icon(Icons.edit_rounded),
               padding: EdgeInsets.only(right: 30.0, bottom: 10.0),
             )
-          ]
-        )
-      ],
-    ),
-    body: Center(
-      child: Column(
-        children: [
-          Padding(padding: EdgeInsets.all(25), child: _notesSearchBar(context)),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await _refreshData();
-              },
-              child: ListView.builder(
-                itemCount: allTaskNotes.length,
-                itemBuilder: (context, index) {
-                  final taskNote = allTaskNotes[index];
-                  return _NoteCard(
-                    NoteItem(taskNote.taskTitle ?? '', taskNote.taskDesc ?? ''),
-                  );
-                },
-              ),
-            ),
-          ),
+          ])
         ],
       ),
-    ),
-  );
-}
+      body: Center(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(25),
+              child: _notesSearchBar(context),
+            ),
+            DropdownButton<String>(
+              value: selectedTask,
+              hint: Text('Select Task'), // Displayed when no task is selected
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  updateSelectedTask(newValue);
+                }
+              },
+              items: groupedTaskNotes.keys
+                  .map<DropdownMenuItem<String>>((String taskName) {
+                return DropdownMenuItem<String>(
+                  value: taskName,
+                  child: Text(taskName),
+                );
+              }).toList(),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await _refreshData();
+                },
+                child: ListView.builder(
+                  itemCount: groupedTaskNotes.length,
+                  itemBuilder: (context, index) {
+                    // Check if the task name matches the selected task
+                    if (groupedTaskNotes.keys.elementAt(index) ==
+                        selectedTask) {
+                      // Extract task name and task notes list from the grouped data
+                      String taskName = groupedTaskNotes.keys.elementAt(index);
+                      List<TaskNotes> taskNameTaskNotes =
+                          groupedTaskNotes.values.elementAt(index);
 
-Future<void> _refreshData() async {
-  await fetchLatestTraineeNote();
-  await fetchAllTaskNotes();
-}
+                      // Display task name as a header
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            child: Text(
+                              taskName,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          // Display task notes for the current task name
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: taskNameTaskNotes.length,
+                            itemBuilder: (context, index) {
+                              return _NoteCard(
+                                NoteItem(
+                                    taskNameTaskNotes[index].taskTitle ?? '',
+                                    taskNameTaskNotes[index].taskDesc ?? ''),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    } else {
+                      // Return an empty container for tasks that are not selected
+                      return Container();
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
+  // Group task notes by task name/title
+  Map<String, List<TaskNotes>> groupTaskNotesByName(List<TaskNotes> taskNotes) {
+    Map<String, List<TaskNotes>> groupedMap = {};
+    for (TaskNotes note in taskNotes) {
+      String taskName = note.taskTitle ?? 'Untitled'; // Default task name
+      if (!groupedMap.containsKey(taskName)) {
+        groupedMap[taskName] = [];
+      }
+      groupedMap[taskName]!.add(note);
+    }
+    return groupedMap;
+  }
 
+  Future<void> _refreshData() async {
+    await fetchLatestTraineeNote();
+    await fetchAllTaskNotes();
+  }
 
   // Search Bar
   Widget _notesSearchBar(context) => TextField(
@@ -304,16 +386,4 @@ Future<void> _refreshData() async {
                       fontSize: 25,
                       fontWeight: FontWeight.w500,
                       color: Colors.pink[900])))));
-
-// Mock Data
-  final List<NoteItem> mockNotes = [
-    NoteItem('General',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Dishes Evaluation',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Closing Evaluation',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Toilet Breaks',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-  ];
 }
