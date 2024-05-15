@@ -396,10 +396,10 @@ Widget _ProgressCard(Task task, CurrTask? currTask) {
 
 // Mock Data
 
-  final List<ProgressItem> mockProgress = [
-    ProgressItem('Closing Evaluation', 0.45, 3, 'Good',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'),
-    ProgressItem('Dishes Evaluation', 0.7, 2, 'Very Good',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'),
-  ];
+  //final List<ProgressItem> mockProgress = [
+    //ProgressItem('Closing Evaluation', 0.45, 3, 'Good',
+        //'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'),
+    //ProgressItem('Dishes Evaluation', 0.7, 2, 'Very Good',
+        //'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'),
+  //];
 }

@@ -25,6 +25,7 @@ class SupportTraineeProfile extends StatefulWidget {
   _SupportTraineeProfileState createState() => _SupportTraineeProfileState();
 }
 
+
 class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
   //late final Task task;
 
@@ -41,8 +42,8 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SupportTraineeDashboard(trainee: widget.trainee, task: widget.task)));
+                builder: (context) => SupportTraineeDashboard(
+                    trainee: widget.trainee, task: widget.task)));
         break;
       case 1:
         // Navigate to evaluate screen
@@ -134,42 +135,42 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
 
   Widget _profileDetails() => Row(
         children: [
-    FutureBuilder<String>(
-      future: getDownloadUrl(
-        key: widget.trainee.traineePhoto!,
-        accessLevel: StorageAccessLevel.guest,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircleAvatar(
-            radius: 100,
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasError) {
-          return CircleAvatar(
-            radius: 100,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.error),
-          );
-        }
-        return CircleAvatar(
-          radius: 100,
-          backgroundImage: NetworkImage(snapshot.data!),
-        );
-      },
-    ),
-    const SizedBox(width: 50),
-    Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
-      maxLines: 2,
-      style: const TextStyle(
-        fontFamily: 'Lexend Exa',
-        fontSize: 45,
-        fontWeight: FontWeight.w500))
-  ],
+          FutureBuilder<String>(
+            future: getDownloadUrl(
+              key: widget.trainee.traineePhoto!,
+              accessLevel: StorageAccessLevel.guest,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircleAvatar(
+                  radius: 100,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasError) {
+                return CircleAvatar(
+                  radius: 100,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.error),
+                );
+              }
+              return CircleAvatar(
+                radius: 100,
+                backgroundImage: NetworkImage(snapshot.data!),
+              );
+            },
+          ),
+          const SizedBox(width: 50),
+          Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
+              maxLines: 2,
+              style: const TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 45,
+                  fontWeight: FontWeight.w500))
+        ],
       );
 
-   Future<String> getDownloadUrl({
+  Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
   }) async {
@@ -190,14 +191,16 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
       rethrow;
     }
   }
-  
-  
 
   // Progress Button
   Widget _progressButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return SupportTraineeProgress(title: 'Progress', trainee: widget.trainee,);
+            return SupportTraineeProgress(
+              title: 'Progress',
+              trainee: widget.trainee,
+              task: widget.task,
+            );
           }));
         },
         child: Container(

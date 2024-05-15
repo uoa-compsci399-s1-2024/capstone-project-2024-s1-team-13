@@ -47,18 +47,29 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     selectedTask = widget.task; // Provide a default task if widget.task is null
     timesEvaluated = 0;
 
-    fetchCurrentTask(); // Call the function to fetch curr task
+    // fetchCurrentTask(); // Call the function to fetch curr task
   }
 
-  Future<void> updateCurrentTask(List<CurrTask> currentTask,
-      String newTaskTitle, List<String>? newTaskSteps, String newTraineeID, String? newTaskProgress, String? newCoverImage) async {
+  Future<void> updateCurrentTask(
+      String newTaskTitle,
+      List<String>? newTaskSteps,
+      String newTraineeID,
+      String? newTaskProgress,
+      String? newCoverImage, 
+      List<Sess>? newSessionList) async {
     try {
-      if (currentTask.isEmpty) {
-        throw Exception('No current task found');
+      if (selectedTask == null) {
+        throw Exception('No selected task found');
       }
 
-      final updatedTask = currentTask.last
-          .copyWith(currTaskName: newTaskTitle, taskSteps: newTaskSteps, traineeID: newTraineeID, taskProgress: newTaskProgress, taskCoverImage: newCoverImage);
+      final updatedTask = selectedTask.copyWith(
+        taskTitle: newTaskTitle,
+        taskSteps: newTaskSteps,
+        traineeID: newTraineeID,
+        sessionList: newSessionList,
+        taskProgress: newTaskProgress,
+        taskCoverImage: newCoverImage,
+      );
 
       final request = ModelMutations.update(updatedTask);
       final response = await Amplify.API.mutate(request: request).response;
@@ -69,20 +80,22 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       }
 
       // Print the response for debugging purposes
-      safePrint("Current Task updated!");
+      safePrint("Selected Task updated!");
 
       safePrint('Update response: $response');
     } catch (e) {
       // Handle any errors
-      safePrint('Error updating current task: $e');
+      safePrint('Error updating selected task: $e');
     }
   }
+
 
   Future<void> fetchSelectedTask() async {
     try {
       final task = await queryTaskByID(widget.task.id);
       if (task != null) {
         setState(() {
+          safePrint("TASK");
           selectedTask = task;
         });
       } else {
@@ -193,8 +206,8 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SupportTraineeDashboard(trainee: widget.trainee, task: widget.task)));
+                builder: (context) => SupportTraineeDashboard(
+                    trainee: widget.trainee, task: selectedTask)));
         break;
       case 1:
         // Navigate to evaluate screen
@@ -204,7 +217,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
                 builder: (context) => SupportEvaluate(
                     title: "Evaluate",
                     trainee: widget.trainee,
-                    task: widget.task)));
+                    task: selectedTask)));
         setState(() {
           // Update timesEvaluated with the value received from EvaluateTask
           timesEvaluated = recievedTimesEvaluated ?? 0;
@@ -288,16 +301,23 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
                   onTap: () async {
                     setState(() {
                       selectedTask = task; // Set the selected task
-                      //safePrint(selectedTask);
+                      safePrint(selectedTask);
                     });
                     await updateCurrentTask(
-                        currentTasks, task.taskTitle ?? '', task.taskStep, widget.trainee.id, currentTasks.last.taskProgress, task.taskCoverImage);
+                        //updating task attributes here
+                        selectedTask.taskTitle ?? '',
+                        selectedTask.taskStep,
+                        widget.trainee.id,
+                        selectedTask.taskProgress,
+                        selectedTask.taskCoverImage, selectedTask.sessionList);
+
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => EvaluateTask(
-                                task: selectedTask,
-                                trainee: widget.trainee,
+                                  task: selectedTask,
+                                  trainee: widget.trainee,
                                 )));
                   },
                   child: _EvalCard(task),
@@ -341,86 +361,87 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
         ),
       );
 
-
   Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
-    }) async {
-      try {
-        final result = await Amplify.Storage.getUrl(
-          key: key,
-          options: const StorageGetUrlOptions(
-            accessLevel: StorageAccessLevel.guest,
-            pluginOptions: S3GetUrlPluginOptions(
-              validateObjectExistence: true,
-              expiresIn: Duration(days: 7),
-            ),
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
           ),
-        ).result;
-        return result.url.toString();
-      } on StorageException catch (e) {
-        safePrint('Could not get a downloadable URL: ${e.message}');
-        rethrow;
-      }
+        ),
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
   }
 
-
-Widget _EvalCard(Task task) => Card(
-  margin: EdgeInsets.all(10),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-  elevation: 2,
-  //color: Color.fromARGB(255, 196, 155, 175),
-  child: Stack(
-    children: [
-      Positioned.fill(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: task.taskCoverImage != null
-              ? FutureBuilder<String>(
-                  future: getDownloadUrl(
-                      key: task.taskCoverImage!,
-                      accessLevel: StorageAccessLevel.guest),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else {
-                      final imageUrl = snapshot.data!;
-                      return CachedNetworkImage(
-  imageUrl: imageUrl,
-  fit: BoxFit.cover,
-  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-  errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-);
-                    }
-                  },
-                )
-              : Image.asset(
-                  'assets/images/task_placeholder.jpg',
-                  fit: BoxFit.cover,
-                ),
-        ),
-      ),
-      ListTile(
-        title: Padding(
-          padding: EdgeInsets.only(top: 100, bottom: 100),
-          child: Text(
-            '${task.taskTitle}',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 50,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
+  Widget _EvalCard(Task task) => Card(
+        margin: EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        elevation: 2,
+        //color: Color.fromARGB(255, 196, 155, 175),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: task.taskCoverImage != null
+                    ? FutureBuilder<String>(
+                        future: getDownloadUrl(
+                            key: task.taskCoverImage!,
+                            accessLevel: StorageAccessLevel.guest),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            final imageUrl = snapshot.data!;
+                            return CachedNetworkImage(
+                              imageUrl: imageUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Center(child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) =>
+                                  Center(child: Icon(Icons.error)),
+                            );
+                          }
+                        },
+                      )
+                    : Image.asset(
+                        'assets/images/task_placeholder.jpg',
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
-          ),
+            ListTile(
+              title: Padding(
+                padding: EdgeInsets.only(top: 100, bottom: 100),
+                child: Text(
+                  '${task.taskTitle}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: "Lexend Exa",
+                    fontSize: 50,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-    ],
-  ),
-);
-
+      );
 
   final List<EvaluateItem> mockEvals = [
     EvaluateItem(

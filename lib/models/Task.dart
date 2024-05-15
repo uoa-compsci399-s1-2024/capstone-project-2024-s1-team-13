@@ -39,6 +39,10 @@ class Task extends amplify_core.Model {
   final String? _taskPassed;
   final String? _taskFeeling;
   final int? _timesEvaluated;
+  final String? _traineeID;
+  final int? _checkedStepsCount;
+  final List<Sess>? _sessionList;
+  final String? _judgementCall;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -108,6 +112,22 @@ class Task extends amplify_core.Model {
     return _timesEvaluated;
   }
   
+  String? get traineeID {
+    return _traineeID;
+  }
+  
+  int? get checkedStepsCount {
+    return _checkedStepsCount;
+  }
+  
+  List<Sess>? get sessionList {
+    return _sessionList;
+  }
+  
+  String? get judgementCall {
+    return _judgementCall;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -116,9 +136,9 @@ class Task extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Task._internal({required this.id, taskTitle, taskStep, required adminID, taskStepImage, taskCoverImage, taskTaskNotes, taskSteps, taskProgress, taskPassed, taskFeeling, timesEvaluated, createdAt, updatedAt}): _taskTitle = taskTitle, _taskStep = taskStep, _adminID = adminID, _taskStepImage = taskStepImage, _taskCoverImage = taskCoverImage, _taskTaskNotes = taskTaskNotes, _taskSteps = taskSteps, _taskProgress = taskProgress, _taskPassed = taskPassed, _taskFeeling = taskFeeling, _timesEvaluated = timesEvaluated, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Task._internal({required this.id, taskTitle, taskStep, required adminID, taskStepImage, taskCoverImage, taskTaskNotes, taskSteps, taskProgress, taskPassed, taskFeeling, timesEvaluated, traineeID, checkedStepsCount, sessionList, judgementCall, createdAt, updatedAt}): _taskTitle = taskTitle, _taskStep = taskStep, _adminID = adminID, _taskStepImage = taskStepImage, _taskCoverImage = taskCoverImage, _taskTaskNotes = taskTaskNotes, _taskSteps = taskSteps, _taskProgress = taskProgress, _taskPassed = taskPassed, _taskFeeling = taskFeeling, _timesEvaluated = timesEvaluated, _traineeID = traineeID, _checkedStepsCount = checkedStepsCount, _sessionList = sessionList, _judgementCall = judgementCall, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Task({String? id, String? taskTitle, List<String>? taskStep, required String adminID, List<String>? taskStepImage, String? taskCoverImage, List<TaskNotes>? taskTaskNotes, List<String>? taskSteps, String? taskProgress, String? taskPassed, String? taskFeeling, int? timesEvaluated}) {
+  factory Task({String? id, String? taskTitle, List<String>? taskStep, required String adminID, List<String>? taskStepImage, String? taskCoverImage, List<TaskNotes>? taskTaskNotes, List<String>? taskSteps, String? taskProgress, String? taskPassed, String? taskFeeling, int? timesEvaluated, String? traineeID, int? checkedStepsCount, List<Sess>? sessionList, String? judgementCall}) {
     return Task._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       taskTitle: taskTitle,
@@ -131,7 +151,11 @@ class Task extends amplify_core.Model {
       taskProgress: taskProgress,
       taskPassed: taskPassed,
       taskFeeling: taskFeeling,
-      timesEvaluated: timesEvaluated);
+      timesEvaluated: timesEvaluated,
+      traineeID: traineeID,
+      checkedStepsCount: checkedStepsCount,
+      sessionList: sessionList != null ? List<Sess>.unmodifiable(sessionList) : sessionList,
+      judgementCall: judgementCall);
   }
   
   bool equals(Object other) {
@@ -153,7 +177,11 @@ class Task extends amplify_core.Model {
       _taskProgress == other._taskProgress &&
       _taskPassed == other._taskPassed &&
       _taskFeeling == other._taskFeeling &&
-      _timesEvaluated == other._timesEvaluated;
+      _timesEvaluated == other._timesEvaluated &&
+      _traineeID == other._traineeID &&
+      _checkedStepsCount == other._checkedStepsCount &&
+      DeepCollectionEquality().equals(_sessionList, other._sessionList) &&
+      _judgementCall == other._judgementCall;
   }
   
   @override
@@ -175,6 +203,10 @@ class Task extends amplify_core.Model {
     buffer.write("taskPassed=" + "$_taskPassed" + ", ");
     buffer.write("taskFeeling=" + "$_taskFeeling" + ", ");
     buffer.write("timesEvaluated=" + (_timesEvaluated != null ? _timesEvaluated!.toString() : "null") + ", ");
+    buffer.write("traineeID=" + "$_traineeID" + ", ");
+    buffer.write("checkedStepsCount=" + (_checkedStepsCount != null ? _checkedStepsCount!.toString() : "null") + ", ");
+    buffer.write("sessionList=" + (_sessionList != null ? _sessionList!.toString() : "null") + ", ");
+    buffer.write("judgementCall=" + "$_judgementCall" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -182,7 +214,7 @@ class Task extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Task copyWith({String? taskTitle, List<String>? taskStep, String? adminID, List<String>? taskStepImage, String? taskCoverImage, List<TaskNotes>? taskTaskNotes, List<String>? taskSteps, String? taskProgress, String? taskPassed, String? taskFeeling, int? timesEvaluated}) {
+  Task copyWith({String? taskTitle, List<String>? taskStep, String? adminID, List<String>? taskStepImage, String? taskCoverImage, List<TaskNotes>? taskTaskNotes, List<String>? taskSteps, String? taskProgress, String? taskPassed, String? taskFeeling, int? timesEvaluated, String? traineeID, int? checkedStepsCount, List<Sess>? sessionList, String? judgementCall}) {
     return Task._internal(
       id: id,
       taskTitle: taskTitle ?? this.taskTitle,
@@ -195,7 +227,11 @@ class Task extends amplify_core.Model {
       taskProgress: taskProgress ?? this.taskProgress,
       taskPassed: taskPassed ?? this.taskPassed,
       taskFeeling: taskFeeling ?? this.taskFeeling,
-      timesEvaluated: timesEvaluated ?? this.timesEvaluated);
+      timesEvaluated: timesEvaluated ?? this.timesEvaluated,
+      traineeID: traineeID ?? this.traineeID,
+      checkedStepsCount: checkedStepsCount ?? this.checkedStepsCount,
+      sessionList: sessionList ?? this.sessionList,
+      judgementCall: judgementCall ?? this.judgementCall);
   }
   
   Task copyWithModelFieldValues({
@@ -209,7 +245,11 @@ class Task extends amplify_core.Model {
     ModelFieldValue<String?>? taskProgress,
     ModelFieldValue<String?>? taskPassed,
     ModelFieldValue<String?>? taskFeeling,
-    ModelFieldValue<int?>? timesEvaluated
+    ModelFieldValue<int?>? timesEvaluated,
+    ModelFieldValue<String?>? traineeID,
+    ModelFieldValue<int?>? checkedStepsCount,
+    ModelFieldValue<List<Sess>?>? sessionList,
+    ModelFieldValue<String?>? judgementCall
   }) {
     return Task._internal(
       id: id,
@@ -223,7 +263,11 @@ class Task extends amplify_core.Model {
       taskProgress: taskProgress == null ? this.taskProgress : taskProgress.value,
       taskPassed: taskPassed == null ? this.taskPassed : taskPassed.value,
       taskFeeling: taskFeeling == null ? this.taskFeeling : taskFeeling.value,
-      timesEvaluated: timesEvaluated == null ? this.timesEvaluated : timesEvaluated.value
+      timesEvaluated: timesEvaluated == null ? this.timesEvaluated : timesEvaluated.value,
+      traineeID: traineeID == null ? this.traineeID : traineeID.value,
+      checkedStepsCount: checkedStepsCount == null ? this.checkedStepsCount : checkedStepsCount.value,
+      sessionList: sessionList == null ? this.sessionList : sessionList.value,
+      judgementCall: judgementCall == null ? this.judgementCall : judgementCall.value
     );
   }
   
@@ -245,11 +289,20 @@ class Task extends amplify_core.Model {
       _taskPassed = json['taskPassed'],
       _taskFeeling = json['taskFeeling'],
       _timesEvaluated = (json['timesEvaluated'] as num?)?.toInt(),
+      _traineeID = json['traineeID'],
+      _checkedStepsCount = (json['checkedStepsCount'] as num?)?.toInt(),
+      _sessionList = json['sessionList'] is List
+        ? (json['sessionList'] as List)
+          .where((e) => e != null)
+          .map((e) => Sess.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .toList()
+        : null,
+      _judgementCall = json['judgementCall'],
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'taskTitle': _taskTitle, 'taskStep': _taskStep, 'adminID': _adminID, 'taskStepImage': _taskStepImage, 'taskCoverImage': _taskCoverImage, 'taskTaskNotes': _taskTaskNotes?.map((TaskNotes? e) => e?.toJson()).toList(), 'taskSteps': _taskSteps, 'taskProgress': _taskProgress, 'taskPassed': _taskPassed, 'taskFeeling': _taskFeeling, 'timesEvaluated': _timesEvaluated, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'taskTitle': _taskTitle, 'taskStep': _taskStep, 'adminID': _adminID, 'taskStepImage': _taskStepImage, 'taskCoverImage': _taskCoverImage, 'taskTaskNotes': _taskTaskNotes?.map((TaskNotes? e) => e?.toJson()).toList(), 'taskSteps': _taskSteps, 'taskProgress': _taskProgress, 'taskPassed': _taskPassed, 'taskFeeling': _taskFeeling, 'timesEvaluated': _timesEvaluated, 'traineeID': _traineeID, 'checkedStepsCount': _checkedStepsCount, 'sessionList': _sessionList?.map((Sess? e) => e?.toJson()).toList(), 'judgementCall': _judgementCall, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -265,6 +318,10 @@ class Task extends amplify_core.Model {
     'taskPassed': _taskPassed,
     'taskFeeling': _taskFeeling,
     'timesEvaluated': _timesEvaluated,
+    'traineeID': _traineeID,
+    'checkedStepsCount': _checkedStepsCount,
+    'sessionList': _sessionList,
+    'judgementCall': _judgementCall,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -284,6 +341,10 @@ class Task extends amplify_core.Model {
   static final TASKPASSED = amplify_core.QueryField(fieldName: "taskPassed");
   static final TASKFEELING = amplify_core.QueryField(fieldName: "taskFeeling");
   static final TIMESEVALUATED = amplify_core.QueryField(fieldName: "timesEvaluated");
+  static final TRAINEEID = amplify_core.QueryField(fieldName: "traineeID");
+  static final CHECKEDSTEPSCOUNT = amplify_core.QueryField(fieldName: "checkedStepsCount");
+  static final SESSIONLIST = amplify_core.QueryField(fieldName: "sessionList");
+  static final JUDGEMENTCALL = amplify_core.QueryField(fieldName: "judgementCall");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Task";
     modelSchemaDefinition.pluralName = "Tasks";
@@ -373,6 +434,31 @@ class Task extends amplify_core.Model {
       key: Task.TIMESEVALUATED,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Task.TRAINEEID,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Task.CHECKEDSTEPSCOUNT,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
+      fieldName: 'sessionList',
+      isRequired: false,
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embeddedCollection, ofCustomTypeName: 'Sess')
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Task.JUDGEMENTCALL,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

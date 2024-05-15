@@ -95,27 +95,34 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
     }
   }
 
-  
-
   Future<void> createTrainee() async {
     try {
-      final aTrainee = Trainee(
-        traineePhoto: uploadedImageKey,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
-        adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
-      );
+      //CHECK VALIDATION
+      if (_firstNameController.text.isEmpty != true && _lastNameController.text.isEmpty != true && uploadedImageKey != null){
+        final aTrainee = Trainee(
+          traineePhoto: uploadedImageKey,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
+          adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
+          isWorking: true, //default value
+        );
 
-      final req = ModelMutations.create(aTrainee);
-      final res = await Amplify.API.mutate(request: req).response;
+        final req = ModelMutations.create(aTrainee);
+        final res = await Amplify.API.mutate(request: req).response;
 
-      final createdTrainee = res.data;
-      if (createdTrainee == null) {
-        print('errors: ${res.errors}');
-        return;
+        final createdTrainee = res.data;
+        if (createdTrainee == null) {
+          print('errors: ${res.errors}');
+          return;
+        }
+        print('Mutation result: ${createdTrainee.firstName}');
+      } else {
+        //can also make a different way to let the user know that you cannot have empty information when creating a trainee
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid information!')),
+        );
       }
-      print('Mutation result: ${createdTrainee.firstName}');
     } on ApiException catch (e) {
       print('Mutation Failed: $e');
     }

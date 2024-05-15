@@ -1,3 +1,28 @@
+type TaskFeeling @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  traineeID: String
+  taskID: String
+  feeling: String
+}
+
+type JudgementCall @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  traineeID: String
+  taskID: String
+  call: String
+}
+
+type Session @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  traineeID: String
+  taskID: String
+  sessionList: [Sess]
+}
+
+type Sess {
+  aSess: [String]
+}
+
 type CurrTask @model @auth(rules: [{allow: public}]) {
   id: ID!
   taskFeeling: String
@@ -13,7 +38,8 @@ type CurrTask @model @auth(rules: [{allow: public}]) {
   traineeCurrTask: Trainee @belongsTo
   taskStepImage: [String]
   taskCoverImage: String
-  traineeID: ID
+  traineeID: String
+  sessionList: [Sess]
 }
 
 type Notifications @model @auth(rules: [{allow: public}]) {
@@ -66,6 +92,10 @@ type Task @model @auth(rules: [{allow: public}]) {
   taskPassed: String
   taskFeeling: String
   timesEvaluated: Int
+  traineeID: String
+  checkedStepsCount: Int
+  sessionList: [Sess]
+  judgementCall: String
 }
 
 type Admin @model @auth(rules: [{allow: public}]) {
@@ -101,5 +131,7 @@ type Trainee @model @auth(rules: [{allow: public}]) {
   adminID: ID! @index(name: "byAdmin")
   TrTaskNotes: [TaskNotes] @hasMany(indexName: "byTrainee", fields: ["id"])
   traineeNote: String
+  isWorking: Boolean
+  traineeSessionList: [Sess]
 }
  

@@ -21,14 +21,11 @@ class AdminEditTrainees extends StatefulWidget {
 
 class _AdminEditTraineesState extends State<AdminEditTrainees> {
 
-  
-
   late final String title;
   final TextEditingController _textController = TextEditingController();
   late List<Trainee> allTrainees = [];
+  late List<Trainee> allArchivedTrainees = [];
   
-  
-
   @override
   void initState() {
     super.initState();
@@ -36,24 +33,26 @@ class _AdminEditTraineesState extends State<AdminEditTrainees> {
     fetchAllTrainees();
   }
 
-  // Function to fetch all trainees
+  //FETCHES ONLY CURRENT WORKING TRAINEES
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
 
       setState(() {
         allTrainees = trainees;
-        
       });
     } catch (e) {
       print('Error fetching trainees: $e');
     }
   }
 
-  // Function to query all task notes
+  //RETRIVES ONLY CURRENT WORKING TRAINEES
   Future<List<Trainee>> queryTrainees() async {
     try {
-      final request = ModelQueries.list(Trainee.classType);
+      final request = ModelQueries.list(
+        Trainee.classType,
+        where: Trainee.ISWORKING.eq(true)
+      );
       final response = await Amplify.API.query(request: request).response;
 
       final trainee = response.data?.items;
@@ -66,27 +65,53 @@ class _AdminEditTraineesState extends State<AdminEditTrainees> {
       safePrint('Query failed: $e');
       return [];
     }
-
   }
 
-
-  Future<void> deleteTrainee(String traineeId) async {
+  //FETCHES ONLY ARCHIVED TRAINEES
+  Future<void> fetchArchivedTrainees() async {
     try {
-        final req = ModelMutations.deleteById(
-        Trainee.classType,
-        TaskModelIdentifier(id: traineeId),
-      );
-
-      final res = await Amplify.API.mutate(request: req).response;
-      safePrint('The trainee has been deleted!: $res');
+      final trainees = await queryArchivedTrainees();
 
       setState(() {
-        allTrainees.removeWhere((trainee) => trainee.id == traineeId);
+        allArchivedTrainees = trainees;
       });
     } catch (e) {
-      safePrint('Error deleting trainee: $e');
+      print('Error fetching trainees: $e');
     }
   }
+
+  //RETRIVES ONLY ARCHIVED TRAINEES
+  Future<List<Trainee>> queryArchivedTrainees() async {
+    try {
+      final request = ModelQueries.list(
+        Trainee.classType,
+        where: Trainee.ISWORKING.eq(false)
+      );
+      final response = await Amplify.API.query(request: request).response;
+
+      final trainee = response.data?.items;
+      if (trainee == null) {
+        safePrint('errors: ${response.errors}');
+        return [];
+      }
+      return trainee.cast<Trainee>();
+    } catch (e) {
+      safePrint('Query failed: $e');
+      return [];
+    }
+  }
+
+  Future<void> archiveTrainee(Trainee currTrainee) async {
+    final updatedTrainee = currTrainee.copyWith(
+      isWorking: false
+    );   
+
+    final req = ModelMutations.update(updatedTrainee);
+    final res = await Amplify.API.mutate(request: req).response;
+    safePrint('Response: $res');
+  }
+
+
   @override
   Widget build(BuildContext context) {
   return Scaffold(
@@ -251,7 +276,7 @@ Widget _TraineeCard(Trainee trainee) => Card(
     },
     trailing: IconButton(
             onPressed: () =>
-                deleteTraineeDialog(context, allTrainees.indexOf(trainee), trainee.id),
+                deleteTraineeDialog(context, allTrainees.indexOf(trainee), trainee),
             icon: const Icon(Icons.remove_circle_rounded),
             iconSize: 50,
             color: Colors.red[600],
@@ -282,8 +307,7 @@ Widget _TraineeCard(Trainee trainee) => Card(
   ];
 
   // Mock Functionality
-  //Delete selected trainee - pending backend functionality
-  void deleteTraineeDialog(BuildContext context, index, String traineeId) {
+  void deleteTraineeDialog(BuildContext context, index, Trainee currTrainee) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -294,7 +318,7 @@ Widget _TraineeCard(Trainee trainee) => Card(
           title: Padding(
               padding: const EdgeInsets.all(30),
               child: Text(
-                  'Remove ${allTrainees[index].firstName} and their details?', // Warning: This works, but throws a NoSuchMethod Error for some reason?
+                  'Archive ${allTrainees[index].firstName} and their details?', // Warning: This works, but throws a NoSuchMethod Error for some reason?
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontFamily: 'Lexend Exa',
@@ -335,7 +359,7 @@ Widget _TraineeCard(Trainee trainee) => Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50))),
                   onPressed: () {
-                    deleteTrainee(traineeId);
+                    archiveTrainee(currTrainee);
                     Navigator.of(context).pop(); // Close the dialog
                   },
                   child: const Text("YES"))

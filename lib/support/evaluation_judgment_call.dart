@@ -1,94 +1,107 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:inka_test/models/CurrTask.dart';
+import 'package:flutter/widgets.dart';
+import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/models/Task.dart';
-import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/evaluation_notes.dart';
 import 'package:inka_test/support/support_items/evaluate_item.dart';
 import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/support/support_settings.dart';
 
 class EvaluationJudgmentCall extends StatefulWidget {
-   EvaluationJudgmentCall(
-      {Key? key, required this.task, required this.trainee, this.currentTasks})
+  const EvaluationJudgmentCall(
+      {Key? key, required this.trainee, this.task})
       : super(key: key);
-  //final EvaluateItem evaluation;
-  final Task task;
   final Trainee trainee;
-  List<CurrTask>? currentTasks = [];
-
-
-
-  @override
+  final Task? task;
+  
+    @override
   _EvaluationJudgmentCall createState() => _EvaluationJudgmentCall();
 }
 
 class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
-  List<CurrTask> currentTasks = [];
+  late Task selectedTask;
 
-  @override
-  void initState() {
+ void initState() {
     super.initState();
-    fetchCurrentTask(); // Call the function to fetch curr task
+    selectedTask = widget.task!; // Provide a default task if widget.task is null
+    fetchSelectedTask();
   }
 
-  Future<List<CurrTask>> queryCurrTask() async {
+  Future<void> fetchSelectedTask() async {
     try {
-      final request = ModelQueries.list(CurrTask.classType);
-      final response = await Amplify.API.query(request: request).response;
+      final task = await querySelectedTask(widget.task!.id, widget.trainee.id);
+     
 
-      final currTask = response.data?.items;
-      if (currTask == null) {
-        safePrint('errors: ${response.errors}');
-        return const [];
+      if (task != null) {
+        setState(() {
+          selectedTask = task;
+        });
+      } else {
+        safePrint('Selected task not found');
       }
-      return currTask.cast<CurrTask>();
-    } on ApiException catch (e) {
-      safePrint('Query failed: $e');
-      return const [];
-    }
-  }
-
-  // Function to fetch the current task
-  Future<void> fetchCurrentTask() async {
-    try {
-      final currentTask = await queryCurrTask();
-
-      setState(() {
-        currentTasks = currentTask;
-        //safePrint(CurrentTasks);
-      });
     } catch (e) {
-      print('Error fetching current task: $e');
+      safePrint('Error fetching selected task: $e');
     }
   }
 
-  Future<void> updateTaskProgress(
-      CurrTask currentTask, String newTaskProgress, String newTraineeID) async {
-    final updatedTask = currentTask.copyWith(taskProgress: newTaskProgress, traineeID: newTraineeID);
+  
 
-    final request = ModelMutations.update(updatedTask);
+  Future<Task?> querySelectedTask(String taskID, String traineeID) async {
+  try {
+    final request = ModelQueries.list(Task.classType,
+        where: Task.TRAINEEID.eq(traineeID) & Task.ID.eq(taskID));
+    final response = await Amplify.API.query(request: request).response;
+
+    final tasks = response.data?.items;
+    if (tasks == null || tasks.isEmpty) {
+      safePrint('Task not found');
+      return null;
+    }
+
+    // Since you're querying by ID, you expect only one task to match
+    return tasks[0];
+  } on ApiException catch (e) {
+    safePrint('Query failed: $e');
+    return null;
+  }
+}
+
+
+    Future<void> updateTaskProgress(String newJudgementCall, String newTraineeID) async {
+  try {
+    // Create a new JudgementCall object
+    final judgementCall = JudgementCall(
+      taskID: selectedTask.id,
+      traineeID: newTraineeID,
+      call: newJudgementCall,
+    );
+
+    // Use Amplify to save the judgement call to the database
+    final request = ModelMutations.create(judgementCall);
     final response = await Amplify.API.mutate(request: request).response;
 
     // Check for errors in the mutation response
-
     if (response.errors.isNotEmpty) {
       throw Exception('Failed to update task progress');
     }
 
     // Print the response for debugging purposes
-    safePrint("Current Task updated!");
+    safePrint("Judgement call updated!");
     safePrint('Update response: $response');
-
-    // Print the response for debugging purposes
+  } catch (e) {
+    safePrint('Error updating task progress: $e');
   }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.task.taskTitle ?? ''),
+          title: Text(selectedTask.taskTitle!),
           leading: IconButton(
               iconSize: 40,
               icon: Icon(Icons.arrow_back_ios),
@@ -128,7 +141,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
         Padding(
             padding: EdgeInsets.only(left: 50, right: 50),
             child: Text(
-                '${widget.trainee.firstName} has successfully completed the evaluation.', // need to insert trainee name here, may need to make a trainee class, and evaluation extends trainee.
+                '${widget.trainee.firstName} has completed the evaluation.', // need to insert trainee name here, may need to make a trainee class, and evaluation extends trainee.
                 textAlign: TextAlign.center,
                 maxLines: 5,
                 style: TextStyle(
@@ -139,9 +152,9 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
             padding:
                 EdgeInsets.only(left: 100, right: 100, top: 50, bottom: 50),
             child: Text(
-                'Do you think ${widget.trainee.firstName} has passed?', // need to insert trainee name here, may need to make a trainee class, and evaluation extends trainee.
+                "What do you think was ${widget.trainee.firstName}'s overall accuracy?", // need to insert trainee name here, may need to make a trainee class, and evaluation extends trainee.
                 textAlign: TextAlign.center,
-                maxLines: 2,
+                maxLines: 3,
                 style: TextStyle(
                     fontFamily: 'Lexend Exa',
                     fontSize: 35,
@@ -151,61 +164,144 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
   // Buttons
   Widget _buttons(context) =>
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        ElevatedButton(
-            child: Text("YES"),
-            style: ElevatedButton.styleFrom(
-                minimumSize: Size(250, 100),
-                foregroundColor: Colors.white,
-                textStyle: TextStyle(
-                    fontSize: 40,
-                    fontFamily: 'Lexend Exa',
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white),
-                backgroundColor: Colors.pink[900],
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50))),
-            onPressed: () {
-              updateTaskProgress(currentTasks.last, '100%', widget.trainee.id);
-
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return EvaluationNotes(
-                    task: widget.task, trainee: widget.trainee);
-              }));
-            } // Temporary navigation
-            ),
-        SizedBox(width: 30),
-        ElevatedButton(
-            child: Text("NO"),
-            style: ElevatedButton.styleFrom(
-                minimumSize: Size(250, 100),
-                foregroundColor: Colors.pink[900],
-                textStyle: TextStyle(
-                  fontSize: 40,
-                  fontFamily: 'Lexend Exa',
-                  fontWeight: FontWeight.w500,
-                ),
-                backgroundColor: Colors.grey[300],
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50))),
-           onPressed: () {
-  if (currentTasks.isNotEmpty) {
-    final taskStepsCount = currentTasks.last.taskSteps!.length;
-    final taskStepsCheckedCount = currentTasks.last.checkedStepsCount!;
-    final newTaskProgress = '${((taskStepsCheckedCount / taskStepsCount) * 100).round()}%';
-
-    updateTaskProgress(currentTasks.last, newTaskProgress, widget.trainee.id);
-  } else {
-    print('Error: currentTasks is empty.');
-    // Handle the case where currentTasks is empty
-  }
-
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return EvaluationNotes(
-        task: widget.task, trainee: widget.trainee);
-  }));
-}
-            )
+        _IndependentButton(context),
+        SizedBox(width: 15),
+        _VPButton(context),
+        SizedBox(width: 15),
+        _GPButton(context),
+        SizedBox(width: 15),
+        _PPButton(context),
+        SizedBox(width: 15),
+        _NCButton(context)
       ]);
+
+// Independent
+  Widget _IndependentButton(context) => ElevatedButton(
+      onPressed: () {
+        // pending backend functionality
+      updateTaskProgress('I', widget.trainee.id);
+
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return EvaluationNotes(
+              task: widget.task!, trainee: widget.trainee); // change parameters
+        }));
+      },
+      child: Text("I"),
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size(100, 100),
+          foregroundColor: Colors.white,
+          textStyle: TextStyle(
+            fontSize: 35,
+            fontFamily: 'Lexend Exa',
+            fontWeight: FontWeight.w500,
+          ),
+          backgroundColor: Color.fromARGB(255, 220, 180, 200),
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))));
+
+// Verbal Prompt
+  Widget _VPButton(context) => ElevatedButton(
+      onPressed: () {
+        // pending backend functionality
+      updateTaskProgress('VP', widget.trainee.id);
+
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return EvaluationNotes(
+               task: widget.task!, trainee: widget.trainee); // change parameters
+        }));
+      },
+      child: Text("V"),
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size(100, 100),
+          foregroundColor: Colors.white,
+          textStyle: TextStyle(
+            fontSize: 35,
+            fontFamily: 'Lexend Exa',
+            fontWeight: FontWeight.w500,
+          ),
+          backgroundColor: Color.fromARGB(255, 220, 180, 200),
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))));
+
+// Gestural Prompt
+  Widget _GPButton(context) => ElevatedButton(
+      onPressed: () {
+        // pending backend functionality
+        updateTaskProgress('GP', widget.trainee.id);
+
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return EvaluationNotes(
+               task: widget.task!, trainee: widget.trainee); // change parameters
+        }));
+      },
+      child: Text("G"),
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size(100, 100),
+          foregroundColor: Colors.white,
+          textStyle: TextStyle(
+            fontSize: 35,
+            fontFamily: 'Lexend Exa',
+            fontWeight: FontWeight.w500,
+          ),
+          backgroundColor: Color.fromARGB(255, 220, 180, 200),
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))));
+
+// Physical Prompt
+  Widget _PPButton(context) => ElevatedButton(
+      onPressed: () {
+        // pending backend functionality
+        updateTaskProgress('P', widget.trainee.id);
+
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return EvaluationNotes(
+               task: widget.task!, trainee: widget.trainee); // change parameters
+        }));
+      },
+      child: Text("P"),
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size(100, 100),
+          foregroundColor: Colors.white,
+          textStyle: TextStyle(
+            fontSize: 35,
+            fontFamily: 'Lexend Exa',
+            fontWeight: FontWeight.w500,
+          ),
+          backgroundColor: Color.fromARGB(255, 220, 180, 200),
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))));
+
+// Not Completed
+  Widget _NCButton(context) => ElevatedButton(
+      onPressed: () {
+        // pending backend functionality
+          updateTaskProgress('NC', widget.trainee.id);
+
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return EvaluationNotes(
+               task: widget.task!, trainee: widget.trainee); // change parameters
+        }));
+      },
+      child: Text("NC"),
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size(100, 100),
+          foregroundColor: Colors.white,
+          textStyle: TextStyle(
+            fontSize: 33,
+            fontFamily: 'Lexend Exa',
+            fontWeight: FontWeight.w500,
+          ),
+          backgroundColor: Color.fromARGB(255, 220, 180, 200),
+          elevation: 2,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))));
 }

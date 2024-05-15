@@ -109,7 +109,7 @@ class _SupportTrainees extends State<SupportTrainees> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => SupportTraineeDashboard(
-                                  trainee: allTrainees[index]
+                                  trainee: allTrainees[index],
 
                                 )));
                   },

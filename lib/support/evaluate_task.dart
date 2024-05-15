@@ -30,6 +30,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
   List<CurrTask> currentTasks = [];
   late List<Task> allTasks = []; // List to store all tasks
   late String traineeID = widget.trainee.id; // Get the selected trainee's ID
+  late Task selectedTask;
 
   @override
   void didUpdateWidget(EvaluateTask oldWidget) {
@@ -45,10 +46,47 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     super.initState();
     traineeID = widget.trainee.id;
     fetchSelectedTrainee();
+    fetchSelectedTask();
+    selectedTask = widget.task;
 
-    fetchCurrentTask(); // Call the function to fetch curr task
+    //fetchCurrentTask(); // Call the function to fetch curr task
     _isCheckedList =
         List<bool>.filled(widget.task.taskStep?.length ?? 0, false);
+  }
+
+  Future<void> fetchSelectedTask() async {
+    try {
+      final task = await queryTaskByID(widget.task.id);
+      if (task != null) {
+        setState(() {
+          safePrint("TASK");
+          selectedTask = task;
+        });
+      } else {
+        safePrint('Selected task not found');
+      }
+    } catch (e) {
+      safePrint('Error fetching selected task: $e');
+    }
+  }
+
+  Future<Task?> queryTaskByID(String taskID) async {
+    try {
+      final request = ModelQueries.get(
+          Task.classType,
+          TaskModelIdentifier(
+              id: taskID)); // Use ModelQuery.get to fetch a single task by ID
+      final response = await Amplify.API.query(request: request).response;
+
+      final task = response.data;
+      if (task == null) {
+        safePrint('errors: ${response.errors}');
+      }
+      return task;
+    } on ApiException catch (e) {
+      safePrint('Query failed: $e');
+      return null;
+    }
   }
 
   Future<void> fetchSelectedTrainee() async {
@@ -101,8 +139,8 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     }
   }
 
-  Future<void> updateCurrentTask(CurrTask currentTask, List<bool> isCheckedList,
-      String newTraineeID) async {
+  Future<void> updateSelectedTask(
+      List<bool> isCheckedList, String newTraineeID) async {
     try {
       int checkedStepsCount = 0;
 
@@ -114,7 +152,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
       }
 
       // Update the current task with the new checkedStepsCount
-      final updatedTask = currentTask.copyWith(
+      final updatedTask = selectedTask.copyWith(
           checkedStepsCount: checkedStepsCount, traineeID: widget.trainee.id);
 
       // Perform the update mutation
@@ -127,11 +165,12 @@ class _EvaluateTaskState extends State<EvaluateTask> {
       }
 
       // Print the response for debugging purposes
-      safePrint("Current Task updated!");
+      safePrint("Selected Task updated!");
+      safePrint("Checked Steps Count: $checkedStepsCount");
       safePrint('Update response: $response');
     } catch (e) {
       // Handle any errors
-      safePrint('Error updating current task steps count and trainee ID: $e');
+      safePrint('Error updating selected task steps count and trainee ID: $e');
     }
   }
 
@@ -246,8 +285,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
                       _isCheckedList[index] = value!;
                     });
 
-                    await updateCurrentTask(
-                        currentTasks.last, _isCheckedList, widget.trainee.id);
+                    await updateSelectedTask(_isCheckedList, widget.trainee.id);
                   },
                 );
               },

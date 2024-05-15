@@ -22,31 +22,39 @@
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'Admin.dart';
 import 'CurrTask.dart';
+import 'JudgementCall.dart';
 import 'Notifications.dart';
 import 'Recipe.dart';
+import 'Session.dart';
 import 'Support.dart';
 import 'Task.dart';
+import 'TaskFeeling.dart';
 import 'TaskNotes.dart';
 import 'Trainee.dart';
 import 'TraineeNotes.dart';
+import 'Sess.dart';
 
 export 'Admin.dart';
 export 'CurrTask.dart';
+export 'JudgementCall.dart';
 export 'Notifications.dart';
 export 'Recipe.dart';
+export 'Sess.dart';
+export 'Session.dart';
 export 'Support.dart';
 export 'Task.dart';
+export 'TaskFeeling.dart';
 export 'TaskNotes.dart';
 export 'Trainee.dart';
 export 'TraineeNotes.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "be8e039e3fb57fb7b331be73d398a7f6";
+  String version = "fe1c40d8036283b9ecf8baa61c41c83b";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [Admin.schema, CurrTask.schema, Notifications.schema, Recipe.schema, Support.schema, Task.schema, TaskNotes.schema, Trainee.schema, TraineeNotes.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [Admin.schema, CurrTask.schema, JudgementCall.schema, Notifications.schema, Recipe.schema, Session.schema, Support.schema, Task.schema, TaskFeeling.schema, TaskNotes.schema, Trainee.schema, TraineeNotes.schema];
   @override
-  List<amplify_core.ModelSchema> customTypeSchemas = [];
+  List<amplify_core.ModelSchema> customTypeSchemas = [Sess.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
@@ -57,14 +65,20 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return Admin.classType;
       case "CurrTask":
         return CurrTask.classType;
+      case "JudgementCall":
+        return JudgementCall.classType;
       case "Notifications":
         return Notifications.classType;
       case "Recipe":
         return Recipe.classType;
+      case "Session":
+        return Session.classType;
       case "Support":
         return Support.classType;
       case "Task":
         return Task.classType;
+      case "TaskFeeling":
+        return TaskFeeling.classType;
       case "TaskNotes":
         return TaskNotes.classType;
       case "Trainee":
