@@ -22,7 +22,6 @@ class SupportTraineeDashboard extends StatefulWidget {
   SupportTraineeDashboard({super.key, required this.trainee, this.task});
   Trainee trainee;
   final Task? task;
-  
 
   //final String traineeID;
 
@@ -40,7 +39,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
 
   String generalNote = ''; // Placeholder for the latest trainee note text
   late Trainee selectedTrainee;
-  
+
   // Provide a default task if widget.task is null;
   List<CurrTask>? currentTasks = [];
   TaskNotes taskNote = TaskNotes();
@@ -53,28 +52,28 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
         Task(
             adminID:
                 "e7bd6941-2f8f-4949-a4ed-6803cd2ab42b"); // Provide a default task if widget.task is null
-  super.initState();
-  fetchAllData();
-  fetchLatestTaskForTrainee();
-  _traineeNotesController.text = widget.trainee.traineeNote ?? '';
-}
-
+    super.initState();
+    fetchAllData();
+    fetchLatestTaskForTrainee();
+    _traineeNotesController.text = widget.trainee.traineeNote ?? '';
+  }
 
   // Function to fetch all task
   Future<void> fetchAllData() async {
-  await Future.delayed(Duration(milliseconds: 500)); // Simulating fetch delay
-  await fetchAllTask();
-  await fetchLatestTaskForTrainee(); // Fetch the most recently accessed task
-  await fetchLatestTaskNote(allTasks!);
-  setState(() {
-    isLoading = false;
-  });
-}
+    await Future.delayed(Duration(milliseconds: 500)); // Simulating fetch delay
+    await fetchAllTask();
+    await fetchLatestTaskForTrainee(); // Fetch the most recently accessed task
+    await fetchLatestTaskNote(allTasks!);
+    setState(() {
+      isLoading = false;
+    });
+  }
 
-Future<void> fetchLatestTaskForTrainee() async {
+  Future<void> fetchLatestTaskForTrainee() async {
     try {
       // Query latest task for the trainee
-      final Task? latestTask = await queryLatestTaskForTrainee(widget.trainee.id);
+      final Task? latestTask =
+          await queryLatestTaskForTrainee(widget.trainee.id);
       if (latestTask != null) {
         // Update selectedTask with the latest task
         setState(() {
@@ -90,23 +89,22 @@ Future<void> fetchLatestTaskForTrainee() async {
     }
   }
 
-
-Future<void> fetchAllTask() async {
-  try {
-    final task = await queryTask();
-
-    setState(() {
-      allTasks = task.cast<Task>();
-    });
-  } catch (e) {
-    print('Error fetching task: $e');
-  }
-}
-
-
-Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
+  Future<void> fetchAllTask() async {
     try {
-      final request = ModelQueries.list(Task.classType, where: Task.TRAINEEID.eq(traineeID));
+      final task = await queryTask();
+
+      setState(() {
+        allTasks = task.cast<Task>();
+      });
+    } catch (e) {
+      print('Error fetching task: $e');
+    }
+  }
+
+  Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
+    try {
+      final request = ModelQueries.list(Task.classType,
+          where: Task.TRAINEEID.eq(traineeID));
       final response = await Amplify.API.query(request: request).response;
 
       final tasks = response.data?.items;
@@ -134,7 +132,6 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
       return null;
     }
   }
-
 
   // Function to query all task
   Future<List<Task>> queryTask() async {
@@ -263,8 +260,6 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
       return null;
     }
   }
-
-  
 
   Future<List<TaskNotes?>> queryTaskNoteListItem(String traineeID) async {
     try {
@@ -407,7 +402,8 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(50),
+                  padding:
+                      EdgeInsets.only(top: 45, left: 50, right: 50, bottom: 10),
                   child: Text(
                     "${widget.trainee.firstName}'s Summary",
                     textAlign: TextAlign.start,
@@ -440,7 +436,7 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                 ),
                 SizedBox(height: 50),
                 Padding(
-                  padding: EdgeInsets.only(left: 50, bottom: 10),
+                  padding: EdgeInsets.only(left: 50),
                   child: Text(
                     "Notes",
                     textAlign: TextAlign.start,
@@ -452,11 +448,13 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                     ),
                   ),
                 ),
-                //_buildNotesCard(context, generalNote),
-                _buildNotesCard(context, generalNote),
-                SizedBox(height: 30),
+                //_taskNotes(context, generalNote),
 
-                _buildAnotherNotesWidget(context, "Trainee Note"),
+                _traineeNoteCard(context, "Trainee Note"),
+
+                SizedBox(height: 15),
+
+                _taskNotes(context, generalNote),
               ],
             ),
           ),
@@ -501,7 +499,9 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
     await fetchSelectedTrainee();
   }
 
-  Widget _buildAnotherNotesWidget(BuildContext context, String title) {
+  // Trainee Notes Card
+
+  Widget _traineeNoteCard(BuildContext context, String title) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(20),
@@ -541,9 +541,12 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                       ),
                       IconButton(
                         icon: isEditing
-                            ? Icon(
-                                Icons.check) // Change to tick icon in edit mode
-                            : Icon(Icons.edit), // Default to edit icon
+                            ? Icon(Icons.check,
+                                size: 35) // Change to tick icon in edit mode
+                            : Icon(
+                                Icons.edit,
+                                size: 35,
+                              ), // Default to edit icon
                         onPressed: () async {
                           if (isEditing) {
                             setState(() {
@@ -579,6 +582,11 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                               hintText: 'Enter your note...',
                               border: InputBorder.none,
                             ),
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Lexend Exa',
+                                fontWeight: FontWeight.w500,
+                                color: Colors.pink[900]),
                           )
                         : Text(
                             // Display the trainee note if available, otherwise show default text
@@ -623,7 +631,7 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
   }
 
   // Recent Notes
-  Widget _buildNotesCard(BuildContext context, note) => Center(
+  Widget _taskNotes(BuildContext context, note) => Center(
         child: GestureDetector(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -650,7 +658,8 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.all(30),
+              padding:
+                  EdgeInsets.only(top: 30, bottom: 30, left: 50, right: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -713,10 +722,9 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
             if (selectedTask != null && selectedTask!.taskCoverImage != null) {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return SupportTraineeProgress(
-                  title: 'Progress',
-                  trainee: widget.trainee,
-                  task: selectedTask!
-                );
+                    title: 'Progress',
+                    trainee: widget.trainee,
+                    task: selectedTask!);
               }));
             }
           },
@@ -790,7 +798,6 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                                   color: Colors.white,
                                 ),
                               ),
-                              
                             ],
                           ),
                         ),
@@ -805,52 +812,50 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
       );
 
 // Circular Progress Indicator
- Widget _circularProgress(String? progress) {
-  if (progress == null || !progress.endsWith('%')) {
-    // Handle the case where progress is null or not in the expected format
-    return Container(); // Return an empty container or some default widget
+  Widget _circularProgress(String? progress) {
+    if (progress == null || !progress.endsWith('%')) {
+      // Handle the case where progress is null or not in the expected format
+      return Container(); // Return an empty container or some default widget
+    }
+
+    double percentage = double.tryParse(progress.replaceAll('%', '')) ?? 0;
+    double actualPercentage = percentage / 100;
+
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: <Widget>[
+        Center(
+          child: SizedBox(
+            width: 175,
+            height: 175,
+            child: CircularProgressIndicator(
+              strokeWidth: 15,
+              strokeCap: StrokeCap.round,
+              value: actualPercentage,
+              color: Colors.pink[900],
+              backgroundColor: Colors.grey[300],
+            ),
+          ),
+        ),
+        Center(
+          child: Text(
+            progress,
+            style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 30,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
   }
-
-  double percentage = double.tryParse(progress.replaceAll('%', '')) ?? 0;
-  double actualPercentage = percentage / 100;
-
-  return Stack(
-    alignment: AlignmentDirectional.center,
-    children: <Widget>[
-      Center(
-        child: SizedBox(
-          width: 175,
-          height: 175,
-          child: CircularProgressIndicator(
-            strokeWidth: 15,
-            strokeCap: StrokeCap.round,
-            value: actualPercentage,
-            color: Colors.pink[900],
-            backgroundColor: Colors.grey[300],
-          ),
-        ),
-      ),
-      Center(
-        child: Text(
-          progress,
-          style: TextStyle(
-            fontFamily: 'Lexend Exa',
-            fontSize: 30,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
 
 // Mock Data (temporary)
 
   final NoteItem recentNote = NoteItem('General',
       'Maecenas malesuada, mi vitae placerat rhoncus, quam risus condimentum enim, id feugiat quam turpis ultrices turpis.');
 
-  final ProgressItem recentProgress =
-      ProgressItem('Dishes', 'P', 'Good');
+  final ProgressItem recentProgress = ProgressItem('Dishes', 'P', 'Good');
 }
