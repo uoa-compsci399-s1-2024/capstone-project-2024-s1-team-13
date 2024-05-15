@@ -24,8 +24,6 @@ class EvaluationFeedback extends StatefulWidget {
 }
 
 class _EvaluationFeedback extends State<EvaluationFeedback> {
-  //String generalNote = '';
-
   late Task selectedTask;
 
   @override
@@ -33,7 +31,6 @@ class _EvaluationFeedback extends State<EvaluationFeedback> {
     super.initState();
     selectedTask = widget.task!; // Provide a default task if widget.task is null
     fetchSelectedTask();
-    //fetchCurrentTask(); // Call the function to fetch curr task
   }
 
   Future<void> fetchSelectedTask() async {

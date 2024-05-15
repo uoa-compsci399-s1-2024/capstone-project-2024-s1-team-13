@@ -22,7 +22,6 @@ class EvaluationNotes extends StatefulWidget {
   //final EvaluateItem evaluation;
   final Task task;
   final Trainee trainee;
-  List<CurrTask>? currentTasks = [];
   List<Task>? allTasks = []; // List to store all tasks
   List<JudgementCall> judgementCalls = [];
   List<TaskFeeling> taskFeelings = [];
@@ -34,7 +33,6 @@ class EvaluationNotes extends StatefulWidget {
 class _EvaluationNotesState extends State<EvaluationNotes> {
   late final String title;
   late List<TaskNotes> allTaskNotes = []; // List to store all task notes
-  List<CurrTask> currentTasks = [];
   late Task selectedTask;
   List<Task> allTasks = []; // List to store all tasks
   List<Session> sessions = []; //List to store all of the trainee's sessions (ALL OF IT)  
@@ -53,7 +51,6 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
     fetchTaskFeeling(); 
     querySession(widget.task.id, widget.trainee.id);
     fetchSession();
-    
     selectedTask = widget.task;
   }
 
@@ -234,7 +231,6 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
     }
   }
 
-  // Fetch latest judgment call
 // Fetch latest judgement call
 Future<JudgementCall?> fetchLatestJudgementCall(String taskID, String traineeID) async {
   try {
@@ -495,41 +491,6 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
       );
     }
     
-  }
-
-  Future<List<CurrTask?>> queryCurrTask(String traineeID) async {
-    try {
-      final request = ModelQueries.list(CurrTask.classType,
-          where: CurrTask.TRAINEEID.eq(traineeID));
-      final response = await Amplify.API.query(request: request).response;
-      safePrint('Testing!');
-
-      final currTask = response.data?.items;
-      safePrint(currTask);
-      if (currTask == null) {
-        safePrint('errors: ${response.errors}');
-        return const [];
-      }
-      return currTask;
-    } on ApiException catch (e) {
-      safePrint('Query failed: $e');
-      return const [];
-    }
-  }
-
-  Future<void> fetchCurrentTask() async {
-    try {
-      final currentTask = await queryCurrTask(widget.trainee.id);
-      if (currentTask.isNotEmpty) {
-        setState(() {
-          currentTasks = currentTask.cast<CurrTask>();
-        });
-      } else {
-        safePrint('No current task found');
-      }
-    } catch (e) {
-      print('Error fetching current task: $e');
-    }
   }
 
   //CREATES A NEW SESSION

@@ -18,14 +18,12 @@ class SupportEvaluate extends StatefulWidget {
       required this.title,
       required this.trainee,
       required this.task,
-      this.currentTasks});
+      });
   final String title;
   final Trainee trainee;
-  Task task = Task(
-      adminID: "e7bd6941-2f8f-4949-a4ed-6803cd2ab42b"); // Initialize task here
-  //final Task task;
+  final Task task;
 
-  List<CurrTask>? currentTasks = [];
+
 
   @override
   _SupportEvaluateState createState() => _SupportEvaluateState();
@@ -34,10 +32,7 @@ class SupportEvaluate extends StatefulWidget {
 class _SupportEvaluateState extends State<SupportEvaluate> {
   final TextEditingController _textController = TextEditingController();
   late List<Task> allTasks = []; // List to store all tasks
-  List<CurrTask> currentTasks = [];
   late Task selectedTask;
-  late int timesEvaluated;
-  //Map<String, int> completedSteps = {};
 
   @override
   void initState() {
@@ -45,9 +40,61 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     fetchAllTask(); // Call the function to fetch all task
     fetchSelectedTask();
     selectedTask = widget.task; // Provide a default task if widget.task is null
-    timesEvaluated = 0;
+  }
+ 
 
-    // fetchCurrentTask(); // Call the function to fetch curr task
+  Future<void> fetchLatestTaskForTrainee() async {
+    try {
+      // Query latest task for the trainee
+      final Task? latestTask =
+          await queryLatestTaskForTrainee(widget.trainee.id);
+      if (latestTask != null) {
+        // Update selectedTask with the latest task
+        setState(() {
+          selectedTask = latestTask;
+          safePrint("selected task set");
+          safePrint(selectedTask);
+        });
+      } else {
+        // Handle case where no task is found
+        safePrint('Latest task for trainee not found');
+      }
+    } catch (e) {
+      // Handle any errors
+      safePrint('Error fetching latest task for trainee: $e');
+    }
+  }
+
+  Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
+    try {
+      final request = ModelQueries.list(Task.classType,
+          where: Task.TRAINEEID.eq(traineeID));
+      final response = await Amplify.API.query(request: request).response;
+
+      final tasks = response.data?.items;
+      if (tasks == null || tasks.isEmpty) {
+        // Handle case where no tasks are found
+        safePrint('No tasks found for trainee: $traineeID');
+        return null;
+      }
+
+      // Sort tasks based on creation date in descending order
+      tasks.sort((a, b) {
+        final createdAtA = (a as Task).createdAt;
+        final createdAtB = (b as Task).createdAt;
+        if (createdAtA == null || createdAtB == null) {
+          return 0;
+        }
+        return createdAtB.compareTo(createdAtA);
+      });
+
+      // Return the first (most recent) task
+      return tasks.first as Task;
+    } catch (e) {
+      // Handle any errors
+      safePrint('Query failed: $e');
+      return null;
+    }
   }
 
   Future<void> updateCurrentTask(
@@ -55,7 +102,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       List<String>? newTaskSteps,
       String newTraineeID,
       String? newTaskProgress,
-      String? newCoverImage, 
+      String? newCoverImage,
       List<Sess>? newSessionList) async {
     try {
       if (selectedTask == null) {
@@ -88,7 +135,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       safePrint('Error updating selected task: $e');
     }
   }
-
 
   Future<void> fetchSelectedTask() async {
     try {
@@ -125,22 +171,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     }
   }
 
-  // Function to fetch the current task
-  Future<void> fetchCurrentTask() async {
-    try {
-      final currentTask = await queryCurrTask();
-      if (currentTask.isNotEmpty) {
-        setState(() {
-          currentTasks = currentTask.cast<CurrTask>();
-        });
-      } else {
-        safePrint('No current task found');
-      }
-    } catch (e) {
-      print('Error fetching current task: $e');
-    }
-  }
-
+  
   // Function to fetch all task
   Future<void> fetchAllTask() async {
     try {
@@ -154,26 +185,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     }
   }
 
-  //query the current task
-  Future<List<CurrTask?>> queryCurrTask() async {
-    try {
-      final request = ModelQueries.list(CurrTask.classType);
-      final response = await Amplify.API.query(request: request).response;
-      //safePrint('List of all the Task Notes:', response);
-      safePrint('Testing!');
-
-      final currTask = response.data?.items;
-      safePrint(currTask);
-      if (currTask == null) {
-        safePrint('errors: ${response.errors}');
-        return const [];
-      }
-      return currTask;
-    } on ApiException catch (e) {
-      safePrint('Query failed: $e');
-      return const [];
-    }
-  }
 
   // Function to query all task
   Future<List<Task>> queryTask() async {
@@ -211,17 +222,13 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
         break;
       case 1:
         // Navigate to evaluate screen
-        final recievedTimesEvaluated = await Navigator.push(
+        await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => SupportEvaluate(
                     title: "Evaluate",
                     trainee: widget.trainee,
                     task: selectedTask)));
-        setState(() {
-          // Update timesEvaluated with the value received from EvaluateTask
-          timesEvaluated = recievedTimesEvaluated ?? 0;
-        });
         break;
       case 2:
         // Navigate to profile screen
@@ -301,15 +308,16 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
                   onTap: () async {
                     setState(() {
                       selectedTask = task; // Set the selected task
+                      safePrint("THIS IS THE SELECTED TASK");
                       safePrint(selectedTask);
                     });
                     await updateCurrentTask(
-                        //updating task attributes here
                         selectedTask.taskTitle ?? '',
                         selectedTask.taskStep,
                         widget.trainee.id,
                         selectedTask.taskProgress,
-                        selectedTask.taskCoverImage, selectedTask.sessionList);
+                        selectedTask.taskCoverImage,
+                        selectedTask.sessionList); //updating SELECTED TASK HERE 
 
 
                     Navigator.push(
@@ -443,30 +451,4 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
         ),
       );
 
-  final List<EvaluateItem> mockEvals = [
-    EvaluateItem(
-        title: 'Dishes',
-        assetImage: 'assets/images/task_placeholder.jpg',
-        instructions: ['Do the dishes', 'Do the dishes', 'Do the dishes']),
-    EvaluateItem(
-        title: 'Clear Table',
-        assetImage: 'assets/images/task_placeholder.jpg',
-        instructions: [
-          'Clear the table',
-          'Clear the table',
-          'Clear the table'
-        ]),
-    EvaluateItem(
-        title: 'Closing',
-        assetImage: 'assets/images/task_placeholder.jpg',
-        instructions: ['Close the cafe', 'Close the cafe', 'Close the cafe']),
-    EvaluateItem(
-        title: 'Orders',
-        assetImage: 'assets/images/task_placeholder.jpg',
-        instructions: ['Take an order', 'Take an order', 'Take an order']),
-    EvaluateItem(
-        title: 'Opening',
-        assetImage: 'assets/images/task_placeholder.jpg',
-        instructions: ['Open the cafe', 'Open the dishes', 'Open the dishes'])
-  ];
 }

@@ -44,6 +44,8 @@ dependencies:
   image_picker: ^1.1.0
   amplify_auth_cognito: ^1.8.0
   provider: ^5.0.0
+  flutter_tts: ^3.2.2
+  
 
 
 

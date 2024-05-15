@@ -5,6 +5,7 @@ import 'package:inka_test/models/Recipe.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 
 class SelectedRecipe extends StatefulWidget {
@@ -21,10 +22,13 @@ class SelectedRecipe extends StatefulWidget {
 class _SelectedRecipeState extends State<SelectedRecipe> {
   Recipe? selectedRecipe; // Variable to store the selected task
   //late List<Task> allTasks = []; // List to store all tasks
+  final FlutterTts flutterTts = FlutterTts();
+
   @override
   void initState() {
     super.initState();
     //fetchAllTask(); // Call the function to fetch all task notes
+    _configureTts(); // Configure TTS settings
     fetchSelectedRecipe(); 
   }
 
@@ -38,6 +42,12 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
     } catch (e) {
       safePrint('Error fetching selected task: $e');
     }
+  }
+
+  Future<void> _configureTts() async {
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setPitch(1.2);
   }
 
   Future<Recipe?> queryRecipeById(String recipeId) async {
@@ -148,7 +158,7 @@ Widget buildRecipeContent() {
                     description: description,
                     stepImage: image,
                   );
-                  return StepScreen(step: step);
+                  return StepScreen(step: step, flutterTts: flutterTts);
                 }
               },
             );
@@ -228,8 +238,9 @@ class RecipesStep {
 
 class StepScreen extends StatelessWidget {
   final RecipesStep step;
+  final FlutterTts flutterTts;
 
-  const StepScreen({super.key, required this.step});
+  const StepScreen({super.key, required this.step, required this.flutterTts});
 
   @override
   Widget build(BuildContext context) {
@@ -267,6 +278,13 @@ class StepScreen extends StatelessWidget {
                       fontSize: 25,
                       fontWeight: FontWeight.w500),
                 )),
+
+          IconButton(
+              icon: Icon(Icons.volume_up, size: 45, color: Colors.pink[900]),
+              onPressed: () async {
+                await flutterTts.speak(step.description);
+              },
+            ),
           ],
         ),
 

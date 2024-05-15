@@ -16,15 +16,14 @@ import 'package:inka_test/support/support_trainee_profile.dart';
 import 'package:inka_test/support/support_trainee_progress.dart';
 import 'package:inka_test/support/support_settings.dart';
 
+//will get rid of selected task after
+
 class SupportTraineeDashboard extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
 
   SupportTraineeDashboard({super.key, required this.trainee, this.task});
   Trainee trainee;
   final Task? task;
-  
-
-  //final String traineeID;
 
   @override
   _SupportTraineeDashboardState createState() =>
@@ -34,13 +33,13 @@ class SupportTraineeDashboard extends StatefulWidget {
 class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   final TextEditingController _traineeNotesController = TextEditingController();
 
-  bool isEditing = false; // Step 2
+  bool isEditing = false;
 
   Task? selectedTask;
 
-  String generalNote = ''; // Placeholder for the latest trainee note text
+  String generalNote = '';
   late Trainee selectedTrainee;
-  
+
   // Provide a default task if widget.task is null;
   List<CurrTask>? currentTasks = [];
   TaskNotes taskNote = TaskNotes();
@@ -53,32 +52,35 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
         Task(
             adminID:
                 "e7bd6941-2f8f-4949-a4ed-6803cd2ab42b"); // Provide a default task if widget.task is null
-  super.initState();
-  fetchAllData();
-  fetchLatestTaskForTrainee();
-  _traineeNotesController.text = widget.trainee.traineeNote ?? '';
-}
-
+    super.initState();
+    fetchAllData();
+    fetchLatestTaskForTrainee();
+    _traineeNotesController.text = widget.trainee.traineeNote ?? '';
+  }
 
   // Function to fetch all task
   Future<void> fetchAllData() async {
-  await Future.delayed(Duration(milliseconds: 500)); // Simulating fetch delay
-  await fetchAllTask();
-  await fetchLatestTaskForTrainee(); // Fetch the most recently accessed task
-  await fetchLatestTaskNote(allTasks!);
-  setState(() {
-    isLoading = false;
-  });
-}
+    await Future.delayed(Duration(milliseconds: 500)); // Simulating fetch delay
+    await fetchAllTask();
+    //await fetchSelectedTask();
+    await fetchLatestTaskForTrainee(); // Fetch the most recently accessed task
+    await fetchLatestTaskNote(allTasks!);
+    setState(() {
+      isLoading = false;
+    });
+  }
 
-Future<void> fetchLatestTaskForTrainee() async {
+  Future<void> fetchLatestTaskForTrainee() async {
     try {
       // Query latest task for the trainee
-      final Task? latestTask = await queryLatestTaskForTrainee(widget.trainee.id);
+      final Task? latestTask =
+          await queryLatestTaskForTrainee(widget.trainee.id);
       if (latestTask != null) {
         // Update selectedTask with the latest task
         setState(() {
           selectedTask = latestTask;
+          safePrint("selected task set");
+          safePrint(selectedTask);
         });
       } else {
         // Handle case where no task is found
@@ -90,23 +92,22 @@ Future<void> fetchLatestTaskForTrainee() async {
     }
   }
 
-
-Future<void> fetchAllTask() async {
-  try {
-    final task = await queryTask();
-
-    setState(() {
-      allTasks = task.cast<Task>();
-    });
-  } catch (e) {
-    print('Error fetching task: $e');
-  }
-}
-
-
-Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
+  Future<void> fetchAllTask() async {
     try {
-      final request = ModelQueries.list(Task.classType, where: Task.TRAINEEID.eq(traineeID));
+      final task = await queryTask();
+
+      setState(() {
+        allTasks = task.cast<Task>();
+      });
+    } catch (e) {
+      print('Error fetching task: $e');
+    }
+  }
+
+  Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
+    try {
+      final request = ModelQueries.list(Task.classType,
+          where: Task.TRAINEEID.eq(traineeID));
       final response = await Amplify.API.query(request: request).response;
 
       final tasks = response.data?.items;
@@ -116,14 +117,15 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
         return null;
       }
 
-      // Sort tasks based on creation date in descending order
+      // Sort tasks based on updated time date in descending order
       tasks.sort((a, b) {
-        final createdAtA = (a as Task).createdAt;
-        final createdAtB = (b as Task).createdAt;
-        if (createdAtA == null || createdAtB == null) {
+        final updatedAtA = (a as Task).updatedAt;
+        final updatedAtB = (b as Task).updatedAt;
+        if (updatedAtA == null || updatedAtB == null) {
           return 0;
         }
-        return createdAtB.compareTo(createdAtA);
+
+        return updatedAtB.compareTo(updatedAtA);
       });
 
       // Return the first (most recent) task
@@ -134,7 +136,6 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
       return null;
     }
   }
-
 
   // Function to query all task
   Future<List<Task>> queryTask() async {
@@ -154,53 +155,13 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
     }
   }
 
-  Future<void> fetchCurrentTask() async {
-    try {
-      final currentTask = await queryCurrTask(widget.trainee.id);
-      if (currentTask.isNotEmpty) {
-        setState(() {
-          currentTasks = currentTask.cast<CurrTask>();
-          fetchLatestTaskNote(allTasks!); // Fetch latest task note
-        });
-      } else {
-        safePrint('No current task found');
-      }
-    } catch (e) {
-      print('Error fetching current task: $e');
-    }
-  }
-
-  //query the current task
-  Future<List<CurrTask?>> queryCurrTask(String traineeID) async {
-    try {
-      final request = ModelQueries.list(CurrTask.classType,
-          where: CurrTask.TRAINEEID.eq(traineeID));
-      final response = await Amplify.API.query(request: request).response;
-      //safePrint('List of all the Task Notes:', response);
-      safePrint('Testing!');
-
-      final currTask = response.data?.items;
-      safePrint(currTask);
-      if (currTask == null) {
-        safePrint('errors: ${response.errors}');
-        return const [];
-      }
-      return currTask;
-    } on ApiException catch (e) {
-      safePrint('Query failed: $e');
-      return const [];
-    }
-  }
-
   Future<void> fetchSelectedTask() async {
     try {
-      final task = await querySelectedTask(widget.task!.id, widget.trainee.id);
-      safePrint("WIDGET TASK");
-      safePrint(widget.task);
-
+      final task = await queryTaskByID(widget.task!.id);
       if (task != null) {
         setState(() {
-          selectedTask = widget.task!;
+          safePrint("TASK");
+          selectedTask = task;
         });
       } else {
         safePrint('Selected task not found');
@@ -210,21 +171,19 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
     }
   }
 
-  Future<List<Task?>?> querySelectedTask(
-      String taskID, String traineeID) async {
+  Future<Task?> queryTaskByID(String taskID) async {
     try {
-      final request = ModelQueries.list(Task.classType,
-          where: Task.TRAINEEID.eq(traineeID) & Task.ID.eq(taskID));
+      final request = ModelQueries.get(
+          Task.classType,
+          TaskModelIdentifier(
+              id: taskID)); // Use ModelQuery.get to fetch a single task by ID
       final response = await Amplify.API.query(request: request).response;
 
-      final task = response.data?.items;
-      safePrint(task);
+      final task = response.data;
       if (task == null) {
         safePrint('errors: ${response.errors}');
       }
-      safePrint("SELECTED TASK");
-      safePrint(selectedTask);
-
+      safePrint("Query for dashboard screen sucessful");
       return task;
     } on ApiException catch (e) {
       safePrint('Query failed: $e');
@@ -264,8 +223,6 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
     }
   }
 
-  
-
   Future<List<TaskNotes?>> queryTaskNoteListItem(String traineeID) async {
     try {
       final request = ModelQueries.list(TaskNotes.classType,
@@ -291,7 +248,8 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
         final List<TaskNotes?> taskNotes =
             await queryTaskNoteListItem(widget.trainee.id);
         if (taskNotes.isNotEmpty) {
-          taskNotes.sort((a, b) => b!.createdAt!.compareTo(a!.createdAt!));
+          taskNotes.sort((a, b) => b!.createdAt!
+              .compareTo(a!.createdAt!)); //to show latest task note
           setState(() {
             taskNote = taskNotes.first!;
           });
@@ -305,7 +263,7 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
 
 // Bottom Bar Navigation
   int _selectedIndex = 0;
-  void _onItemTapped(int index) {
+  Future<void> _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
     });
@@ -316,19 +274,28 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SupportTraineeDashboard(trainee: widget.trainee)));
+                builder: (context) => SupportTraineeDashboard(
+                      trainee: widget.trainee,
+                      task: selectedTask,
+                    )));
         break;
       case 1:
-        // Navigate to evaluate screen
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SupportEvaluate(
-                      title: "Evaluate",
-                      trainee: widget.trainee,
-                      task: selectedTask!,
-                    )));
+        final updatedTask = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SupportEvaluate(
+              title: "Evaluate",
+              trainee: widget.trainee,
+              task: selectedTask!,
+            ),
+          ),
+        );
+
+        if (updatedTask != null) {
+          setState(() {
+            selectedTask = updatedTask;
+          });
+        }
         break;
       case 2:
         // Navigate to profile screen
@@ -403,11 +370,14 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
         body: RefreshIndicator(
           onRefresh: _refreshData,
           child: SingleChildScrollView(
+            physics:
+                AlwaysScrollableScrollPhysics(), // Add this line to enable scrolling even when there's not enough content
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(50),
+                  padding:
+                      EdgeInsets.only(top: 45, left: 50, right: 50, bottom: 10),
                   child: Text(
                     "${widget.trainee.firstName}'s Summary",
                     textAlign: TextAlign.start,
@@ -440,7 +410,7 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                 ),
                 SizedBox(height: 50),
                 Padding(
-                  padding: EdgeInsets.only(left: 50, bottom: 10),
+                  padding: EdgeInsets.only(left: 50),
                   child: Text(
                     "Notes",
                     textAlign: TextAlign.start,
@@ -452,11 +422,9 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                     ),
                   ),
                 ),
-                //_buildNotesCard(context, generalNote),
-                _buildNotesCard(context, generalNote),
-                SizedBox(height: 30),
-
-                _buildAnotherNotesWidget(context, "Trainee Note"),
+                _traineeNoteCard(context, "Trainee Note"),
+                SizedBox(height: 15),
+                _taskNotes(context, generalNote),
               ],
             ),
           ),
@@ -465,43 +433,18 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
     }
   }
 
-  Future<void> updateSelectedTask(String? newTaskProgress) async {
-    try {
-      final updatedTask = selectedTask!.copyWith(taskProgress: newTaskProgress);
-
-      final request = ModelMutations.update(updatedTask);
-      final response = await Amplify.API.mutate(request: request).response;
-
-      // Check for errors in the mutation response
-      if (response.errors.isNotEmpty) {
-        throw Exception('Failed to update');
-      }
-
-      // Print the response for debugging purposes
-      safePrint("Selected Task updated!");
-
-      safePrint('Update response: $response');
-    } catch (e) {
-      // Handle any errors
-      safePrint('Error updating selected task: $e');
-    }
-  }
-
   Future<void> _refreshData() async {
-    // Fetch the current task
-    await fetchSelectedTask();
-
+    //await fetchSelectedTask();
+    await fetchLatestTaskForTrainee();
     // If current task is available, fetch task note based on it
     if (selectedTask != null) {
-      setState(() {
-        updateSelectedTask("0%");
-      });
       await fetchLatestTaskNote(allTasks);
     }
     await fetchSelectedTrainee();
   }
 
-  Widget _buildAnotherNotesWidget(BuildContext context, String title) {
+  // Trainee Notes Card
+  Widget _traineeNoteCard(BuildContext context, String title) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(20),
@@ -541,9 +484,12 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                       ),
                       IconButton(
                         icon: isEditing
-                            ? Icon(
-                                Icons.check) // Change to tick icon in edit mode
-                            : Icon(Icons.edit), // Default to edit icon
+                            ? Icon(Icons.check,
+                                size: 35) // Change to tick icon in edit mode
+                            : Icon(
+                                Icons.edit,
+                                size: 35,
+                              ), // Default to edit icon
                         onPressed: () async {
                           if (isEditing) {
                             setState(() {
@@ -579,6 +525,11 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
                               hintText: 'Enter your note...',
                               border: InputBorder.none,
                             ),
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Lexend Exa',
+                                fontWeight: FontWeight.w500,
+                                color: Colors.pink[900]),
                           )
                         : Text(
                             // Display the trainee note if available, otherwise show default text
@@ -623,7 +574,7 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
   }
 
   // Recent Notes
-  Widget _buildNotesCard(BuildContext context, note) => Center(
+  Widget _taskNotes(BuildContext context, note) => Center(
         child: GestureDetector(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -650,7 +601,8 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.all(30),
+              padding:
+                  EdgeInsets.only(top: 30, bottom: 30, left: 50, right: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -705,152 +657,97 @@ Future<Task?> queryLatestTaskForTrainee(String traineeID) async {
   }
 
   // Recent Progress
-  // Inside _buildProgressCard method
-  Widget _buildProgressCard(BuildContext context, progress, currentTaskTitle) =>
-      Center(
-        child: GestureDetector(
-          onTap: () {
-            if (selectedTask != null && selectedTask!.taskCoverImage != null) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SupportTraineeProgress(
-                  title: 'Progress',
-                  trainee: widget.trainee,
-                  task: selectedTask!
-                );
-              }));
+  // Inside _buildProgressCard method -- NOT USING PROGRESS
+Widget _buildProgressCard(BuildContext context, progress, currentTaskTitle) =>
+  Center(
+    child: GestureDetector(
+      onTap: () {
+        if (selectedTask != null && selectedTask!.taskCoverImage != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return SupportTraineeProgress(
+                title: 'Progress',
+                trainee: widget.trainee,
+                task: selectedTask!);
+          }));
+        }
+      },
+      child: selectedTask != null && selectedTask!.taskCoverImage != null
+        ? FutureBuilder<String>(
+          future: getDownloadUrl(
+            key: selectedTask!.taskCoverImage!,
+            accessLevel: StorageAccessLevel.guest,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                // Return a container with a loading indicator
+                width: 750,
+                height: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(50),
+                  color: Colors.grey[200],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  //child: CircularProgressIndicator(),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (snapshot.hasData) {
+              return Container(
+                width: 750,
+                height: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(50),
+                  image: DecorationImage(
+                    image: NetworkImage(snapshot.data!),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      Color.fromARGB(130, 0, 0, 0),
+                      BlendMode.multiply,
+                    ),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Center( // Centering the task title text
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    child: Text(
+                      '$currentTaskTitle',
+                      textAlign: TextAlign.center, // Center-align the text
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 39,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              return Container(); // Return an empty container if no data is available yet
             }
           },
-          child: selectedTask != null && selectedTask!.taskCoverImage != null
-              ? FutureBuilder<String>(
-                  future: getDownloadUrl(
-                    key: selectedTask!.taskCoverImage!,
-                    accessLevel: StorageAccessLevel.guest,
-                  ),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Container(
-                        // Return a container with a loading indicator
-                        width: 750,
-                        height: 250,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.grey[200],
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      return Container(
-                        width: 750,
-                        height: 250,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(50),
-                          image: DecorationImage(
-                            image: NetworkImage(snapshot.data!),
-                            fit: BoxFit.cover,
-                            colorFilter: ColorFilter.mode(
-                              Color.fromARGB(130, 0, 0, 0),
-                              BlendMode.multiply,
-                            ),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 50, right: 50),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '$currentTaskTitle',
-                                style: TextStyle(
-                                  fontFamily: 'Lexend Exa',
-                                  fontSize: 39,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Container(); // Return an empty container if no data is available yet
-                    }
-                  },
-                )
-              : Container(),
-        ),
-      );
-
-// Circular Progress Indicator
- Widget _circularProgress(String? progress) {
-  if (progress == null || !progress.endsWith('%')) {
-    // Handle the case where progress is null or not in the expected format
-    return Container(); // Return an empty container or some default widget
-  }
-
-  double percentage = double.tryParse(progress.replaceAll('%', '')) ?? 0;
-  double actualPercentage = percentage / 100;
-
-  return Stack(
-    alignment: AlignmentDirectional.center,
-    children: <Widget>[
-      Center(
-        child: SizedBox(
-          width: 175,
-          height: 175,
-          child: CircularProgressIndicator(
-            strokeWidth: 15,
-            strokeCap: StrokeCap.round,
-            value: actualPercentage,
-            color: Colors.pink[900],
-            backgroundColor: Colors.grey[300],
-          ),
-        ),
-      ),
-      Center(
-        child: Text(
-          progress,
-          style: TextStyle(
-            fontFamily: 'Lexend Exa',
-            fontSize: 30,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
+        )
+        : Container(),
+    ),
   );
-}
-
-
-// Mock Data (temporary)
-
-  final NoteItem recentNote = NoteItem('General',
-      'Maecenas malesuada, mi vitae placerat rhoncus, quam risus condimentum enim, id feugiat quam turpis ultrices turpis.');
-
-  final ProgressItem recentProgress =
-      ProgressItem('Dishes', 'P', 'Good');
 }

@@ -171,13 +171,7 @@ class _TasksScreenState extends State<TasksScreen> {
         ),
       ],
       currentIndex: _selectedIndex,
-      onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          _onItemTapped(index);
-        },
-      
+      onTap: _onItemTapped,
 
     ),
     body: RefreshIndicator(

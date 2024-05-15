@@ -18,16 +18,12 @@ class EvaluateTask extends StatefulWidget {
   //final EvaluateItem evaluation;
   final Trainee trainee;
   final Task task;
-
-  //final Map<String, int> checkedSteps;
-
   @override
   _EvaluateTaskState createState() => _EvaluateTaskState();
 }
 
 class _EvaluateTaskState extends State<EvaluateTask> {
   late Trainee selectedTrainee;
-  List<CurrTask> currentTasks = [];
   late List<Task> allTasks = []; // List to store all tasks
   late String traineeID = widget.trainee.id; // Get the selected trainee's ID
   late Task selectedTask;
@@ -48,8 +44,6 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     fetchSelectedTrainee();
     fetchSelectedTask();
     selectedTask = widget.task;
-
-    //fetchCurrentTask(); // Call the function to fetch curr task
     _isCheckedList =
         List<bool>.filled(widget.task.taskStep?.length ?? 0, false);
   }
@@ -121,23 +115,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     }
   }
 
-  // Function to fetch the current task
-  Future<void> fetchCurrentTask() async {
-    try {
-      final currentTask = await queryCurrTask();
-      print('Fetched current tasks: $currentTask');
-
-      setState(() {
-        setState(() {
-          currentTasks = currentTask.cast<CurrTask>();
-          // Filter out null values using whereType and convert to List<CurrTask>
-        });
-        //safePrint(CurrentTasks);
-      });
-    } catch (e) {
-      print('Error fetching current task: $e');
-    }
-  }
+  
 
   Future<void> updateSelectedTask(
       List<bool> isCheckedList, String newTraineeID) async {
@@ -151,7 +129,6 @@ class _EvaluateTaskState extends State<EvaluateTask> {
         }
       }
 
-      // Update the current task with the new checkedStepsCount
       final updatedTask = selectedTask.copyWith(
           checkedStepsCount: checkedStepsCount, traineeID: widget.trainee.id);
 
@@ -187,27 +164,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     }
   }
 
-  //query the current task
-  Future<List<CurrTask?>> queryCurrTask() async {
-    try {
-      final request = ModelQueries.list(CurrTask.classType);
-      final response = await Amplify.API.query(request: request).response;
-      //safePrint('List of all the Task Notes:', response);
-      safePrint('Testing!');
-      safePrint(widget.trainee.id); //this is the selected trainee
-
-      final currTask = response.data?.items;
-      safePrint(currTask);
-      if (currTask == null) {
-        safePrint('errors: ${response.errors}');
-        return const [];
-      }
-      return currTask;
-    } on ApiException catch (e) {
-      safePrint('Query failed: $e');
-      return const [];
-    }
-  }
+  
 
   // Function to query all task
   Future<List<Task>> queryTask() async {
