@@ -7,13 +7,15 @@ import 'package:inka_test/admin/admin_tasks.dart';
 import 'package:inka_test/admin/admin_trainee_notes.dart';
 import 'package:inka_test/admin/admin_trainee_progress.dart';
 import 'package:inka_test/admin/admin_trainees.dart';
-import 'package:inka_test/items/trainee_item.dart';
+import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/Trainee.dart';
 
 class AdminTraineeProfile extends StatefulWidget {
-  const AdminTraineeProfile({super.key, required this.title, required this.trainee});
+  AdminTraineeProfile({super.key, required this.title, required this.trainee});
   final String title;
   final Trainee trainee;
+  Task task = Task(
+      adminID: "e7bd6941-2f8f-4949-a4ed-6803cd2ab42b"); // Initialize task here
 
   @override
   _AdminTraineeProfileState createState() => _AdminTraineeProfileState();
@@ -49,7 +51,8 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const AdminRecipesScreen(title: 'Recipes')));
+                builder: (context) =>
+                    const AdminRecipesScreen(title: 'Recipes')));
         break;
       default:
         break;
@@ -64,7 +67,8 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
         leading: IconButton(
             iconSize: 40,
             icon: const Icon(Icons.arrow_back_ios),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
               Navigator.pop(context);
             }),
@@ -77,7 +81,8 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
             },
             iconSize: 45,
             icon: const Icon(Icons.settings),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
         ],
       ),
@@ -116,7 +121,7 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
     );
   }
 
-Future<String> getDownloadUrl({
+  Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
   }) async {
@@ -140,49 +145,52 @@ Future<String> getDownloadUrl({
 
   // Widgets
 
-Widget _profileDetails() => Row(
-  children: [
-    FutureBuilder<String>(
-      future: getDownloadUrl(
-        key: widget.trainee.traineePhoto!,
-        accessLevel: StorageAccessLevel.guest,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircleAvatar(
-            radius: 100,
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasError) {
-          return CircleAvatar(
-            radius: 100,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.error),
-          );
-        }
-        return CircleAvatar(
-          radius: 100,
-          backgroundImage: NetworkImage(snapshot.data!),
-        );
-      },
-    ),
-    const SizedBox(width: 50),
-    Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
-      maxLines: 2,
-      style: const TextStyle(
-        fontFamily: 'Lexend Exa',
-        fontSize: 50,
-        fontWeight: FontWeight.w500))
-  ],
-);
-
+  Widget _profileDetails() => Row(
+        children: [
+          FutureBuilder<String>(
+            future: getDownloadUrl(
+              key: widget.trainee.traineePhoto!,
+              accessLevel: StorageAccessLevel.guest,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircleAvatar(
+                  radius: 100,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasError) {
+                return CircleAvatar(
+                  radius: 100,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.error),
+                );
+              }
+              return CircleAvatar(
+                radius: 100,
+                backgroundImage: NetworkImage(snapshot.data!),
+              );
+            },
+          ),
+          const SizedBox(width: 50),
+          Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
+              maxLines: 2,
+              style: const TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 50,
+                  fontWeight: FontWeight.w500))
+        ],
+      );
 
   // Progress Button
   Widget _progressButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AdminTraineeProgress(title: 'Progress', trainee: widget.trainee,);
+            return AdminTraineeProgress(
+              title: 'Progress',
+              trainee: widget.trainee,
+              task: widget.task, // To  FIXXXXX
+            );
           }));
         },
         child: Container(
@@ -231,7 +239,10 @@ Widget _profileDetails() => Row(
   Widget _notesButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AdminTraineeNotes(title: 'Notes', trainee: widget.trainee,);
+            return AdminTraineeNotes(
+              title: 'Notes',
+              trainee: widget.trainee,
+            );
           }));
         },
         child: Container(

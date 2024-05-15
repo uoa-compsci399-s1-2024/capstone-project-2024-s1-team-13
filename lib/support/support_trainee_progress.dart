@@ -1,7 +1,6 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:inka_test/items/progress_item.dart';
 import 'package:inka_test/models/CurrTask.dart';
 import 'package:inka_test/models/Session.dart';
 import 'package:inka_test/models/Task.dart';
@@ -162,7 +161,9 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => SupportSelectedProgress(
-                                  title: task.taskTitle!, task: task, trainee: widget.trainee, 
+                                  title: task.taskTitle!,
+                                  task: task,
+                                  trainee: widget.trainee,
                                 ),
                               ),
                             );
@@ -206,125 +207,115 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
 
   // Widget to build progress information
   Widget _buildProgress(Task task) {
-  return FutureBuilder<List<Session>?>(
-    future: querySession(task.id, widget.trainee.id),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Text('No progress available');
-      } else {
-        final sessions = snapshot.data!;
-        // Sort sessions by createdAt in descending order to get the latest one
-        sessions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-        final latestSession = sessions.first;
-        
-        final feedback = latestSession.sessionList![0].aSess![1] ?? 'No feedback available';
-        final judgementCall = latestSession.sessionList![0].aSess![2];
+    return FutureBuilder<List<Session>?>(
+      future: querySession(task.id, widget.trainee.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Text('No progress available');
+        } else {
+          final sessions = snapshot.data!;
+          // Sort sessions by createdAt in descending order to get the latest one
+          sessions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+          final latestSession = sessions.first;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Judgment Call: ',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
+          final feedback = latestSession.sessionList![0].aSess![1] ??
+              'No feedback available';
+          final judgementCall = latestSession.sessionList![0].aSess![2];
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Judgment Call: ',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: '$judgementCall',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.pink[900],
+                    TextSpan(
+                      text: '$judgementCall',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.pink[900],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Recent Feedback: ',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
+              SizedBox(height: 20),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Recent Feedback: ',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: '$feedback',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.pink[900],
+                    TextSpan(
+                      text: '$feedback',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.pink[900],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      }
-    },
-  );
-}
-
-
-
-
-
+            ],
+          );
+        }
+      },
+    );
+  }
 
   //QUERY ALL THE SESSIONS FOR THE TRAINEE
   // QUERY ALL THE SESSIONS FOR THE TRAINEE AND SELECTED TASK
   Future<List<Session>?> querySession(String taskID, String traineeID) async {
-  try {
-    final request = ModelQueries.list(
-      Session.classType,
-      where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
-    );
-    final response = await Amplify.API.query(request: request).response;
+    try {
+      final request = ModelQueries.list(
+        Session.classType,
+        where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
+      );
+      final response = await Amplify.API.query(request: request).response;
 
-    final session = response.data?.items;
-    if (session == null) {
-      safePrint('errors: ${response.errors}');
+      final session = response.data?.items;
+      if (session == null) {
+        safePrint('errors: ${response.errors}');
+        return null;
+      } else {
+        session.sort((a, b) {
+          if (a == null ||
+              a.createdAt == null ||
+              b == null ||
+              b.createdAt == null) {
+            return 0; // Handle null values
+          }
+          return a.createdAt!.compareTo(b.createdAt!);
+        });
+        // Sort sessions by createdAt in ascending order
+      }
+
+      return session?.cast<Session>();
+    } on ApiException catch (e) {
+      safePrint('Query failed: $e');
       return null;
-    } else {
-      session.sort((a, b) {
-        if (a == null || a.createdAt == null || b == null || b.createdAt == null) {
-          return 0; // Handle null values
-        }
-        return a.createdAt!.compareTo(b.createdAt!);
-      });
-      // Sort sessions by createdAt in ascending order
     }
-
-    return session?.cast<Session>();
-  } on ApiException catch (e) {
-    safePrint('Query failed: $e');
-    return null;
   }
 }
-
-
-}
-
-// Mock Data
-
-final List<ProgressItem> mockProgress = [
-  ProgressItem('Closing Evaluation', 'Independent', 'Good'),
-  ProgressItem('Dishes Evaluation', 'Gestural Prompt', 'Very Good')
-];
