@@ -16,6 +16,8 @@ void main() {
     DeviceOrientation.portraitUp,
   ]);
 
+  //EXAMPLE COMMENT
+
   /// Please update theme as per your need if required.
 
   runApp(const MyApp());
