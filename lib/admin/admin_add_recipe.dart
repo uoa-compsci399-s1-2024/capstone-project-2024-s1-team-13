@@ -34,7 +34,7 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
     safePrint('Steps: $steps');
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Task saved successfully')),
+      const SnackBar(content: Text('Recipe saved successfully')),
     );
   }
 
@@ -122,7 +122,6 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
       final url = await getDownloadUrl(key: platformFile.name, accessLevel: StorageAccessLevel.guest);
       print('Uploaded image URL for Step $stepNumber: $url');
       
-      // Return the key instead of the URL
       return platformFile.name;
     } on StorageException catch (e) {
       safePrint('Error uploading file: $e');
@@ -202,14 +201,14 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
                   hasInstructions = true;
                 }
 
-                if (uploadedImageKey != null && _recipeTitleController.text.isEmpty != true && hasInstructions == true && steps.isNotEmpty == true) {
+                if (uploadedImageKey != null && _recipeTitleController.text.isNotEmpty == true && hasInstructions == true && steps.isNotEmpty == true) {
                   createRecipe(_recipeTitleController.text, steps, uploadedImageKey!, stepImageUrls);
                   saveRecipe();
-                } else if (_recipeTitleController.text.isEmpty != false) {
+                } else if (_recipeTitleController.text.isEmpty == false) {
                   safePrint('Cannot save an empty recipe title!');
                 } else if (hasInstructions == false) {
                   safePrint('There is a step missing an instruction!');
-                } else if (steps.isEmpty != true) {
+                } else if (steps.isEmpty == true) {
                   safePrint('Cannot save an empty recipe step list!');
                 } else {
                   safePrint('Cannot save an empty recipe title!');
