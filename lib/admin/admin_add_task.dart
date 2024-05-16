@@ -191,32 +191,43 @@ class _AdminAddTaskState extends State<AdminAddTask> {
         ),
         actions: [
           IconButton(
-            onPressed: () async {
-              for (int i = 0; i < steps.length; i++){
-                if (steps[i].isEmpty == true){
-                  safePrint('No instructions in this step.');
-                  safePrint(i+1);
-                  hasInstructions = false;
-                  break;
+            onPressed: () {
+                for (int i = 0; i < steps.length; i++){
+                  if (steps[i].isEmpty == true){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No instructions in step: ${i+1}')),
+                    );
+                    hasInstructions = false;
+                    break;
+                  }
+                  hasInstructions = true;
                 }
-                hasInstructions = true;
-              }
 
-              if (uploadedImageKey != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && steps.isNotEmpty == true) {
-                createTask(_taskTitleController.text, steps, uploadedImageKey!, stepImageUrls);
-                saveTask();
-              } else if (_taskTitleController.text.isEmpty == true) {
-                safePrint('Cannot save an empty task title!');
-              } else if (hasInstructions == false) {
-                safePrint('There is a step missing an instruction!');
-              } else if (steps.isEmpty == true) {
-                safePrint('Cannot save an empty task step list!');
-              } else {
-                safePrint('Cannot save an empty task title!');
-                safePrint('Image upload failed.');
-                safePrint('Cannot save an empty task step list!');  
-              }
+                if (uploadedImageKey != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && steps.isNotEmpty == true) {
+                  createTask(_taskTitleController.text, steps, uploadedImageKey!, stepImageUrls);
+                  saveTask();
+                } else if (_taskTitleController.text.isEmpty == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a task title!')),
+                  );
+                } else if (steps.isEmpty == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add atleast 1 task step!')),
+                  );
+                }
+                  else if (uploadedImageKey == null){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a task cover image!')),
+                  );
+                  }
+                else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Task could not be saved')),
+                  );
+                  
+                }
             },
+
             iconSize: 50,
             icon: const Icon(Icons.done_rounded),
             padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -287,75 +298,68 @@ class _AdminAddTaskState extends State<AdminAddTask> {
       ),
       const SizedBox(width: 20),
       // Conditionally render the image container based on whether an image is uploaded
-      uploadedImageKey == null
-          ? InkWell(
-              onTap: () async {
-                String? key = await uploadImage();
-                if (key != null) {
-                  setState(() {
-                    uploadedImageKey = key;
-                  });
-                }
-              },
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                  color: Colors.grey[300],
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.add_a_photo,
-                    size: 40,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-            )
-          : // If an image is already uploaded, allow re-uploading by clicking on the image
-          InkWell(
-              onTap: () async {
-                String? key = await uploadImage();
-                if (key != null) {
-                  setState(() {
-                    uploadedImageKey = key;
-                  });
-                }
-              },
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(35),
-                  child: FutureBuilder<String>(
-                    future: getDownloadUrl(
-                        key: uploadedImageKey!,
-                        accessLevel: StorageAccessLevel.guest),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return Image.network(
-                          snapshot.data!,
-                          fit: BoxFit.cover,
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
+      InkWell(
+        onTap: () async {
+          String? key = await uploadImage();
+            if (key != null) {
+              setState(() {
+                uploadedImageKey = key;
+              });
+            }
+        },
+        child: Stack(
+        children: [
+          Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(35),
+              color: Colors.grey[300],
             ),
-          ],
-        );
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(35),
+              child: uploadedImageKey == null
+                  ? Center(
+                      child: Icon(
+                        Icons.add_a_photo,
+                        size: 40,
+                        color: Colors.grey[600],
+                      ),
+                    )
+                  : FutureBuilder<String>(
+                      future: getDownloadUrl(key: uploadedImageKey!, accessLevel: StorageAccessLevel.guest),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else {
+                          return Image.network(
+                            snapshot.data!,
+                            fit: BoxFit.cover,
+                          );
+                        }
+                      },
+                    ),
+            ),
+          ),
+
+          Positioned(
+            top: 70,
+            right: 70,
+            child: Icon(
+              Icons.add_a_photo,
+              size: 40,
+              color: Colors.grey[300]!.withOpacity(0.7),
+            ),
+          ),
+          
+        ],
+      ),
+    ),
+  ],
+);
+
 
   Widget _StepCard(BuildContext context, String step, int stepNumber) {
     return Card(
@@ -443,74 +447,70 @@ class _AdminAddTaskState extends State<AdminAddTask> {
           ),
         ),
         const SizedBox(width: 20),
-        if (stepImageUrls.isNotEmpty && stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null)
-          SizedBox(
-            width: 180,
-            height: 180,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(35),
-              child: InkWell(
-                onTap: () async {
-                  String? key = await uploadStepImage(stepNumber);
-                  if (key != null) {
-                    setState(() {
-                      stepImageUrls[stepNumber - 1] = key;
-                    });
-                  }
-                },
-                child: FutureBuilder<String>(
-                  future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Image.network(
-                        snapshot.data!,
-                        fit: BoxFit.cover,
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-          )
-        else // Show upload button if no image is uploaded
-          InkWell(
-            onTap: () async {
-              String? key = await uploadStepImage(stepNumber);
-              if (key != null) {
-                setState(() {
-                  if (stepImageUrls.length >= stepNumber) {
-                    stepImageUrls[stepNumber - 1] = key;
-                  } else {
-                    stepImageUrls.add(key);
-                  }
-                });
+        InkWell(
+        onTap: () async {
+          String? key = await uploadStepImage(stepNumber);
+          if (key != null) {
+            setState(() {
+              if (stepImageUrls.length >= stepNumber) {
+                stepImageUrls[stepNumber - 1] = key;
+              } else {
+                stepImageUrls.add(key);
               }
-            },
-            child: Container(
+            });
+          }
+        },
+        child: Stack(
+          children: [
+            Container(
               width: 180,
               height: 180,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(35),
                 color: Colors.grey[300],
               ),
-              child: Center(
-                child: Icon(
-                  Icons.add_a_photo,
-                  size: 40,
-                  color: Colors.grey[600],
-                ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(35),
+                child: stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null
+                    ? FutureBuilder<String>(
+                        future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            );
+                          }
+                        },
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.add_a_photo,
+                          size: 40,
+                          color: Colors.grey[600],
+                        ),
+                      ),
               ),
             ),
-          ),
-      ],
-    );
-  }
+            Positioned(
+              top: 70,
+              right: 70,
+              child: Icon(
+                Icons.add_a_photo,
+                size: 40,
+                color: Colors.grey[300]!.withOpacity(0.8),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
 
   Widget _AddStepButton() => ElevatedButton(
     onPressed: () {

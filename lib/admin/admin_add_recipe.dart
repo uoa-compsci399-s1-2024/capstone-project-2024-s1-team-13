@@ -193,8 +193,9 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
               onPressed: () {
                 for (int i = 0; i < steps.length; i++){
                   if (steps[i].isEmpty == true){
-                    safePrint('No instructions in this step.');
-                    safePrint(i+1);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No instructions in step: ${i+1}')),
+                    );
                     hasInstructions = false;
                     break;
                   }
@@ -204,18 +205,28 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
                 if (uploadedImageKey != null && _recipeTitleController.text.isNotEmpty == true && hasInstructions == true && steps.isNotEmpty == true) {
                   createRecipe(_recipeTitleController.text, steps, uploadedImageKey!, stepImageUrls);
                   saveRecipe();
-                } else if (_recipeTitleController.text.isEmpty == false) {
-                  safePrint('Cannot save an empty recipe title!');
-                } else if (hasInstructions == false) {
-                  safePrint('There is a step missing an instruction!');
+                } else if (_recipeTitleController.text.isEmpty == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a recipe title!')),
+                  );
                 } else if (steps.isEmpty == true) {
-                  safePrint('Cannot save an empty recipe step list!');
-                } else {
-                  safePrint('Cannot save an empty recipe title!');
-                  safePrint('Image upload failed.');
-                  safePrint('Cannot save an empty recipe step list!');  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add atleast 1 recipe step!')),
+                  );
                 }
-              },
+                  else if (uploadedImageKey == null){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a recipe cover image!')),
+                  );
+                  }
+                else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Recipe could not be saved')),
+                  );
+                  
+                }
+            },
+
               iconSize: 50,
               icon: const Icon(Icons.done_rounded),
               padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -260,104 +271,95 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
 
   // Recipe Title - text form field and image
   Widget _RecipeTitle() => Row(
+  children: [
+    Expanded(
+      child: TextField(
+        controller: _recipeTitleController,
+        style: const TextStyle(
+          fontFamily: "Lexend Exa",
+          fontSize: 30,
+          fontWeight: FontWeight.w300,
+        ),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+          hintText: "Enter recipe name",
+          hintStyle: const TextStyle(
+            fontFamily: "Lexend Exa",
+            fontSize: 30,
+            fontWeight: FontWeight.w300,
+          ),
+          filled: true,
+          fillColor: Colors.grey[300],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    ),
+    const SizedBox(width: 20),
+    InkWell(
+      onTap: () async {
+        String? key = await uploadImage();
+        if (key != null) {
+          setState(() {
+            uploadedImageKey = key;
+          });
+        }
+      },
+      child: Stack(
         children: [
-          // Task Title
-          Expanded(
-              child: TextField(
-            controller: _recipeTitleController,
-            style: const TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 30,
-              fontWeight: FontWeight.w300,
+          Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(35),
+              color: Colors.grey[300],
             ),
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-              hintText: "Enter recipe name",
-              hintStyle: const TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 30,
-                  fontWeight: FontWeight.w300),
-              filled: true,
-              fillColor: Colors.grey[300],
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide.none),
-            ),
-          )),
-
-          // Task Image
-          const SizedBox(width: 20),
-          // Conditionally render the image container based on whether an image is uploaded
-          uploadedImageKey == null
-              ? InkWell(
-                  onTap: () async {
-                    String? key = await uploadImage();
-                    if (key != null) {
-                      setState(() {
-                        uploadedImageKey = key;
-                      });
-                    }
-                  },
-                  child: Container(
-                    width: 180,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(35),
-                      color: Colors.grey[300],
-                    ),
-                    child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(35),
+              child: uploadedImageKey == null
+                  ? Center(
                       child: Icon(
                         Icons.add_a_photo,
                         size: 40,
                         color: Colors.grey[600],
                       ),
+                    )
+                  : FutureBuilder<String>(
+                      future: getDownloadUrl(key: uploadedImageKey!, accessLevel: StorageAccessLevel.guest),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else {
+                          return Image.network(
+                            snapshot.data!,
+                            fit: BoxFit.cover,
+                          );
+                        }
+                      },
                     ),
-                  ),
-                )
-              : // If an image is already uploaded, allow re-uploading by clicking on the image
-              InkWell(
-                  onTap: () async {
-                    String? key = await uploadImage();
-                    if (key != null) {
-                      setState(() {
-                        uploadedImageKey = key;
-                      });
-                    }
-                  },
-                  child: Container(
-                    width: 180,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(35),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(35),
-                      child: FutureBuilder<String>(
-                        future: getDownloadUrl(
-                            key: uploadedImageKey!,
-                            accessLevel: StorageAccessLevel.guest),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return Image.network(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ),
+            ),
+          ),
+
+          Positioned(
+            top: 70,
+            right: 70,
+            child: Icon(
+              Icons.add_a_photo,
+              size: 40,
+              color: Colors.grey[300]!.withOpacity(0.7),
+            ),
+          ),
+          
         ],
-      );
+      ),
+    ),
+  ],
+);
+
 
   Widget _StepCard(BuildContext context, String step, int stepNumber) {
     return Card(
@@ -411,109 +413,105 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
 
   // Step Card helper widget - text field
   Widget _stepDesc(int stepNumber) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextFormField(
-            initialValue: steps[stepNumber - 1],
-            onChanged: (value) {
-              setState(() {
-                steps[stepNumber - 1] = value;
-              });
-            },
-            maxLines: 4,
-            style: const TextStyle(
+  return Row(
+    children: [
+      Expanded(
+        child: TextFormField(
+          initialValue: steps[stepNumber - 1],
+          onChanged: (value) {
+            setState(() {
+              steps[stepNumber - 1] = value;
+            });
+          },
+          maxLines: 4,
+          style: const TextStyle(
+            fontFamily: "Lexend Exa",
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+          ),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+            filled: true,
+            fillColor: Colors.grey[300],
+            hintText: "Enter instruction",
+            hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 25,
               fontWeight: FontWeight.w500,
+              color: Colors.grey[400],
             ),
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-              filled: true,
-              fillColor: Colors.grey[300],
-              hintText: "Enter instruction",
-              hintStyle: TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[400],
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: BorderSide.none,
-              ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide.none,
             ),
           ),
         ),
-        const SizedBox(width: 20),
-        if (stepImageUrls.isNotEmpty && stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null)
-          SizedBox(
-            width: 180,
-            height: 180,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(35),
-              child: InkWell(
-                onTap: () async {
-                  String? key = await uploadStepImage(stepNumber);
-                  if (key != null) {
-                    setState(() {
-                      stepImageUrls[stepNumber - 1] = key;
-                    });
-                  }
-                },
-                child: FutureBuilder<String>(
-                  future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Image.network(
-                        snapshot.data!,
-                        fit: BoxFit.cover,
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-          )
-        else // Show upload button if no image is uploaded
-          InkWell(
-            onTap: () async {
-              String? key = await uploadStepImage(stepNumber);
-              if (key != null) {
-                setState(() {
-                  if (stepImageUrls.length >= stepNumber) {
-                    stepImageUrls[stepNumber - 1] = key;
-                  } else {
-                    stepImageUrls.add(key);
-                  }
-                });
+      ),
+      const SizedBox(width: 20),
+      InkWell(
+        onTap: () async {
+          String? key = await uploadStepImage(stepNumber);
+          if (key != null) {
+            setState(() {
+              if (stepImageUrls.length >= stepNumber) {
+                stepImageUrls[stepNumber - 1] = key;
+              } else {
+                stepImageUrls.add(key);
               }
-            },
-            child: Container(
+            });
+          }
+        },
+        child: Stack(
+          children: [
+            Container(
               width: 180,
               height: 180,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(35),
                 color: Colors.grey[300],
               ),
-              child: Center(
-                child: Icon(
-                  Icons.add_a_photo,
-                  size: 40,
-                  color: Colors.grey[600],
-                ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(35),
+                child: stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null
+                    ? FutureBuilder<String>(
+                        future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            );
+                          }
+                        },
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.add_a_photo,
+                          size: 40,
+                          color: Colors.grey[600],
+                        ),
+                      ),
               ),
             ),
-          ),
-      ],
-    );
-  }
+            Positioned(
+              top: 70,
+              right: 70,
+              child: Icon(
+                Icons.add_a_photo,
+                size: 40,
+                color: Colors.grey[300]!.withOpacity(0.8),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
 
   // Add Step Button
   Widget _AddStepButton() => ElevatedButton(
