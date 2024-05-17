@@ -13,17 +13,15 @@ import 'package:inka_test/support/support_trainee_profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class SupportEvaluate extends StatefulWidget {
-  SupportEvaluate(
-      {super.key,
-      required this.title,
-      required this.trainee,
-      required this.task,
-      });
+  SupportEvaluate({
+    super.key,
+    required this.title,
+    required this.trainee,
+    required this.task,
+  });
   final String title;
   final Trainee trainee;
   final Task task;
-
-
 
   @override
   _SupportEvaluateState createState() => _SupportEvaluateState();
@@ -33,6 +31,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
   final TextEditingController _textController = TextEditingController();
   late List<Task> allTasks = []; // List to store all tasks
   late Task selectedTask;
+  late List<Task> searchResults = []; // For autocomplete
 
   @override
   void initState() {
@@ -41,7 +40,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     fetchSelectedTask();
     selectedTask = widget.task; // Provide a default task if widget.task is null
   }
- 
 
   Future<void> fetchLatestTaskForTrainee() async {
     try {
@@ -171,7 +169,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     }
   }
 
-  
   // Function to fetch all task
   Future<void> fetchAllTask() async {
     try {
@@ -184,7 +181,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       print('Error fetching task: $e');
     }
   }
-
 
   // Function to query all task
   Future<List<Task>> queryTask() async {
@@ -243,131 +239,221 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     }
   }
 
+  Task? selectedTaskSearch;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          // Change to notification icon once bottom bar navigation is sorted
-          leading: IconButton(
-              iconSize: 40,
-              icon: Icon(Icons.notifications_rounded),
-              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return SupportNotifications(title: 'Notifications');
-                }));
-              }),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const SupportSettings(title: 'Settings');
-                }));
-              },
-              // To add functionality to settings
-              iconSize: 45,
-              icon: Icon(Icons.settings),
-              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text(widget.title),
+        // Change to notification icon once bottom bar navigation is sorted
+        leading: IconButton(
+          iconSize: 40,
+          icon: Icon(Icons.notifications_rounded),
+          padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return SupportNotifications(title: 'Notifications');
+            }));
+          }),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const SupportSettings(title: 'Settings');
+              }));
+            },
+            // To add functionality to settings
+            iconSize: 45,
+            icon: Icon(Icons.settings),
+            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          ),
+        ],
+      ),
 
-        // Bottom Bar
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'HOME',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.task_rounded),
-              label: 'EVALUATE',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: 'PROFILE',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
+      // Bottom Bar
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_rounded),
+            label: 'HOME',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.task_rounded),
+            label: 'EVALUATE',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: 'PROFILE',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
 
-        // List View of Evaluations
-        body: Column(
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.all(25),
-                child: _buildEvaluateSearchBar(context)),
-            Expanded(
-                child: ListView.builder(
-              itemCount: allTasks.length,
-              itemBuilder: (context, index) {
-                final task = allTasks[index];
-                return GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      selectedTask = task; // Set the selected task
-                      safePrint("THIS IS THE SELECTED TASK");
-                      safePrint(selectedTask);
-                    });
-                    await updateCurrentTask(
+      // List View of Evaluations
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(25),
+            child: _buildTaskSearchBar(context)
+          ),
+          Expanded(
+            child: searchResults.isNotEmpty || _textController.text.isNotEmpty
+              ? searchResults.isEmpty
+                ? Center(
+                  child: Text(
+                    'No task found',
+                    style: TextStyle(
+                      fontFamily: "Lexend Exa",
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                    ),
+                  ),
+                )
+                : ListView.builder(
+                  itemCount: searchResults.length,
+                  itemBuilder: (context, index) {
+                    final task = searchResults[index]; // Use searchResults instead of allTasks
+                    return GestureDetector(
+                      onTap: () async {
+                        setState(() {
+                          selectedTask = task; // Set the selected task
+                        });
+                        await updateCurrentTask(
+                          selectedTask.taskTitle ?? '',
+                          selectedTask.taskSteps,
+                          widget.trainee.id,
+                          selectedTask.taskProgress,
+                          selectedTask.taskCoverImage,
+                          selectedTask.sessionList,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EvaluateTask(
+                              task: selectedTask,
+                              trainee: widget.trainee,
+                            ),
+                          ),
+                        );
+                      },
+                      child: _EvalCard(task),
+                    );
+                  },
+                )
+              : ListView.builder(
+                itemCount: allTasks.length,
+                itemBuilder: (context, index) {
+                  final task = allTasks[index];
+                  return GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        selectedTask = task; // Set the selected task
+                      });
+                      await updateCurrentTask(
                         selectedTask.taskTitle ?? '',
-                        selectedTask.taskStep,
+                        selectedTask.taskSteps,
                         widget.trainee.id,
                         selectedTask.taskProgress,
                         selectedTask.taskCoverImage,
-                        selectedTask.sessionList); //updating SELECTED TASK HERE 
-
-
-                    Navigator.push(
+                        selectedTask.sessionList,
+                      );
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EvaluateTask(
-                                  task: selectedTask,
-                                  trainee: widget.trainee,
-                                )));
-                  },
-                  child: _EvalCard(task),
-                );
-              },
-            ))
-          ],
-        ));
+                          builder: (context) => EvaluateTask(
+                            task: selectedTask,
+                            trainee: widget.trainee,
+                          ),
+                        ),
+                      );
+                    },
+                    child: _EvalCard(task),
+                  );
+                },
+              ),
+          ),
+        ],
+      )
+    );
   }
 
-  // Search Bar
-  Widget _buildEvaluateSearchBar(context) => TextField(
-        controller: _textController,
-        style: TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 30,
-            fontWeight: FontWeight.w300),
-        decoration: InputDecoration(
-          prefixIcon: IconButton(
-              padding: EdgeInsets.only(left: 20, right: 10),
-              icon:
-                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
-              onPressed: () => _textController.clear()),
-          suffixIcon: IconButton(
-            padding: EdgeInsets.only(left: 10, right: 20),
-            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
-            onPressed: () {
-              _textController.text = "";
-            },
+  
+
+  // Autocomplete logic
+  void _onSearchTextChanged(String searchText) {
+    setState(() {
+      searchResults = allTasks
+          .where((task) =>
+              task.taskTitle!.toLowerCase().contains(searchText.toLowerCase()))
+          .toList();
+    });
+  }
+
+  // Search Bar with Autocomplete
+  Widget _buildTaskSearchBar(context) {
+    final maxListHeight = MediaQuery.of(context).size.height * 0.3;
+    final itemHeight = 70.0;
+    final listItemWidth = MediaQuery.of(context).size.width * 0.95;
+
+    return Autocomplete<Task>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<Task>.empty();
+        }
+        return allTasks.where((task) => task.taskTitle!
+            .toLowerCase()
+            .contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: (Task selectedTaskSearch) {
+        setState(() {
+          searchResults = [selectedTaskSearch];
+          this.selectedTaskSearch = selectedTaskSearch;
+          _textController.text = '${selectedTaskSearch.taskTitle}';
+        });
+      },
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return TextField(
+          controller: _textController,
+          focusNode: focusNode,
+          onChanged: _onSearchTextChanged,
+          style: TextStyle(
+            fontSize: 27, // Adjust the font size here
           ),
-          hintText: "Search Evaluation",
-          hintStyle: TextStyle(
+          decoration: InputDecoration(
+            prefixIcon:
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+            suffixIcon: IconButton(
+              icon:
+                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+              onPressed: () {
+                _textController.clear();
+                _onSearchTextChanged('');
+              },
+            ),
+            hintText: "Search Evaluation",
+            hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
-              fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
+              fontWeight: FontWeight.w300,
+            ),
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
-        ),
-      );
+              borderSide: BorderSide.none,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
   Future<String> getDownloadUrl({
     required String key,
@@ -450,5 +536,4 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
           ],
         ),
       );
-
 }
