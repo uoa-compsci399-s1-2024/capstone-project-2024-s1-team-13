@@ -20,6 +20,9 @@ class AdminRecipesScreen extends StatefulWidget {
 }
 
 class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
+    late List<Recipe> searchResults = []; // For autocomplete
+
+
   Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
@@ -43,11 +46,11 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
     }
   }
 
-  late List<Recipe> allRecipes = []; // List to store all tasks
+  late List<Recipe> allRecipes = []; // List to store all recipes
   @override
   void initState() {
     super.initState();
-    fetchAllRecipe(); // Call the function to fetch all task notes
+    fetchAllRecipe(); 
   
   }
 
@@ -119,146 +122,198 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
         break;
     }
   }
+
+   Recipe? selectedRecipe;
+
+  void _onSearchTextChanged(String searchText) {
+    setState(() {
+      searchResults = allRecipes
+          .where((recipe) =>
+              recipe.recipeTitle!.toLowerCase().contains(searchText.toLowerCase()))
+          .toList();
+    });
+  }
+
+    // Search Bar with Autocomplete
+  Widget _buildRecipeSearchBar(context) {
+    final maxListHeight = MediaQuery.of(context).size.height * 0.3;
+    final itemHeight = 70.0;
+    final listItemWidth = MediaQuery.of(context).size.width * 0.95;
+
+    return Autocomplete<Recipe>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<Recipe>.empty();
+        }
+        return allRecipes.where((recipe) => recipe.recipeTitle!
+            .toLowerCase()
+            .contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: (Recipe selectedRecipe) {
+        setState(() {
+          searchResults = [selectedRecipe];
+          this.selectedRecipe = selectedRecipe;
+          _textController.text = '${selectedRecipe.recipeTitle}';
+        });
+      },
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return TextField(
+          controller: _textController,
+          focusNode: focusNode,
+          onChanged: _onSearchTextChanged,
+          style: TextStyle(
+            fontSize: 27, // Adjust the font size here
+          ),
+          decoration: InputDecoration(
+            prefixIcon:
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+            suffixIcon: IconButton(
+              icon:
+                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+              onPressed: () {
+                _textController.clear();
+                _onSearchTextChanged('');
+              },
+            ),
+            hintText: "Search Recipes",
+            hintStyle: TextStyle(
+              fontFamily: "Lexend Exa",
+              fontSize: 30,
+              fontWeight: FontWeight.w300,
+            ),
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        );
+      },
+    );
+  }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          leading: IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.notifications_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return AdminNotifications(title: 'Notifications');
-                }));
-              }),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const AdminEditRecipes(title: 'Edit Recipes');
-                }));
-              }, // To add functionality to settings
-              iconSize: 45,
-              icon: const Icon(Icons.edit_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text(widget.title),
+        leading: IconButton(
+          iconSize: 40,
+          icon: const Icon(Icons.notifications_rounded),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return AdminNotifications(title: 'Notifications');
+            }));
+          },
         ),
-
-        // Bottom Navigation Bar
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: 'TRAINEES',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.task_rounded),
-              label: 'TASKS',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'RECIPES',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
-
-        // Grid View
-        // Body
-    body: Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(25),
-          child: _buildRecipeSearchBar(context),
-        ),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: fetchAllRecipe,
-            child: GridView.builder(
-  itemCount: allRecipes.length,
-  itemBuilder: (context, index) {
-    final recipe = allRecipes[index]; // Use allTasks instead of mockTasks
-    return FutureBuilder<String>(
-      future: getDownloadUrl(
-        key: recipe.recipeCoverImage!,
-        accessLevel: StorageAccessLevel.guest,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return GestureDetector(
-            onTap: () {
-              // Navigate to the desired screen when a task card is tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SelectedRecipe(title: recipe.recipeTitle!, recipeId: recipe.id)
-                ),
-              );
-            },
-            child: _buildRecipeCard(
-              recipe.recipeTitle ?? "Recipe Title Not Found",
-              snapshot.data ?? "", // Use the URL from the snapshot
-            ),
-          );
-        }
-      },
-    );
-  },
-  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2,
-  ),
-  scrollDirection: Axis.vertical,
-),
-
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-
-  // Search Bar
-  Widget _buildRecipeSearchBar(context) => TextField(
-        controller: _textController,
-        style: const TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 30,
-            fontWeight: FontWeight.w300),
-        decoration: InputDecoration(
-          prefixIcon: IconButton(
-              padding: const EdgeInsets.only(left: 20, right: 10),
-              icon:
-                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
-              onPressed: () => _textController.clear()),
-          suffixIcon: IconButton(
-            padding: const EdgeInsets.only(left: 10, right: 20),
-            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+        actions: [
+          IconButton(
             onPressed: () {
-              _textController.text = "";
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const AdminEditRecipes(title: 'Edit Recipes');
+              }));
             },
+            iconSize: 45,
+            icon: const Icon(Icons.edit_rounded),
           ),
-          hintText: "Search Recipes",
-          hintStyle: const TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 30,
-              fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
-        ),
-      );
+        ],
+      ),
+
+      // Bottom Navigation Bar
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: 'TRAINEES',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.task_rounded),
+            label: 'TASKS',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_view_rounded),
+            label: 'RECIPES',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+
+      // Body
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(25),
+            child: _buildRecipeSearchBar(context),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: fetchAllRecipe,
+              child: GridView.builder(
+                itemCount: searchResults.isNotEmpty || _textController.text.isNotEmpty
+                    ? searchResults.length
+                    : allRecipes.length,
+                itemBuilder: (context, index) {
+                  if (searchResults.isEmpty && _textController.text.isNotEmpty) {
+                    return Center(
+                      child: Text('No recipes found.'),
+                    );
+                  }
+                  final recipe = searchResults.isNotEmpty || _textController.text.isNotEmpty
+                      ? searchResults[index]
+                      : allRecipes[index]; // Use searchResults if available, otherwise allRecipes
+
+                  return FutureBuilder<String>(
+                    future: getDownloadUrl(
+                      key: recipe.recipeCoverImage!,
+                      accessLevel: StorageAccessLevel.guest,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to the desired screen when a recipe card is tapped
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SelectedRecipe(
+                                  title: recipe.recipeTitle!,
+                                  recipeId: recipe.id,
+                                ),
+                              ),
+                            );
+                          },
+                          child: _buildRecipeCard(
+                            recipe.recipeTitle ?? "Recipe Title Not Found",
+                            snapshot.data ?? "", // Use the URL from the snapshot
+                          ),
+                        );
+                      }
+                    },
+                  );
+                },
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+ 
 
   // Recipe Card
   String _getRecipe(int index) {

@@ -22,6 +22,7 @@ class _AdminTraineesState extends State<AdminTrainees> {
   late final String title;
   final TextEditingController _textController = TextEditingController();
   late List<Trainee> allTrainees = [];
+  late List<Trainee> searchResults = []; // For autocomplete
 
   @override
   void initState() {
@@ -120,6 +121,23 @@ class _AdminTraineesState extends State<AdminTrainees> {
     }
   }
 
+  // Autocomplete logic
+  void _onSearchTextChanged(String searchText) {
+    setState(() {
+      searchResults = allTrainees
+          .where((trainee) =>
+              trainee.firstName!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()) ||
+              trainee.lastName!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()))
+          .toList();
+    });
+  }
+
+  Trainee? selectedTrainee;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,72 +210,122 @@ class _AdminTraineesState extends State<AdminTrainees> {
           ),
           Expanded(
             child: RefreshIndicator(
-              onRefresh: fetchAllTrainees,
-              child: ListView.builder(
-                itemCount: allTrainees.length,
-                itemBuilder: (context, index) {
-                  final trainee = allTrainees[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AdminTraineeProfile(
-                            title: 'Profile',
-                            trainee: allTrainees[index],
-                          ),
+                onRefresh: fetchAllTrainees,
+                child: searchResults.isNotEmpty || _textController.text.isEmpty
+                    ? ListView.builder(
+                            itemCount: _textController.text.isNotEmpty
+                            ? searchResults.length
+                            : allTrainees.length,
+                        itemBuilder: (context, index) {
+                         final trainee = _textController.text.isNotEmpty
+                              ? searchResults[index]
+                              : allTrainees[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AdminTraineeProfile(
+                                    title: 'Profile',
+                                    trainee: allTrainees[index],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: _TraineeCard(trainee),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text(
+                        "No trainees found",
+                        style: TextStyle(
+                          fontFamily: "Lexend Exa",
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
                         ),
-                      );
-                    },
-                    child: _TraineeCard(trainee),
-                  );
-                },
-              ),
-            ),
+                      ))),
           ),
         ],
       ),
     );
   }
 
-  // Search Bar
-  Widget _buildTraineeSearchBar(context) => TextField(
-        controller: _textController,
-        style: const TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 30,
-            fontWeight: FontWeight.w300),
-        decoration: InputDecoration(
-          prefixIcon: IconButton(
-              padding: const EdgeInsets.only(left: 20, right: 10),
-              icon:
-                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
-              onPressed: () => _textController.clear()),
-          suffixIcon: IconButton(
-            padding: const EdgeInsets.only(left: 10, right: 20),
-            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
-            onPressed: () {
-              _textController.text = "";
-            },
+  Widget _buildTraineeSearchBar(context) {
+    final maxListHeight = MediaQuery.of(context).size.height * 0.3;
+    final itemHeight = 70.0;
+    final listItemWidth = MediaQuery.of(context).size.width * 0.95;
+
+    return Autocomplete<Trainee>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<Trainee>.empty();
+        }
+        return allTrainees.where((trainee) =>
+            trainee.firstName!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()) ||
+            trainee.lastName!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: (Trainee selectedTrainee) {
+        setState(() {
+          // Filter out the search results to only the selected option
+          searchResults = [selectedTrainee];
+          // Store the selected trainee
+          this.selectedTrainee = selectedTrainee;
+          _textController.text =
+              '${selectedTrainee.firstName} ${selectedTrainee.lastName}';
+        });
+      },
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return TextField(
+          controller: _textController,
+          focusNode: focusNode,
+          onChanged: _onSearchTextChanged,
+          style: TextStyle(
+            fontSize: 27, // Adjust the font size here
           ),
-          hintText: "Search Trainees",
-          hintStyle: const TextStyle(
+          decoration: InputDecoration(
+            prefixIcon:
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+            suffixIcon: IconButton(
+              icon:
+                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+              onPressed: () {
+                _textController.clear();
+                _onSearchTextChanged('');
+              },
+            ),
+            hintText: "Search Trainees",
+            hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
-              fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
+              fontWeight: FontWeight.w300,
+            ),
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
-        ),
-      );
+              borderSide: BorderSide.none,
+            ),
+          ),
+        );
+      },
+    );
+  }
 
+// Trainee Card
   Widget _TraineeCard(Trainee trainee) => Card(
         margin: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         elevation: 2,
-        color: trainee.isWorking == true ? Colors.white : Colors.grey[400],
+        color: Colors.white,
         child: ListTile(
           // Avatar containing image - set as leading for Card instance, needs fixing
           leading: FutureBuilder<String>(
@@ -289,13 +357,11 @@ class _AdminTraineesState extends State<AdminTrainees> {
             padding: EdgeInsets.only(top: 100, bottom: 100),
             child: Text(
               '${trainee.firstName} ${trainee.lastName}',
-              style: TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 40,
-                  fontWeight: FontWeight.w500,
-                  color: trainee.isWorking == true
-                      ? Colors.black
-                      : Colors.grey[600]),
+              style: const TextStyle(
+                fontFamily: "Lexend Exa",
+                fontSize: 40,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
