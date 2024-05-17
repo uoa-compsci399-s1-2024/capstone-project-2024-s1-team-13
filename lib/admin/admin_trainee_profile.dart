@@ -9,6 +9,8 @@ import 'package:inka_test/admin/admin_trainee_progress.dart';
 import 'package:inka_test/admin/admin_trainees.dart';
 import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/models/Trainee.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
 
 class AdminTraineeProfile extends StatefulWidget {
   const AdminTraineeProfile({super.key, required this.title, required this.trainee});
@@ -168,12 +170,18 @@ Widget _profileDetails() => Row(
       },
     ),
     const SizedBox(width: 50),
-    Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
-      maxLines: 2,
+    Flexible(
+    child: AutoSizeText(
+      "${widget.trainee.firstName} ${widget.trainee.lastName}",
       style: const TextStyle(
         fontFamily: 'Lexend Exa',
         fontSize: 50,
-        fontWeight: FontWeight.w500))
+        fontWeight: FontWeight.w500),
+      maxLines: 1,
+      minFontSize: 10, 
+      overflow: TextOverflow.ellipsis,
+      ))
+    
   ],
 );
 

@@ -45,6 +45,7 @@ dependencies:
   amplify_auth_cognito: ^1.8.0
   provider: ^5.0.0
   flutter_tts: ^3.2.2
+  auto_size_text: ^3.0.0
   
 
 

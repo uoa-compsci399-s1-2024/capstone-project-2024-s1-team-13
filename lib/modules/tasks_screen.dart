@@ -5,7 +5,7 @@ import 'package:inka_test/modules/modules_settings.dart';
 import 'package:inka_test/modules/recipes_screen.dart';
 import 'package:inka_test/modules/selected_task.dart';
 import 'package:inka_test/modules/training_modules.dart';
-
+import 'package:auto_size_text/auto_size_text.dart';
 
 
 
@@ -295,12 +295,20 @@ class _TasksScreenState extends State<TasksScreen> {
   child: Column(
     children: [
       Container(
+        height: 260, // Set a fixed height for the image container
+        width: 400,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(50),
             topRight: Radius.circular(50),
           ),
-          child: Image.network(taskCoverImageUrl, fit: BoxFit.fill),
+          child: Image.network(taskCoverImageUrl, fit: BoxFit.cover), // Use BoxFit.contain
         ),
       ),
       const SizedBox(height: 30),
@@ -309,15 +317,20 @@ class _TasksScreenState extends State<TasksScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.center,
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 30,
-                  fontWeight: FontWeight.w300,
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.center,
+                child: AutoSizeText(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 30,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  maxLines: 1, // Limit the text to a single line
+                  minFontSize: 10, // Set the minimum font size
+                  overflow: TextOverflow.ellipsis, // Add ellipsis if the text overflows
                 ),
               ),
             ),

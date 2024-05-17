@@ -9,6 +9,7 @@ import 'package:inka_test/admin/admin_trainees.dart';
 import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/modules/module_items/task_item.dart';
 import 'package:inka_test/modules/selected_task.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class AdminTasksScreen extends StatefulWidget {
   const AdminTasksScreen({super.key, required this.title});
@@ -294,12 +295,20 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
   child: Column(
     children: [
       Container(
+        height: 260, // Set a fixed height for the image container
+        width: 400,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(50),
             topRight: Radius.circular(50),
           ),
-          child: Image.network(taskCoverImageUrl, fit: BoxFit.fill),
+          child: Image.network(taskCoverImageUrl, fit: BoxFit.cover),
         ),
       ),
       const SizedBox(height: 30),
@@ -308,17 +317,24 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
+            Expanded(
+            child: Container(
               padding: const EdgeInsets.all(10),
               alignment: Alignment.center,
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 30,
-                  fontWeight: FontWeight.w300,
+              child: AutoSizeText(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 30,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  maxLines: 1, // Limit the text to a single line
+                  minFontSize: 10, // Set the minimum font size
+                  overflow: TextOverflow.ellipsis, // Add ellipsis if the text overflows
                 ),
-              ),
+            ),
+
+              
             ),
             
           ],

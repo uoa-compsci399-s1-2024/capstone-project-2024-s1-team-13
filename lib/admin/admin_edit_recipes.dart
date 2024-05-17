@@ -9,6 +9,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:inka_test/models/Recipe.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 //------------------------------------------------------------
 
@@ -276,12 +277,20 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
       child: Column(
         children: [
           Container(
+            height: 260, // Set a fixed height for the image container
+            width: 400,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+            ),
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(50),
                 topRight: Radius.circular(50),
               ),
-              child: Image.network(recipeCoverImageUrl, fit: BoxFit.fill),
+              child: Image.network(recipeCoverImageUrl, fit: BoxFit.cover),
             ),
           ),
           const SizedBox(height: 30),
@@ -290,16 +299,23 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                        padding: const EdgeInsets.all(10),
-                        alignment: Alignment.center,
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 30,
-                              fontWeight: FontWeight.w300),
-                        )),
+                    Expanded(
+                    child: Container(
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.center,
+                child: AutoSizeText(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 30,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  maxLines: 1, // Limit the text to a single line
+                  minFontSize: 10, // Set the minimum font size
+                  overflow: TextOverflow.ellipsis, // Add ellipsis if the text overflows
+                ),
+              ),
+            ),
                     IconButton(
                       onPressed: () =>
                           deleteRecipeDialog(context, currRecipeId), 
@@ -308,7 +324,7 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
                       iconSize: 50,
                       color: Colors.red[600],
                     )
-                  ])),
+      ])),
         ],
       ));
 

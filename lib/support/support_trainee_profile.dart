@@ -10,6 +10,7 @@ import 'package:inka_test/support/support_trainee_dashboard.dart';
 import 'package:inka_test/support/support_trainee_notes.dart';
 import 'package:inka_test/support/support_trainee_progress.dart';
 import 'package:inka_test/support/support_settings.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class SupportTraineeProfile extends StatefulWidget {
   SupportTraineeProfile({
@@ -161,12 +162,17 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
             },
           ),
           const SizedBox(width: 50),
-          Text("${widget.trainee.firstName} ${widget.trainee.lastName}",
-              maxLines: 2,
-              style: const TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 45,
-                  fontWeight: FontWeight.w500))
+          Flexible(
+    child: AutoSizeText(
+      "${widget.trainee.firstName} ${widget.trainee.lastName}",
+      style: const TextStyle(
+        fontFamily: 'Lexend Exa',
+        fontSize: 50,
+        fontWeight: FontWeight.w500),
+      maxLines: 1,
+      minFontSize: 10, 
+      overflow: TextOverflow.ellipsis,
+      ))
         ],
       );
 
