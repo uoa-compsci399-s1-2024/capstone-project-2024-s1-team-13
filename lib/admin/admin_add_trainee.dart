@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+
+//FILE UPLOAD IMPORT
 import 'package:file_picker/file_picker.dart';
+
+//AMPLIFY IMPORT
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
@@ -15,11 +19,22 @@ class AdminAddTrainee extends StatefulWidget {
 }
 
 class _AdminAddTraineeState extends State<AdminAddTrainee> {
+  //GLOBAL VARIABLES
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   String? uploadedImageKey;
   String? downloadedImageUrl;
+  String placeholderImageKey = 'trainee_placeholder.png';
+  bool? hasPlaceholder;
 
+  //INIT STATE
+  @override
+  void initState() {
+    super.initState();
+    displayImage();
+  }
+
+  //FUNCTIONS
   Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
@@ -43,18 +58,24 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
   }
   
   Future<void> displayImage() async {
-    final String? imageKey = uploadedImageKey;
+    String? imageKey = uploadedImageKey;
+    final String? imageUrl;
 
-    if (imageKey != null) {
-      final String imageUrl =
-          await getDownloadUrl(key: imageKey, accessLevel: StorageAccessLevel.guest);
-
+    try {
+      imageKey ??= placeholderImageKey;
+      if (imageKey == placeholderImageKey) {
+        hasPlaceholder = true;
+      }
+      imageUrl = await getDownloadUrl(key: imageKey, accessLevel: StorageAccessLevel.guest);
+      
       setState(() {
         downloadedImageUrl = imageUrl;
       });
+    
+    } catch (e) {
+      safePrint('Error fetching image URL :$e');
     }
   }
-
 
   Future<String?> uploadImage() async {
     final result = await FilePicker.platform.pickFiles(
@@ -82,12 +103,10 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
         },
       ).result;
 
-      // Set the uploaded image key in the state
       setState(() {
         uploadedImageKey = platformFile.name;
       });
 
-      // Return the key instead of the URL
       return platformFile.name;
     } on StorageException catch (e) {
       safePrint('Error uploading file: $e');
@@ -97,34 +116,51 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
 
   Future<void> createTrainee() async {
     try {
-      //CHECK VALIDATION
-      if (_firstNameController.text.isEmpty != true && _lastNameController.text.isEmpty != true && uploadedImageKey != null){
-        final aTrainee = Trainee(
-          traineePhoto: uploadedImageKey,
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
-          adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
-          isWorking: true, //default value
-        );
+      if (_firstNameController.text.isEmpty != true && _lastNameController.text.isEmpty != true){
+        if (hasPlaceholder != true) {
+          final aTrainee = Trainee(
+            traineePhoto: uploadedImageKey,
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+            supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
+            adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
+            isWorking: true, //default value
+          );
+          final req = ModelMutations.create(aTrainee);
+          final res = await Amplify.API.mutate(request: req).response;
 
-        final req = ModelMutations.create(aTrainee);
-        final res = await Amplify.API.mutate(request: req).response;
+          final createdTrainee = res.data;
+          if (createdTrainee == null) {
+            safePrint('errors: ${res.errors}');
+            return;
+          }
+          safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
+        } else if (hasPlaceholder == true) {
+          final aTrainee = Trainee(
+            traineePhoto: placeholderImageKey,
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+            supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
+            adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
+            isWorking: true, //default value
+          );
+          final req = ModelMutations.create(aTrainee);
+          final res = await Amplify.API.mutate(request: req).response;
 
-        final createdTrainee = res.data;
-        if (createdTrainee == null) {
-          print('errors: ${res.errors}');
-          return;
+          final createdTrainee = res.data;
+          if (createdTrainee == null) {
+            safePrint('errors: ${res.errors}');
+            return;
+          }
+          safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
         }
-        print('Mutation result: ${createdTrainee.firstName}');
       } else {
-        //can also make a different way to let the user know that you cannot have empty information when creating a trainee
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Invalid information!')),
         );
       }
     } on ApiException catch (e) {
-      print('Mutation Failed: $e');
+      safePrint('Error creating a trainee: $e');
     }
   }
 
@@ -168,79 +204,81 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
   }
 
   Widget _TraineeImage() => Column(
-        children: <Widget>[
-          Container(
-            width: 250,
-            height: 250,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (downloadedImageUrl != null)
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(downloadedImageUrl!),
-                        fit: BoxFit.cover,
-                      ),
+      children: <Widget>[
+        Container(
+          width: 250,
+          height: 250,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (downloadedImageUrl != null)
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(downloadedImageUrl!),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                if (downloadedImageUrl == null && uploadedImageKey == null)
-                  Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromARGB(255, 196, 155, 175),
-                    ),
-                    child: Center(
-                      child: InkWell(
-                        onTap: () async {
-                          await uploadImage();
-                          await displayImage();
-                        },
-                        child: Icon(
-                          Icons.add_a_photo,
-                          size: 40,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ),
+                )
+              else
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 196, 155, 175),
                   ),
-                if (uploadedImageKey != null)
-                  Positioned(
-                    top: 8,
-                    right: 8,
+                  child: Center(
                     child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          uploadedImageKey = null;
-                        });
+                      onTap: () async {
+                        await uploadImage();
+                        await displayImage();
                       },
-                      child: const Icon(Icons.close, color: Colors.white),
+                      child: Icon(
+                        Icons.add_a_photo,
+                        size: 40,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ),
-              ],
-            ),
-          ),
-          InkWell(
-            onTap: () async {
-              await uploadImage();
-              await displayImage();
-            },
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Text(
-                "Change Photo",
-                style: TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 30,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.pink[900],
                 ),
+              if (uploadedImageKey != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        uploadedImageKey = null;
+                        downloadedImageUrl = null;
+                      });
+                      displayImage();
+                    },
+                    child: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () async {
+            await uploadImage();
+            await displayImage();
+          },
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              "Change Photo",
+              style: TextStyle(
+                fontFamily: "Lexend Exa",
+                fontSize: 30,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900],
               ),
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
 
   Widget _TraineeDetails() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
