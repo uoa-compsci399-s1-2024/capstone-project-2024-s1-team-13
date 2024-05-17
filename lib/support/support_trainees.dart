@@ -6,7 +6,6 @@ import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/support_settings.dart';
 import 'package:inka_test/support/support_trainee_dashboard.dart';
-import 'package:inka_test/items/trainee_item.dart';
 
 class SupportTrainees extends StatefulWidget {
   const SupportTrainees({
@@ -200,11 +199,17 @@ class _SupportTrainees extends State<SupportTrainees> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+            ),
             suffixIcon: IconButton(
-              icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 15, right: 10),
+                child: Icon(Icons.clear_rounded,
+                    color: Colors.grey[600], size: 50),
+              ),
               onPressed: () {
                 _textController.clear();
                 _onSearchTextChanged('');
@@ -256,7 +261,7 @@ class _SupportTrainees extends State<SupportTrainees> {
         margin: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         elevation: 2,
-        color: Colors.white,
+        color: trainee.isWorking == true ? Colors.white : Colors.grey[400],
         child: ListTile(
           // Avatar containing image - set as leading for Card instance, needs fixing
           leading: FutureBuilder<String>(
@@ -288,11 +293,13 @@ class _SupportTrainees extends State<SupportTrainees> {
             padding: EdgeInsets.only(top: 100, bottom: 100),
             child: Text(
               '${trainee.firstName} ${trainee.lastName}',
-              style: const TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 40,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(
+                  fontFamily: "Lexend Exa",
+                  fontSize: 40,
+                  fontWeight: FontWeight.w500,
+                  color: trainee.isWorking == true
+                      ? Colors.black
+                      : Colors.grey[600]),
             ),
           ),
         ),
