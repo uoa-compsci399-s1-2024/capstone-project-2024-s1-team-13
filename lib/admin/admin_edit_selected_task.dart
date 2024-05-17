@@ -37,6 +37,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
   late String globalCoverImageUrl;
   List<String> taskSteps = [];
   List<String> taskStepImages = [];
+  bool? hasInstructions;
 
   //------------------------------------------------------------
   //INITSTATE() ------------------------------------------------
@@ -52,11 +53,26 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
     globalCoverImageUrl = widget.task.taskCoverImage!;
     _taskTitleController = TextEditingController(text: widget.task.taskTitle);
     _stepDescriptionController = TextEditingController(text: widget.task.taskStep?[0]);
+    
   }
 
   //------------------------------------------------------------
   //FUNCTIONS SECTION ------------------------------------------
   //------------------------------------------------------------
+
+   void saveTask() {
+    String taskName = _taskTitleController.text;
+
+    print('Task Name: $taskName');
+    print('Steps: $taskSteps');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Task saved successfully')),
+    );
+  }
+
+
+  
 
   Future<String> getDownloadUrl({
     required String key,
@@ -160,14 +176,14 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
   
   
 
-  Future<void> updateTask(String retTaskTitle, List<String> retTaskSteps) async {
+  Future<void> updateTask(String retTaskTitle, List<String> retTaskSteps, String imageKey, List<String> taskStepImages) async {
     try {
       final updatedTask = Task(
         id: globalTaskId,
         taskTitle: retTaskTitle,
         taskStep: retTaskSteps,
         adminID: globalAdminId,
-        taskCoverImage: globalCoverImageUrl, //acc not the url but the key
+        taskCoverImage: imageKey, //acc not the url but the key
         taskStepImage: taskStepImages
       );
 
@@ -214,25 +230,54 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                 Navigator.pop(context);
               }),
           actions: [
-            IconButton(
-              onPressed: () {
-                saveTask();
-                retTaskTitle = _taskTitleController.text;
-                updateTask(retTaskTitle, taskSteps);
-                Navigator.pop(context);
-              },
-              iconSize: 50,
-              icon: const Icon(Icons.done_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
-        ),
+          IconButton(
+            onPressed: () {
+                for (int i = 0; i < taskSteps.length; i++){
+                  if (taskSteps[i].isEmpty == true){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No instructions in step: ${i+1}')),
+                    );
+                    hasInstructions = false;
+                    break;
+                  }
+                  hasInstructions = true;
+                }
 
-        body: RefreshIndicator(
-          onRefresh: _refresh,
+                if (globalCoverImageUrl != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && taskSteps.isNotEmpty == true) {
+                  updateTask(_taskTitleController.text, taskStepImages, globalCoverImageUrl!, taskStepImages);
+                  saveTask();
+                } else if (_taskTitleController.text.isEmpty == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a task title!')),
+                  );
+                } else if (taskSteps.isEmpty == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add atleast 1 task step!')),
+                  );
+                }
+                  else if (globalCoverImageUrl == null){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a task cover image!')),
+                  );
+                  }
+                else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Task could not be saved')),
+                  );
+                  
+                }
+            },
+
+            iconSize: 50,
+            icon: const Icon(Icons.done_rounded),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          ),
+        ],
+      ),
+
 
         // Grid View
-        child: Column(
+        body: Column(
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
@@ -248,6 +293,9 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
               ),
               child: Padding(padding: const EdgeInsets.all(25), child: _TaskTitle()),
             ),
+
+
+
             const SizedBox(height: 30),
             Expanded(
                 child: ListView.builder(
@@ -261,7 +309,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
             _AddStepButton(),
             const SizedBox(height: 30)
           ],
-        )));
+        ));
   }
 
   // Task Title - text form field and image
@@ -306,43 +354,59 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
           // You may want to display a message to the user
         }
       },
-      child: Container(
-        width: 180,
-        height: 180,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
-          color: Colors.grey[300],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(35),
-          child: globalCoverImageUrl != null
-              ? FutureBuilder(
-                  future: getDownloadUrl(key: globalCoverImageUrl!, accessLevel: StorageAccessLevel.guest),
-                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Display a loading indicator while waiting for the URL
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}'); // Display an error message if there is an error
-                    } else {
-                      return Image.network(
-                        snapshot.data!,
-                        fit: BoxFit.cover,
-                      );
-                    }
-                  },
-                )
-              : Center(
-                  child: Icon(
-                    Icons.add_a_photo,
-                    size: 40,
-                    color: Colors.grey[600],
-                  ),
-                ),
-        ),
+      child: Stack(
+        children: [
+          Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(35),
+              color: Colors.grey[300],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(35),
+              child: globalCoverImageUrl == null
+                  ? Center(
+                      child: Icon(
+                        Icons.add_a_photo,
+                        size: 40,
+                        color: Colors.grey[600],
+                      ),
+                    )
+                  : FutureBuilder<String>(
+                      future: getDownloadUrl(key: globalCoverImageUrl!, accessLevel: StorageAccessLevel.guest),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else {
+                          return Image.network(
+                            snapshot.data!,
+                            fit: BoxFit.cover,
+                          );
+                        }
+                      },
+                    ),
+            ),
+          ),
+
+          Positioned(
+            top: 70,
+            right: 70,
+            child: Icon(
+              Icons.add_a_photo,
+              size: 40,
+              color: Colors.grey[300]!.withOpacity(0.7),
+            ),
+          ),
+          
+        ],
       ),
     ),
   ],
 );
+
 
 
 
@@ -460,39 +524,52 @@ Widget _stepDesc(int stepNumber, String? stepImageKey) {
             // You may want to display a message to the user
           }
         },
-        child: Container(
-          width: 180,
-          height: 180,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(35),
-            color: Colors.grey[300],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(35),
-            child: stepImageKey != null
-                ? FutureBuilder(
-                    future: getDownloadUrl(key: stepImageKey, accessLevel: StorageAccessLevel.guest),
-                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(); // Display a loading indicator while waiting for the URL
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}'); // Display an error message if there is an error
-                      } else {
-                        return Image.network(
-                          snapshot.data!,
-                          fit: BoxFit.cover,
-                        );
-                      }
-                    },
-                  )
-                : Center(
-                    child: Icon(
-                      Icons.add_a_photo,
-                      size: 40,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-          ),
+        child: Stack(
+          children: [
+            Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: Colors.grey[300],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(35),
+                child: taskStepImages.length >= stepNumber && taskStepImages[stepNumber - 1] != null
+                    ? FutureBuilder<String>(
+                        future: getDownloadUrl(key: taskStepImages[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            );
+                          }
+                        },
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.add_a_photo,
+                          size: 40,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+              ),
+            ),
+            Positioned(
+              top: 70,
+              right: 70,
+              child: Icon(
+                Icons.add_a_photo,
+                size: 40,
+                color: Colors.grey[300]!.withOpacity(0.8),
+              ),
+            ),
+          ],
         ),
       ),
     ],
@@ -502,42 +579,32 @@ Widget _stepDesc(int stepNumber, String? stepImageKey) {
 
 // Add Step Button
   Widget _AddStepButton() => ElevatedButton(
-        onPressed: () {
-          setState(() {
-            taskSteps.add('');
-          });
-        },
-        style: ElevatedButton.styleFrom(
-            minimumSize: const Size(800, 100),
-            foregroundColor: Colors.pink[900],
-            textStyle: const TextStyle(
-              fontSize: 35,
-              fontFamily: 'Lexend Exa',
-              fontWeight: FontWeight.w500,
-            ),
-            backgroundColor: Colors.white,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50))),
-        child: const Text('+ ADD STEP'),
-      );
+    onPressed: () {
+      setState(() {
+        taskSteps.add('');
+        taskStepImages.add('placeholder.png'); //Include placeholder every initialisation, can be updated
+      });
+    },
+    style: ElevatedButton.styleFrom(
+      minimumSize: const Size(800, 100),
+      foregroundColor: Colors.pink[900],
+      textStyle: const TextStyle(
+        fontSize: 35,
+        fontFamily: 'Lexend Exa',
+        fontWeight: FontWeight.w500,
+      ),
+      backgroundColor: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50)
+      )
+    ),
+    child: const Text('+ ADD STEP'),
+  );
+
 
   // Step Card Helper Widget - Step Number
   
-  void saveTask() {
-    String taskName = _taskTitleController.text;
-
-    // Here you can implement your desired functionality to handle task saving,
-    // whether it's storing data locally, using a different API, or any other logic.
-    // For example, you can print the task details:
-    print('Recipe Name: $taskName');
-    print('Steps: $taskSteps');
- 
-    // You can also show a message to indicate successful saving:
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Task saved successfully')),
-    );
-  }
 
   //Delete selected task - pending backend functionality
   void _deleteStep(BuildContext context, int index) {
@@ -602,3 +669,4 @@ Widget _stepDesc(int stepNumber, String? stepImageKey) {
     );
   }
 }
+

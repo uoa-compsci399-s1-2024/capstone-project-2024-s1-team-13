@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 //------------------------------------------------------------
 //AMPLIFY IMPORTS --------------------------------------------
 //------------------------------------------------------------
+
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
@@ -39,6 +40,7 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
   late String globalCoverImageUrl;
   List<String> recipeSteps = []; //List to store recipe steps
   List<String> recipeStepImages = []; //List to store the recipe step images
+  bool? hasInstructions;
 
   //------------------------------------------------------------
   //INITSTATE() ------------------------------------------------
@@ -59,6 +61,24 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
   //------------------------------------------------------------
   //FUNCTIONS SECTION ------------------------------------------
   //------------------------------------------------------------
+
+
+  void saveRecipe() {
+    String recipeName = _taskTitleController.text;
+
+    // Here you can implement your desired functionality to handle task saving,
+    // whether it's storing data locally, using a different API, or any other logic.
+    // For example, you can print the task details:
+    print('Recipe Name: $recipeName');
+    print('Steps: $recipeSteps');
+ 
+    // You can also show a message to indicate successful saving:
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Recipe saved successfully')),
+    );
+  }
+
+  
 
   //GETDOWNLOADURL [HAVE TO ADD]
   Future<String> getDownloadUrl({
@@ -161,14 +181,14 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
 }
 
   //UPDATERECIPE
-  Future<void> updateRecipe(String retRecipeTitle, List<String> retRecipeSteps) async {
+  Future<void> updateRecipe(String retRecipeTitle, List<String> retRecipeSteps, String imageKey, List<String> recipeStepImages) async {
     try {
       final updatedRecipe = Recipe(
         id: globalRecipeId,
         recipeTitle: retRecipeTitle,
         recipeStep: recipeSteps,
         adminID: globalAdminId,
-        recipeCoverImage: globalCoverImageUrl,
+        recipeCoverImage: imageKey,
         recipeStepImage: recipeStepImages
       );
 
@@ -219,27 +239,54 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
                 Navigator.pop(context);
               }),
           actions: [
-            IconButton(
-              onPressed: () {
-                saveRecipe();
-                retRecipeTitle = _taskTitleController.text;
-                updateRecipe(retRecipeTitle, recipeSteps);
-                Navigator.pop(context);
-              },
-              iconSize: 50,
-              icon: const Icon(Icons.done_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+          IconButton(
+            onPressed: () {
+                for (int i = 0; i < recipeSteps.length; i++){
+                  if (recipeSteps[i].isEmpty == true){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No instructions in step: ${i+1}')),
+                    );
+                    hasInstructions = false;
+                    break;
+                  }
+                  hasInstructions = true;
+                }
+
+                if (globalCoverImageUrl != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && recipeSteps.isNotEmpty == true) {
+                  updateRecipe(_taskTitleController.text, recipeStepImages, globalCoverImageUrl!, recipeStepImages);
+                  saveRecipe();
+                } else if (_taskTitleController.text.isEmpty == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a recipe title!')),
+                  );
+                } else if (recipeSteps.isEmpty == true) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add atleast 1 recipe step!')),
+                  );
+                }
+                  else if (globalCoverImageUrl == null){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please add a recipe cover image!')),
+                  );
+                  }
+                else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Recipe could not be saved')),
+                  );
+                  
+                }
+            },
+
+            iconSize: 50,
+            icon: const Icon(Icons.done_rounded),
+            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          ),
+        ],
         ),
 
-        body: RefreshIndicator(
-          onRefresh: _refresh,
-
-        
 
         // Grid View
-        child: Column(
+        body: Column(
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
@@ -270,7 +317,7 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
             _AddStepButton(),
             const SizedBox(height: 30)
           ],
-        )));
+        ));
   }
 
   // Task Title - text form field and image
@@ -315,45 +362,58 @@ Widget _RecipeTitle() => Row(
           // You may want to display a message to the user
         }
       },
-      child: Container(
-        width: 180,
-        height: 180,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
-          color: Colors.grey[300],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(35),
-          child: globalCoverImageUrl != null
-              ? FutureBuilder(
-                  future: getDownloadUrl(key: globalCoverImageUrl!, accessLevel: StorageAccessLevel.guest),
-                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Display a loading indicator while waiting for the URL
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}'); // Display an error message if there is an error
-                    } else {
-                      return Image.network(
-                        snapshot.data!,
-                        fit: BoxFit.cover,
-                      );
-                    }
-                  },
-                )
-              : Center(
-                  child: Icon(
-                    Icons.add_a_photo,
-                    size: 40,
-                    color: Colors.grey[600],
-                  ),
-                ),
-        ),
+      child: Stack(
+        children: [
+          Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(35),
+              color: Colors.grey[300],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(35),
+              child: globalCoverImageUrl == null
+                  ? Center(
+                      child: Icon(
+                        Icons.add_a_photo,
+                        size: 40,
+                        color: Colors.grey[600],
+                      ),
+                    )
+                  : FutureBuilder<String>(
+                      future: getDownloadUrl(key: globalCoverImageUrl!, accessLevel: StorageAccessLevel.guest),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else {
+                          return Image.network(
+                            snapshot.data!,
+                            fit: BoxFit.cover,
+                          );
+                        }
+                      },
+                    ),
+            ),
+          ),
+
+          Positioned(
+            top: 70,
+            right: 70,
+            child: Icon(
+              Icons.add_a_photo,
+              size: 40,
+              color: Colors.grey[300]!.withOpacity(0.7),
+            ),
+          ),
+          
+        ],
       ),
     ),
   ],
 );
-
-
 
   // Step Card
   // Step Card
@@ -476,39 +536,52 @@ Widget _stepDesc(int stepNumber, String? stepImageKey) {
             // You may want to display a message to the user
           }
         },
-        child: Container(
-          width: 180,
-          height: 180,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(35),
-            color: Colors.grey[300],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(35),
-            child: stepImageKey != null
-                ? FutureBuilder(
-                    future: getDownloadUrl(key: stepImageKey, accessLevel: StorageAccessLevel.guest),
-                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator(); // Display a loading indicator while waiting for the URL
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}'); // Display an error message if there is an error
-                      } else {
-                        return Image.network(
-                          snapshot.data!,
-                          fit: BoxFit.cover,
-                        );
-                      }
-                    },
-                  )
-                : Center(
-                    child: Icon(
-                      Icons.add_a_photo,
-                      size: 40,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-          ),
+        child: Stack(
+          children: [
+            Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: Colors.grey[300],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(35),
+                child: recipeStepImages.length >= stepNumber && recipeStepImages[stepNumber - 1] != null
+                    ? FutureBuilder<String>(
+                        future: getDownloadUrl(key: recipeStepImages[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            );
+                          }
+                        },
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.add_a_photo,
+                          size: 40,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+              ),
+            ),
+            Positioned(
+              top: 70,
+              right: 70,
+              child: Icon(
+                Icons.add_a_photo,
+                size: 40,
+                color: Colors.grey[300]!.withOpacity(0.8),
+              ),
+            ),
+          ],
         ),
       ),
     ],
@@ -517,27 +590,32 @@ Widget _stepDesc(int stepNumber, String? stepImageKey) {
 
 
 // Add Step Button
+  // Add Step Button
   Widget _AddStepButton() => ElevatedButton(
-        onPressed: () {
-          setState(() {
-            recipeSteps.add('');
-          });
-        },
-        style: ElevatedButton.styleFrom(
-            minimumSize: const Size(800, 100),
-            foregroundColor: Colors.pink[900],
-            textStyle: const TextStyle(
-              fontSize: 35,
-              fontFamily: 'Lexend Exa',
-              fontWeight: FontWeight.w500,
-            ),
-            backgroundColor: Colors.white,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50))),
-        child: const Text('+ ADD STEP'),
-      );
+    onPressed: () {
+      setState(() {
+        recipeSteps.add('');
+        recipeStepImages.add('placeholder.png'); //Include placeholder every initialisation, can be updated
+      });
+    },
+    style: ElevatedButton.styleFrom(
+      minimumSize: const Size(800, 100),
+      foregroundColor: Colors.pink[900],
+      textStyle: const TextStyle(
+        fontSize: 35,
+        fontFamily: 'Lexend Exa',
+        fontWeight: FontWeight.w500,
+      ),
+      backgroundColor: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50)
+      )
+    ),
+    child: const Text('+ ADD STEP'),
+  );
 
+  
   // Step Card Helper Widget - Step Number
   Widget _StepNumber() => Padding(
         padding: const EdgeInsets.all(20),
@@ -567,20 +645,7 @@ Widget _stepDesc(int stepNumber, String? stepImageKey) {
         ]),
       );
   
-  void saveRecipe() {
-    String recipeName = _taskTitleController.text;
-
-    // Here you can implement your desired functionality to handle task saving,
-    // whether it's storing data locally, using a different API, or any other logic.
-    // For example, you can print the task details:
-    print('Recipe Name: $recipeName');
-    print('Steps: $recipeSteps');
- 
-    // You can also show a message to indicate successful saving:
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Task saved successfully')),
-    );
-  }
+  
 
   //Delete selected task - pending backend functionality
   //Delete selected task - pending backend functionality

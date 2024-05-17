@@ -115,54 +115,56 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
   }
 
   Future<void> createTrainee() async {
-    try {
-      if (_firstNameController.text.isEmpty != true && _lastNameController.text.isEmpty != true){
-        if (hasPlaceholder != true) {
-          final aTrainee = Trainee(
-            traineePhoto: uploadedImageKey,
-            firstName: _firstNameController.text,
-            lastName: _lastNameController.text,
-            supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
-            adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
-            isWorking: true, //default value
-          );
-          final req = ModelMutations.create(aTrainee);
-          final res = await Amplify.API.mutate(request: req).response;
-
-          final createdTrainee = res.data;
-          if (createdTrainee == null) {
-            safePrint('errors: ${res.errors}');
-            return;
-          }
-          safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
-        } else if (hasPlaceholder == true) {
-          final aTrainee = Trainee(
-            traineePhoto: placeholderImageKey,
-            firstName: _firstNameController.text,
-            lastName: _lastNameController.text,
-            supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
-            adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
-            isWorking: true, //default value
-          );
-          final req = ModelMutations.create(aTrainee);
-          final res = await Amplify.API.mutate(request: req).response;
-
-          final createdTrainee = res.data;
-          if (createdTrainee == null) {
-            safePrint('errors: ${res.errors}');
-            return;
-          }
-          safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid information!')),
-        );
-      }
-    } on ApiException catch (e) {
-      safePrint('Error creating a trainee: $e');
-    }
+  if (_firstNameController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter First Name')),
+    );
+    return;
   }
+
+  if (_lastNameController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter Surname')),
+    );
+    return;
+  }
+
+  try {
+    Trainee aTrainee;
+    if (hasPlaceholder != true) {
+      aTrainee = Trainee(
+        traineePhoto: uploadedImageKey,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
+        adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
+        isWorking: true, //default value
+      );
+    } else {
+      aTrainee = Trainee(
+        traineePhoto: placeholderImageKey,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
+        adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
+        isWorking: true, //default value
+      );
+    }
+
+    final req = ModelMutations.create(aTrainee);
+    final res = await Amplify.API.mutate(request: req).response;
+
+    final createdTrainee = res.data;
+    if (createdTrainee == null) {
+      safePrint('errors: ${res.errors}');
+      return;
+    }
+    safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
+    Navigator.pop(context);  // Pop the screen only on success
+  } on ApiException catch (e) {
+    safePrint('Error creating a trainee: $e');
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +183,7 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
           IconButton(
             onPressed: () {
               createTrainee();
-              Navigator.pop(context);
+              
             },
             iconSize: 50,
             icon: const Icon(Icons.done_rounded),
