@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:inka_test/support/support_select_trainee.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
-class Login extends StatefulWidget {
-  Login({super.key, required this.title});
+class SupportLogin extends StatefulWidget {
+  SupportLogin({super.key, required this.title});
   final String title;
 
   //final TextEditingController _usernameController = TextEditingController();
@@ -14,10 +14,10 @@ class Login extends StatefulWidget {
   //final TextEditingController _passwordController = TextEditingController();
 
   @override
-  _LoginState createState() => _LoginState();
+  _SupportLoginState createState() => _SupportLoginState();
 }
 
-class _LoginState extends State<Login> {
+class _SupportLoginState extends State<SupportLogin> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -49,12 +49,14 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
-            child: Form(
-                child: Column(
+        body: SingleChildScrollView(
+            child: SafeArea(
+                child: Form(
+                    child: Column(
       children: [
-        Padding(padding: EdgeInsets.all(100), child: _LoginTitle()),
+        Padding(
+            padding: EdgeInsets.only(left: 150, top: 100, bottom: 100),
+            child: _LoginTitle()),
         _supportAdminIcon(),
         SizedBox(height: 40),
         Padding(
@@ -64,9 +66,10 @@ class _LoginState extends State<Login> {
         _LoginButton(context),
         if (_errorMessage.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.all(75),
+            padding: const EdgeInsets.only(top: 30, left: 75, right: 75),
             child: Text(
               _errorMessage,
+              textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.red,
                   fontSize: 25,
@@ -222,8 +225,8 @@ class _LoginState extends State<Login> {
       ]);
 
   Widget _supportAdminIcon() => Column(children: [
-        Icon(Icons.group_rounded, size: 200, color: Colors.pink[900]),
-        Text("Support Staff | Admin",
+        Icon(Icons.person_rounded, size: 200, color: Colors.pink[900]),
+        Text("Support Staff",
             style: TextStyle(
                 fontFamily: "Lexend Exa",
                 fontSize: 25,
@@ -376,7 +379,7 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 50),
         ],
       ));
 
@@ -388,7 +391,7 @@ class _LoginState extends State<Login> {
         },
         child: Text('Login'),
         style: ElevatedButton.styleFrom(
-            minimumSize: Size(400, 80),
+            minimumSize: Size(530, 100),
             foregroundColor: Colors.white,
             textStyle: TextStyle(
               fontSize: 30,

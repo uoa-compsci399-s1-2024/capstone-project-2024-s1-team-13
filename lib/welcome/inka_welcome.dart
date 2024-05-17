@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:inka_test/welcome/login.dart';
+import 'package:inka_test/welcome/select_login_type.dart';
+import 'package:inka_test/welcome/support_login.dart';
 import 'package:inka_test/modules/training_modules.dart';
 
 class InkaWelcome extends StatelessWidget {
@@ -58,7 +59,7 @@ class InkaWelcome extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return Login(title: 'Login');
+                        return SelectLoginType(title: 'Login');
                       }));
                     },
                     style: ElevatedButton.styleFrom(
