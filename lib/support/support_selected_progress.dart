@@ -190,6 +190,7 @@ class _SupportSelectedProgressState extends State<SupportSelectedProgress> {
   List<DataColumn> _createColumns() {
     return [
       DataColumn(label: Text('Session')),
+      DataColumn(label: Text('Evaluated Date')),
       DataColumn(label: Text('Judgement Call')),
       DataColumn(label: Text('Feedback')),
       DataColumn(label: Text('Notes')),
@@ -207,16 +208,21 @@ class _SupportSelectedProgressState extends State<SupportSelectedProgress> {
       String judgementCall = '';
       String feedback = '';
       String notes = '';
+      String eval_date = '';
 
       if (sess.aSess != null && sess.aSess!.length >= 3) {
         judgementCall = sess.aSess![2] ?? ''; // Accessing the first string in aSess
         feedback = sess.aSess![1] ?? ''; // Accessing the second string in aSess
         notes = sess.aSess![0] ?? ''; // Accessing the third string in aSess
+        eval_date = sess.aSess![3] ?? '';
+
+
       }
 
       return DataRow(
         cells: [
           DataCell(Text('$sessionNumber')), // Displaying session number
+          DataCell(Text(eval_date)),
           DataCell(Text(judgementCall)),
           DataCell(Text(feedback)),
           DataCell(

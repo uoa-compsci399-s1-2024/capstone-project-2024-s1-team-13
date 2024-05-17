@@ -15,6 +15,7 @@ import 'package:inka_test/support/support_items/evaluate_item.dart';
 import 'package:inka_test/items/note_item.dart';
 import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/support/support_settings.dart';
+import 'package:intl/intl.dart';
 
 class EvaluationNotes extends StatefulWidget {
   EvaluationNotes({Key? key, required this.task, required this.trainee})
@@ -507,12 +508,19 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
       safePrint('No task feeling available for creating session');
       return;
     }
+    // Get the current date in New Zealand timezone
+    final nzTime = DateTime.now().toUtc().add(Duration(hours: 12)); // UTC +12 for New Zealand
+
+    // Format the date to store only the date portion
+    final formattedDate = DateFormat('yyyy-MM-dd').format(nzTime);
+
 
     // Create session with latest judgement call
     List<String> evals = [
       _notesController.text,
       latestTaskFeeling.feeling ?? '',
       latestJudgementCall.call ?? '',
+      formattedDate, 
     ];
 
     List<Sess> newSL = [];
