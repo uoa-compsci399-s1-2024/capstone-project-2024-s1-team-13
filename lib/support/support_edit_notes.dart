@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:inka_test/items/note_item.dart';
 
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
@@ -17,24 +16,24 @@ import 'package:inka_test/items/note_item.dart';
 import '../models/TraineeNotes.dart';
 
 class SupportEditNotes extends StatefulWidget {
-  late final String title; 
+  late final String title;
   final Trainee trainee;
 
   SupportEditNotes({super.key, required this.title, required this.trainee});
-   @override
+  @override
   _SupportEditNotes createState() => _SupportEditNotes();
 }
 
 class _SupportEditNotes extends State<SupportEditNotes> {
-
   late final String title;
   final TextEditingController _searchController = TextEditingController();
   String generalNote = ''; // Placeholder for the latest trainee note text
   late List<TaskNotes> allTaskNotes = []; // List to store all task notes
   late List<Trainee> allTrainees = [];
+  late List<TaskNotes> searchResults = []; // For autocomplete
+  TaskNotes? selectedTaskNote;
 
   late Future<Trainee?> _selectedTraineeFuture;
-
 
   @override
   void initState() {
@@ -59,8 +58,7 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     }
   }
 
-
-Future<Trainee?> queryTraineeById(String traineeID) async {
+  Future<Trainee?> queryTraineeById(String traineeID) async {
     try {
       final request = ModelQueries.get(
           Trainee.classType,
@@ -78,7 +76,8 @@ Future<Trainee?> queryTraineeById(String traineeID) async {
       return null;
     }
   }
-     // Function to fetch all trainees
+
+  // Function to fetch all trainees
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
@@ -86,11 +85,20 @@ Future<Trainee?> queryTraineeById(String traineeID) async {
       setState(() {
         allTrainees = trainees;
         //final List<TraineeItem> traineesList = allTrainees.map((trainee) => TraineeItem.fromTrainee(trainee)).toList();
-
       });
     } catch (e) {
       print('Error fetching trainees: $e');
     }
+  }
+
+  void _onSearchTextChanged(String searchText) {
+    setState(() {
+      searchResults = allTaskNotes
+          .where((taskNote) => taskNote.taskTitle!
+              .toLowerCase()
+              .contains(searchText.toLowerCase()))
+          .toList();
+    });
   }
 
   // Function to query all task notes
@@ -113,7 +121,7 @@ Future<Trainee?> queryTraineeById(String traineeID) async {
 
   Future<void> deleteTaskNote(String taNoId) async {
     try {
-        final req = ModelMutations.deleteById(
+      final req = ModelMutations.deleteById(
         TaskNotes.classType,
         TaskModelIdentifier(id: taNoId),
       );
@@ -128,7 +136,6 @@ Future<Trainee?> queryTraineeById(String traineeID) async {
       safePrint('Error deleting task note: $e');
     }
   }
-
 
   // Function to fetch all task notes
   Future<void> fetchAllTaskNotes() async {
@@ -195,7 +202,6 @@ Future<Trainee?> queryTraineeById(String traineeID) async {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -227,30 +233,47 @@ Future<Trainee?> queryTraineeById(String traineeID) async {
                 children: [
                   Padding(
                     padding: EdgeInsets.all(25),
-                    child: _notesSearchBar(context),
+                    child: _buildTaskNotesSearchBar(context),
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: allTaskNotes.length + 1,
-                      itemBuilder: (context, index) {
-                      
-                          final taskNoteIndex = index - 1;
-                          if (taskNoteIndex >= 0 &&
-                              taskNoteIndex < allTaskNotes.length) {
-                            final taskNote = allTaskNotes[taskNoteIndex];
-                            return _NoteCard(
-                              NoteItem(
-                                taskNote.taskTitle ?? '',
-                                taskNote.taskDesc ?? '',
-                              ),
-                              taskNote.id ?? "",
-                            );
-                          } else {
-                            return SizedBox();
-                          }
-                        
-                      },
-                    ),
+                    child: _searchController.text.isEmpty
+                        ? ListView.builder(
+                            itemCount: allTaskNotes.length,
+                            itemBuilder: (context, index) {
+                              final taskNote = allTaskNotes[index];
+                              return _NoteCard(
+                                NoteItem(
+                                  taskNote.taskTitle ?? '',
+                                  taskNote.taskDesc ?? '',
+                                ),
+                                taskNote.id ?? "",
+                              );
+                            },
+                          )
+                        : (searchResults.isEmpty
+                            ? Center(
+                                child: Text(
+                                'No task notes found',
+                                style: TextStyle(
+                                  fontFamily: "Lexend Exa",
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ))
+                            : ListView.builder(
+                                itemCount: searchResults.length,
+                                itemBuilder: (context, index) {
+                                  final taskNote = searchResults[index];
+                                  return _NoteCard(
+                                    NoteItem(
+                                      taskNote.taskTitle ?? '',
+                                      taskNote.taskDesc ?? '',
+                                    ),
+                                    taskNote.id ?? "",
+                                  );
+                                },
+                              )),
                   ),
                 ],
               ),
@@ -261,39 +284,66 @@ Future<Trainee?> queryTraineeById(String traineeID) async {
     );
   }
 
-
   // Search Bar
-  Widget _notesSearchBar(context) => TextField(
-        controller: _searchController,
-        style: TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 30,
-            fontWeight: FontWeight.w300),
-        decoration: InputDecoration(
-          prefixIcon: IconButton(
-              padding: EdgeInsets.only(left: 20, right: 10),
-              icon:
-                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
-              onPressed: () => _searchController.clear()),
-          suffixIcon: IconButton(
-            padding: EdgeInsets.only(left: 10, right: 20),
-            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
-            onPressed: () {
-              _searchController.text = "";
-            },
+  Widget _buildTaskNotesSearchBar(context) {
+    final maxListHeight = MediaQuery.of(context).size.height * 0.3;
+    final itemHeight = 70.0;
+    final listItemWidth = MediaQuery.of(context).size.width * 0.95;
+
+    return Autocomplete<TaskNotes>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<TaskNotes>.empty();
+        }
+        return allTaskNotes.where((taskNotes) => taskNotes.taskTitle!
+            .toLowerCase()
+            .contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: (TaskNotes selectedTaskNote) {
+        setState(() {
+          searchResults = [selectedTaskNote];
+          this.selectedTaskNote = selectedTaskNote;
+          _searchController.text = '${selectedTaskNote.taskTitle}';
+        });
+      },
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return TextField(
+          controller: _searchController,
+          focusNode: focusNode,
+          onChanged: _onSearchTextChanged,
+          style: TextStyle(
+            fontSize: 27, // Adjust the font size here
           ),
-          hintText: "Search Notes",
-          hintStyle: TextStyle(
+          decoration: InputDecoration(
+            prefixIcon:
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            suffixIcon: IconButton(
+                icon: Icon(Icons.clear_rounded,
+                    color: Colors.grey[600], size: 40),
+                onPressed: () {
+                  _searchController.clear();
+                  _onSearchTextChanged('');
+                }),
+            hintText: "Search Task Notes",
+            hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
-              fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
+              fontWeight: FontWeight.w300,
+            ),
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
-        ),
-      );
+              borderSide: BorderSide.none,
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   // Notes Card
   Widget _NoteCard(note, String taNoId) => Card(

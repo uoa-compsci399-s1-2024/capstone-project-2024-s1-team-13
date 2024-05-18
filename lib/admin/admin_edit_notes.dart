@@ -378,17 +378,6 @@ class _AdminEditNotes extends State<AdminEditNotes> {
                       fontSize: 25,
                       fontWeight: FontWeight.w500,
                       color: Colors.pink[900])))));
-// Mock Data
-  final List<NoteItem> mockNotes = [
-    NoteItem('Closing Evaluation',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Dishes Evaluation',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('General',
-        'Lorem ipsum dolor sit amet, consectetur adipisc  ing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Toilet Breaks',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-  ];
 
 // Mock Functions
 
