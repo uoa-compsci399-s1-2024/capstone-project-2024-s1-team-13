@@ -1,7 +1,5 @@
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
-import 'package:inka_test/modules/module_items/recipe_item.dart';
-import 'package:inka_test/modules/modules_notifications.dart';
 import 'package:inka_test/modules/modules_settings.dart';
 import 'package:inka_test/modules/selected_recipe.dart';
 import 'package:inka_test/modules/tasks_screen.dart';
@@ -129,16 +127,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        leading: IconButton(
-          iconSize: 40,
-          icon: const Icon(Icons.notifications_rounded),
-          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return ModulesNotifications(title: 'Notifications');
-            }));
-          },
-        ),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () {
@@ -148,7 +137,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
             }, // To add functionality to settings
             iconSize: 45,
             icon: const Icon(Icons.settings),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
         ],
       ),
@@ -200,7 +190,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
                   } else {
                     final url = snapshot.data;
                     return _buildRecipeCard(
-                        recipe.recipeTitle ?? "Recipe Title Not Found", url ?? "");
+                        recipe.recipeTitle ?? "Recipe Title Not Found",
+                        url ?? "");
                   }
                 },
               ),
@@ -281,21 +272,23 @@ class _RecipesScreenState extends State<RecipesScreen> {
         ),
         color: Colors.white,
         child: Column(
-          children: [Container(
-        height: 260, // Set a fixed height for the image container
-        width: 400,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-          child: Image.network(recipeCoverImageUrl, fit: BoxFit.cover), // Use BoxFit.contain
+          children: [
+            Container(
+              height: 260, // Set a fixed height for the image container
+              width: 400,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50),
+                ),
+                child: Image.network(recipeCoverImageUrl,
+                    fit: BoxFit.cover), // Use BoxFit.contain
               ),
             ),
             const SizedBox(height: 30),
@@ -305,22 +298,23 @@ class _RecipesScreenState extends State<RecipesScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                child: AutoSizeText(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Lexend Exa',
-                    fontSize: 30,
-                    fontWeight: FontWeight.w300,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      child: AutoSizeText(
+                        title,
+                        style: const TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 30,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        maxLines: 1, // Limit the text to a single line
+                        minFontSize: 10, // Set the minimum font size
+                        overflow: TextOverflow
+                            .ellipsis, // Add ellipsis if the text overflows
+                      ),
+                    ),
                   ),
-                  maxLines: 1, // Limit the text to a single line
-                  minFontSize: 10, // Set the minimum font size
-                  overflow: TextOverflow.ellipsis, // Add ellipsis if the text overflows
-                ),
-              ),
-            ),
                 ],
               ),
             ),

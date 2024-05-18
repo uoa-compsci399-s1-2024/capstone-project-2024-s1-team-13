@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, must_be_immutable
 
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -6,11 +6,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inka_test/models/ModelProvider.dart';
-import 'package:inka_test/models/TraineeNotes.dart';
 import 'package:inka_test/support/support_evaluate.dart';
-import 'package:inka_test/items/note_item.dart';
-import 'package:inka_test/items/progress_item.dart';
-import 'package:inka_test/support/support_notifications.dart';
 import 'package:inka_test/support/support_trainee_notes.dart';
 import 'package:inka_test/support/support_trainee_profile.dart';
 import 'package:inka_test/support/support_trainee_progress.dart';
@@ -326,16 +322,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
             child:
                 SvgPicture.asset('assets/images/inka.svg', color: Colors.white),
           ),
-          leading: IconButton(
-            iconSize: 40,
-            icon: Icon(Icons.notifications_rounded),
-            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SupportNotifications(title: 'Notifications');
-              }));
-            },
-          ),
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               onPressed: () {
@@ -658,96 +645,98 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
 
   // Recent Progress
   // Inside _buildProgressCard method -- NOT USING PROGRESS
-Widget _buildProgressCard(BuildContext context, progress, currentTaskTitle) =>
-  Center(
-    child: GestureDetector(
-      onTap: () {
-        if (selectedTask != null && selectedTask!.taskCoverImage != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return SupportTraineeProgress(
-                title: 'Progress',
-                trainee: widget.trainee,
-                task: selectedTask!);
-          }));
-        }
-      },
-      child: selectedTask != null && selectedTask!.taskCoverImage != null
-        ? FutureBuilder<String>(
-          future: getDownloadUrl(
-            key: selectedTask!.taskCoverImage!,
-            accessLevel: StorageAccessLevel.guest,
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                // Return a container with a loading indicator
-                width: 750,
-                height: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(50),
-                  color: Colors.grey[200],
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  //child: CircularProgressIndicator(),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (snapshot.hasData) {
-              return Container(
-                width: 750,
-                height: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(50),
-                  image: DecorationImage(
-                    image: NetworkImage(snapshot.data!),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                      Color.fromARGB(130, 0, 0, 0),
-                      BlendMode.multiply,
-                    ),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Center( // Centering the task title text
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    child: Text(
-                      '$currentTaskTitle',
-                      textAlign: TextAlign.center, // Center-align the text
-                      style: TextStyle(
-                        fontFamily: 'Lexend Exa',
-                        fontSize: 39,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            } else {
-              return Container(); // Return an empty container if no data is available yet
+  Widget _buildProgressCard(BuildContext context, progress, currentTaskTitle) =>
+      Center(
+        child: GestureDetector(
+          onTap: () {
+            if (selectedTask != null && selectedTask!.taskCoverImage != null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return SupportTraineeProgress(
+                    title: 'Progress',
+                    trainee: widget.trainee,
+                    task: selectedTask!);
+              }));
             }
           },
-        )
-        : Container(),
-    ),
-  );
+          child: selectedTask != null && selectedTask!.taskCoverImage != null
+              ? FutureBuilder<String>(
+                  future: getDownloadUrl(
+                    key: selectedTask!.taskCoverImage!,
+                    accessLevel: StorageAccessLevel.guest,
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        // Return a container with a loading indicator
+                        width: 750,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.grey[200],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                            //child: CircularProgressIndicator(),
+                            ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return Container(
+                        width: 750,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(50),
+                          image: DecorationImage(
+                            image: NetworkImage(snapshot.data!),
+                            fit: BoxFit.cover,
+                            colorFilter: ColorFilter.mode(
+                              Color.fromARGB(130, 0, 0, 0),
+                              BlendMode.multiply,
+                            ),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          // Centering the task title text
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 50),
+                            child: Text(
+                              '$currentTaskTitle',
+                              textAlign:
+                                  TextAlign.center, // Center-align the text
+                              style: TextStyle(
+                                fontFamily: 'Lexend Exa',
+                                fontSize: 39,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container(); // Return an empty container if no data is available yet
+                    }
+                  },
+                )
+              : Container(),
+        ),
+      );
 }

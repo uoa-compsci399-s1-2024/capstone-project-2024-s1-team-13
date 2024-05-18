@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inka_test/admin/admin_items/admin_greeting_text.dart';
-import 'package:inka_test/admin/admin_notifications.dart';
 import 'package:inka_test/admin/admin_recipes.dart';
 import 'package:inka_test/admin/admin_settings.dart';
 import 'package:inka_test/admin/admin_tasks.dart';
@@ -22,15 +21,7 @@ class AdminSelection extends StatelessWidget {
             child:
                 SvgPicture.asset('assets/images/inka.svg', color: Colors.white),
           ),
-          leading: IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.notifications_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return AdminNotifications(title: 'Notifications');
-                }));
-              }),
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               onPressed: () {
@@ -40,7 +31,8 @@ class AdminSelection extends StatelessWidget {
               }, // To add functionality to settings
               iconSize: 45,
               icon: const Icon(Icons.settings),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+              padding:
+                  const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             ),
           ],
         ),

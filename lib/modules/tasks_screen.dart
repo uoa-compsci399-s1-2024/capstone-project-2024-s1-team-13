@@ -1,6 +1,5 @@
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
-import 'package:inka_test/modules/modules_notifications.dart';
 import 'package:inka_test/modules/modules_settings.dart';
 import 'package:inka_test/modules/recipes_screen.dart';
 import 'package:inka_test/modules/selected_task.dart';
@@ -136,16 +135,7 @@ class _TasksScreenState extends State<TasksScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tasks"),
-        leading: IconButton(
-          iconSize: 40,
-          icon: const Icon(Icons.notifications_rounded),
-          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return ModulesNotifications(title: 'Notifications');
-            }));
-          },
-        ),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () {
@@ -290,11 +280,17 @@ class _TasksScreenState extends State<TasksScreen> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
             suffixIcon: IconButton(
-              icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 15, right: 10),
+                child: Icon(Icons.clear_rounded,
+                    color: Colors.grey[600], size: 40),
+              ),
               onPressed: () {
                 _textController.clear();
                 _onSearchTextChanged('');

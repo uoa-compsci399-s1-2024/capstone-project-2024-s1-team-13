@@ -3,11 +3,10 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_edit_tasks.dart';
-import 'package:inka_test/admin/admin_notifications.dart';
 import 'package:inka_test/admin/admin_recipes.dart';
+import 'package:inka_test/admin/admin_settings.dart';
 import 'package:inka_test/admin/admin_trainees.dart';
 import 'package:inka_test/models/Task.dart';
-import 'package:inka_test/modules/module_items/task_item.dart';
 import 'package:inka_test/modules/selected_task.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -137,14 +136,14 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
       appBar: AppBar(
         title: Text(widget.title),
         leading: IconButton(
-          iconSize: 40,
-          icon: const Icon(Icons.notifications_rounded),
-          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return AdminNotifications(title: 'Notifications');
+              return const AdminSettings(title: 'Settings');
             }));
           },
+          iconSize: 45,
+          icon: Icon(Icons.settings),
+          padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
         ),
         actions: [
           IconButton(
@@ -296,8 +295,11 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
             suffixIcon: IconButton(
               icon:
                   Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),

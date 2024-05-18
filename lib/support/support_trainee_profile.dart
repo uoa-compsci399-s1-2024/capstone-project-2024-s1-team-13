@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/support_evaluate.dart';
-import 'package:inka_test/items/trainee_item.dart';
-import 'package:inka_test/support/support_notifications.dart';
 import 'package:inka_test/support/support_trainee_dashboard.dart';
 import 'package:inka_test/support/support_trainee_notes.dart';
 import 'package:inka_test/support/support_trainee_progress.dart';
@@ -25,7 +23,6 @@ class SupportTraineeProfile extends StatefulWidget {
   @override
   _SupportTraineeProfileState createState() => _SupportTraineeProfileState();
 }
-
 
 class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
   //late final Task task;
@@ -75,15 +72,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        leading: IconButton(
-            iconSize: 40,
-            icon: Icon(Icons.notifications_rounded),
-            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SupportNotifications(title: 'Notifications');
-              }));
-            }),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () {
@@ -163,16 +152,16 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
           ),
           const SizedBox(width: 50),
           Flexible(
-    child: AutoSizeText(
-      "${widget.trainee.firstName} ${widget.trainee.lastName}",
-      style: const TextStyle(
-        fontFamily: 'Lexend Exa',
-        fontSize: 50,
-        fontWeight: FontWeight.w500),
-      maxLines: 1,
-      minFontSize: 10, 
-      overflow: TextOverflow.ellipsis,
-      ))
+              child: AutoSizeText(
+            "${widget.trainee.firstName} ${widget.trainee.lastName}",
+            style: const TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 50,
+                fontWeight: FontWeight.w500),
+            maxLines: 1,
+            minFontSize: 10,
+            overflow: TextOverflow.ellipsis,
+          ))
         ],
       );
 

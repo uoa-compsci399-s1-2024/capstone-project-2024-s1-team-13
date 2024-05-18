@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inka_test/support/support_items/support_greeting_text.dart';
-import 'package:inka_test/support/support_notifications.dart';
 import 'package:inka_test/support/support_settings.dart';
 import 'package:inka_test/support/support_trainees.dart';
 
 class SupportSelectTrainee extends StatelessWidget {
   const SupportSelectTrainee({super.key, required this.title});
   final String title;
-
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +20,7 @@ class SupportSelectTrainee extends StatelessWidget {
             child:
                 SvgPicture.asset('assets/images/inka.svg', color: Colors.white),
           ),
-          leading: IconButton(
-              iconSize: 40,
-              icon: Icon(Icons.notifications_rounded),
-              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return SupportNotifications(title: 'Notifications');
-                }));
-              }),
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               onPressed: () {

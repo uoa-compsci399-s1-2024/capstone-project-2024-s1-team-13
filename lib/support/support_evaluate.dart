@@ -4,9 +4,6 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/support/evaluate_task.dart';
-import 'package:inka_test/support/support_items/evaluate_item.dart';
-import 'package:inka_test/items/trainee_item.dart';
-import 'package:inka_test/support/support_notifications.dart';
 import 'package:inka_test/support/support_settings.dart';
 import 'package:inka_test/support/support_trainee_dashboard.dart';
 import 'package:inka_test/support/support_trainee_profile.dart';
@@ -244,143 +241,133 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        // Change to notification icon once bottom bar navigation is sorted
-        leading: IconButton(
-          iconSize: 40,
-          icon: Icon(Icons.notifications_rounded),
-          padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return SupportNotifications(title: 'Notifications');
-            }));
-          }),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const SupportSettings(title: 'Settings');
-              }));
-            },
-            // To add functionality to settings
-            iconSize: 45,
-            icon: Icon(Icons.settings),
-            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          ),
-        ],
-      ),
+        appBar: AppBar(
+          title: Text(widget.title),
+          // Change to notification icon once bottom bar navigation is sorted
+          automaticallyImplyLeading: false,
 
-      // Bottom Bar
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'HOME',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.task_rounded),
-            label: 'EVALUATE',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: 'PROFILE',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const SupportSettings(title: 'Settings');
+                }));
+              },
+              // To add functionality to settings
+              iconSize: 45,
+              icon: Icon(Icons.settings),
+              padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            ),
+          ],
+        ),
 
-      // List View of Evaluations
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(25),
-            child: _buildTaskSearchBar(context)
-          ),
-          Expanded(
-            child: searchResults.isNotEmpty || _textController.text.isNotEmpty
-              ? searchResults.isEmpty
-                ? Center(
-                  child: Text(
-                    'No task found',
-                    style: TextStyle(
-                      fontFamily: "Lexend Exa",
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey,
-                    ),
-                  ),
-                )
-                : ListView.builder(
-                  itemCount: searchResults.length,
-                  itemBuilder: (context, index) {
-                    final task = searchResults[index]; // Use searchResults instead of allTasks
-                    return GestureDetector(
-                      onTap: () async {
-                        setState(() {
-                          selectedTask = task; // Set the selected task
-                        });
-                        await updateCurrentTask(
-                          selectedTask.taskTitle ?? '',
-                          selectedTask.taskSteps,
-                          widget.trainee.id,
-                          selectedTask.taskProgress,
-                          selectedTask.taskCoverImage,
-                          selectedTask.sessionList,
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EvaluateTask(
-                              task: selectedTask,
-                              trainee: widget.trainee,
+        // Bottom Bar
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded),
+              label: 'HOME',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.task_rounded),
+              label: 'EVALUATE',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: 'PROFILE',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
+
+        // List View of Evaluations
+        body: Column(
+          children: <Widget>[
+            Padding(
+                padding: EdgeInsets.all(25),
+                child: _buildTaskSearchBar(context)),
+            Expanded(
+              child: searchResults.isNotEmpty || _textController.text.isNotEmpty
+                  ? searchResults.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No task found',
+                            style: TextStyle(
+                              fontFamily: "Lexend Exa",
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
                             ),
                           ),
+                        )
+                      : ListView.builder(
+                          itemCount: searchResults.length,
+                          itemBuilder: (context, index) {
+                            final task = searchResults[
+                                index]; // Use searchResults instead of allTasks
+                            return GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  selectedTask = task; // Set the selected task
+                                });
+                                await updateCurrentTask(
+                                  selectedTask.taskTitle ?? '',
+                                  selectedTask.taskSteps,
+                                  widget.trainee.id,
+                                  selectedTask.taskProgress,
+                                  selectedTask.taskCoverImage,
+                                  selectedTask.sessionList,
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EvaluateTask(
+                                      task: selectedTask,
+                                      trainee: widget.trainee,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: _EvalCard(task),
+                            );
+                          },
+                        )
+                  : ListView.builder(
+                      itemCount: allTasks.length,
+                      itemBuilder: (context, index) {
+                        final task = allTasks[index];
+                        return GestureDetector(
+                          onTap: () async {
+                            setState(() {
+                              selectedTask = task; // Set the selected task
+                            });
+                            await updateCurrentTask(
+                              selectedTask.taskTitle ?? '',
+                              selectedTask.taskSteps,
+                              widget.trainee.id,
+                              selectedTask.taskProgress,
+                              selectedTask.taskCoverImage,
+                              selectedTask.sessionList,
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EvaluateTask(
+                                  task: selectedTask,
+                                  trainee: widget.trainee,
+                                ),
+                              ),
+                            );
+                          },
+                          child: _EvalCard(task),
                         );
                       },
-                      child: _EvalCard(task),
-                    );
-                  },
-                )
-              : ListView.builder(
-                itemCount: allTasks.length,
-                itemBuilder: (context, index) {
-                  final task = allTasks[index];
-                  return GestureDetector(
-                    onTap: () async {
-                      setState(() {
-                        selectedTask = task; // Set the selected task
-                      });
-                      await updateCurrentTask(
-                        selectedTask.taskTitle ?? '',
-                        selectedTask.taskSteps,
-                        widget.trainee.id,
-                        selectedTask.taskProgress,
-                        selectedTask.taskCoverImage,
-                        selectedTask.sessionList,
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EvaluateTask(
-                            task: selectedTask,
-                            trainee: widget.trainee,
-                          ),
-                        ),
-                      );
-                    },
-                    child: _EvalCard(task),
-                  );
-                },
-              ),
-          ),
-        ],
-      )
-    );
+                    ),
+            ),
+          ],
+        ));
   }
-
-  
 
   // Autocomplete logic
   void _onSearchTextChanged(String searchText) {
@@ -426,11 +413,17 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
             suffixIcon: IconButton(
-              icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 15, right: 10),
+                child: Icon(Icons.clear_rounded,
+                    color: Colors.grey[600], size: 40),
+              ),
               onPressed: () {
                 _textController.clear();
                 _onSearchTextChanged('');
@@ -453,7 +446,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       },
     );
   }
-
 
   Future<String> getDownloadUrl({
     required String key,

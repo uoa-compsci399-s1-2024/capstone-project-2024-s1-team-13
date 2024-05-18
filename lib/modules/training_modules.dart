@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:inka_test/modules/modules_notifications.dart';
 import 'package:inka_test/modules/modules_settings.dart';
 import 'package:inka_test/modules/recipes_screen.dart';
 import 'package:inka_test/modules/tasks_screen.dart';
@@ -61,15 +60,7 @@ class _TrainingModulesState extends State<TrainingModules> {
           child:
               SvgPicture.asset('assets/images/inka.svg', color: Colors.white),
         ),
-        leading: IconButton(
-            iconSize: 40,
-            icon: const Icon(Icons.notifications_rounded),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ModulesNotifications(title: 'Notifications');
-              }));
-            }),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () {
@@ -79,7 +70,8 @@ class _TrainingModulesState extends State<TrainingModules> {
             }, // To add functionality to settings
             iconSize: 45,
             icon: const Icon(Icons.settings),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
         ],
       ),
@@ -114,7 +106,8 @@ class _TrainingModulesState extends State<TrainingModules> {
           ElevatedButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const TasksScreen(title: 'Tasks'); // Was const -will change
+                  return const TasksScreen(
+                      title: 'Tasks'); // Was const -will change
                 }));
               },
               style: ElevatedButton.styleFrom(

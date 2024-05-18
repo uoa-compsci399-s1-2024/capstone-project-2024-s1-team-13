@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_selected_progress.dart';
 import 'package:inka_test/admin/admin_settings.dart';
-import 'package:inka_test/items/progress_item.dart';
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-
 import 'package:inka_test/models/Session.dart';
 import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/TaskNotes.dart';
 import 'package:inka_test/models/Trainee.dart';
-import 'package:inka_test/support/support_selected_progress.dart';
-import 'package:inka_test/support/support_settings.dart';
 
 //adding trainee object required
 
@@ -22,7 +15,7 @@ class AdminTraineeProgress extends StatefulWidget {
       {super.key, required this.title, required this.trainee, this.task});
   final String title;
   final Trainee trainee;
-  final Task? task; 
+  final Task? task;
 
   @override
   @override
@@ -139,7 +132,6 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
                 return const AdminSettings(title: 'Settings');
               }));
             },
-            // To add functionality to settings
             iconSize: 45,
             icon: Icon(Icons.settings),
             padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
