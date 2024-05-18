@@ -244,7 +244,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                 }
 
                 if (globalCoverImageUrl != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && taskSteps.isNotEmpty == true) {
-                  updateTask(_taskTitleController.text, taskStepImages, globalCoverImageUrl!, taskStepImages);
+                  updateTask(_taskTitleController.text, taskSteps, globalCoverImageUrl!, taskStepImages);
                   saveTask();
                 } else if (_taskTitleController.text.isEmpty == true) {
                   ScaffoldMessenger.of(context).showSnackBar(
