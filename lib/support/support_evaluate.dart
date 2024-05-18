@@ -427,10 +427,10 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
           ),
           decoration: InputDecoration(
             prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
             suffixIcon: IconButton(
               icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
               onPressed: () {
                 _textController.clear();
                 _onSearchTextChanged('');

@@ -20,8 +20,7 @@ class AdminRecipesScreen extends StatefulWidget {
 }
 
 class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
-    late List<Recipe> searchResults = []; // For autocomplete
-
+  late List<Recipe> searchResults = []; // For autocomplete
 
   Future<String> getDownloadUrl({
     required String key,
@@ -37,7 +36,6 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
             expiresIn: Duration(days: 7),
           ),
         ),
-
       ).result;
       return result.url.toString();
     } on StorageException catch (e) {
@@ -50,8 +48,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
   @override
   void initState() {
     super.initState();
-    fetchAllRecipe(); 
-  
+    fetchAllRecipe();
   }
 
   Future<void> fetchAllRecipe() async {
@@ -84,8 +81,6 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
     }
   }
 
-  
-
   final TextEditingController _textController = TextEditingController();
 // Bottom Bar Navigation
   int _selectedIndex = 2;
@@ -116,25 +111,27 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const AdminRecipesScreen(title: 'Recipes')));
+                builder: (context) =>
+                    const AdminRecipesScreen(title: 'Recipes')));
         break;
       default:
         break;
     }
   }
 
-   Recipe? selectedRecipe;
+  Recipe? selectedRecipe;
 
   void _onSearchTextChanged(String searchText) {
     setState(() {
       searchResults = allRecipes
-          .where((recipe) =>
-              recipe.recipeTitle!.toLowerCase().contains(searchText.toLowerCase()))
+          .where((recipe) => recipe.recipeTitle!
+              .toLowerCase()
+              .contains(searchText.toLowerCase()))
           .toList();
     });
   }
 
-    // Search Bar with Autocomplete
+  // Search Bar with Autocomplete
   Widget _buildRecipeSearchBar(context) {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
     final itemHeight = 70.0;
@@ -169,10 +166,10 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
           ),
           decoration: InputDecoration(
             prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
             suffixIcon: IconButton(
               icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
               onPressed: () {
                 _textController.clear();
                 _onSearchTextChanged('');
@@ -195,7 +192,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
       },
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -253,67 +250,77 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: fetchAllRecipe,
-              child: GridView.builder(
-                itemCount: searchResults.isNotEmpty || _textController.text.isNotEmpty
-                    ? searchResults.length
-                    : allRecipes.length,
-                itemBuilder: (context, index) {
-                  if (searchResults.isEmpty && _textController.text.isNotEmpty) {
-                    return Center(
-                      child: Text('No recipes found.'),
-                    );
-                  }
-                  final recipe = searchResults.isNotEmpty || _textController.text.isNotEmpty
-                      ? searchResults[index]
-                      : allRecipes[index]; // Use searchResults if available, otherwise allRecipes
+              child: searchResults.isEmpty && _textController.text.isNotEmpty
+                  ? Center(
+                      child: Text(
+                      'No recipes found',
+                      style: TextStyle(
+                        fontFamily: "Lexend Exa",
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ))
+                  : GridView.builder(
+                      itemCount: searchResults.isNotEmpty ||
+                              _textController.text.isNotEmpty
+                          ? searchResults.length
+                          : allRecipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = searchResults.isNotEmpty ||
+                                _textController.text.isNotEmpty
+                            ? searchResults[index]
+                            : allRecipes[
+                                index]; // Use searchResults if available, otherwise allRecipes
 
-                  return FutureBuilder<String>(
-                    future: getDownloadUrl(
-                      key: recipe.recipeCoverImage!,
-                      accessLevel: StorageAccessLevel.guest,
-                    ),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigate to the desired screen when a recipe card is tapped
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SelectedRecipe(
-                                  title: recipe.recipeTitle!,
-                                  recipeId: recipe.id,
-                                ),
-                              ),
-                            );
-                          },
-                          child: _buildRecipeCard(
-                            recipe.recipeTitle ?? "Recipe Title Not Found",
-                            snapshot.data ?? "", // Use the URL from the snapshot
+                        return FutureBuilder<String>(
+                          future: getDownloadUrl(
+                            key: recipe.recipeCoverImage!,
+                            accessLevel: StorageAccessLevel.guest,
                           ),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return GestureDetector(
+                                onTap: () {
+                                  // Navigate to the desired screen when a recipe card is tapped
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SelectedRecipe(
+                                        title: recipe.recipeTitle!,
+                                        recipeId: recipe.id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: _buildRecipeCard(
+                                  recipe.recipeTitle ??
+                                      "Recipe Title Not Found",
+                                  snapshot.data ??
+                                      "", // Use the URL from the snapshot
+                                ),
+                              );
+                            }
+                          },
                         );
-                      }
-                    },
-                  );
-                },
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-              ),
+                      },
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
+                    ),
             ),
           ),
         ],
       ),
     );
   }
-
-
-
- 
 
   // Recipe Card
   String _getRecipe(int index) {
@@ -324,12 +331,13 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
       return "Recipe Title Not Found"; // Fallback title if index exceeds the length of allTasks
     }
   }
+
   String _getUrl(int index) {
     if (index < allRecipes.length) {
       String? imageUrl = allRecipes[index].recipeCoverImage;
       if (imageUrl != null && imageUrl.isNotEmpty) {
         return imageUrl;
-       // Return the task cover image URL if it's not null or empty
+        // Return the task cover image URL if it's not null or empty
       } else {
         return ""; // Return an empty string as a fallback if the URL is null or empty
       }
@@ -355,9 +363,9 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(50),
                 topRight: Radius.circular(50),
-          ),
-        ),
-          child: ClipRRect(
+              ),
+            ),
+            child: ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(50),
                 topRight: Radius.circular(50),
@@ -372,7 +380,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                    child: Container(
+                      child: Container(
                         padding: const EdgeInsets.all(10),
                         alignment: Alignment.center,
                         child: AutoSizeText(
@@ -384,14 +392,12 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
                           ),
                           maxLines: 1, // Limit the text to a single line
                           minFontSize: 10, // Set the minimum font size
-                          overflow: TextOverflow.ellipsis, // Add ellipsis if the text overflows
+                          overflow: TextOverflow
+                              .ellipsis, // Add ellipsis if the text overflows
                         ),
-                        ),
-          
-      )])),
+                      ),
+                    )
+                  ])),
         ],
       ));
-
-  //Mock Data
-  
 }

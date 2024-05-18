@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_add_task.dart';
 import 'package:inka_test/admin/admin_edit_selected_task.dart';
@@ -30,6 +29,8 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
   //------------------------------------------------------------
   late List<Task> allTasks = []; // List to store all tasks
   final TextEditingController _textController = TextEditingController();
+  late List<Task> searchResults = []; // For autocomplete
+  Task? selectedTask;
 
   //------------------------------------------------------------
   //INITSTATE() ------------------------------------------------
@@ -45,6 +46,14 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
   //FUNCTIONS SECTION ------------------------------------------
   //------------------------------------------------------------
 
+  void _onSearchTextChanged(String searchText) {
+    setState(() {
+      searchResults = allTasks
+          .where((task) =>
+              task.taskTitle!.toLowerCase().contains(searchText.toLowerCase()))
+          .toList();
+    });
+  }
 
   Future<void> fetchAllTask() async {
     try {
@@ -75,9 +84,10 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
       return [];
     }
   }
+
   Future<void> deleteTask(String taskId) async {
     try {
-        final req = ModelMutations.deleteById(
+      final req = ModelMutations.deleteById(
         Task.classType,
         TaskModelIdentifier(id: taskId),
       );
@@ -107,7 +117,6 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
             expiresIn: Duration(days: 7),
           ),
         ),
-
       ).result;
       return result.url.toString();
     } on StorageException catch (e) {
@@ -116,7 +125,6 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
     }
   }
 
-  
   //------------------------------------------------------------
   //SCREEN BUILD -----------------------------------------------
   //------------------------------------------------------------
@@ -143,7 +151,8 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
             },
             iconSize: 60,
             icon: const Icon(Icons.add_rounded),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
         ],
       ),
@@ -158,49 +167,67 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: fetchAllTask,
-              child: GridView.builder(
-  itemCount: allTasks.length,
-  itemBuilder: (context, index) {
-    final task = allTasks[index]; // Use allTasks instead of mockTasks
-    return FutureBuilder<String>(
-      future: getDownloadUrl(
-        key: task.taskCoverImage!,
-        accessLevel: StorageAccessLevel.guest,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return GestureDetector(
-            onTap: () {
-              // Navigate to the desired screen when a task card is tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AdminEditSelectedTask(
-                    title: 'Edit ${task.taskTitle}', task: task
-                  ),
-                ),
-              );
-            },
-            child: _buildTaskCard(
-              task.taskTitle ?? "Task Title Not Found",
-              snapshot.data ?? "", // Use the URL from the snapshot
-              task.id
-            ),
-          );
-        }
-      },
-    );
-  },
-  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2,
-  ),
-  scrollDirection: Axis.vertical,
-),
-
+              child: searchResults.isEmpty && _textController.text.isNotEmpty
+                  ? Center(
+                      child: Text(
+                      'No tasks found',
+                      style: TextStyle(
+                        fontFamily: "Lexend Exa",
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ))
+                  : GridView.builder(
+                      itemCount: searchResults.isNotEmpty
+                          ? searchResults.length
+                          : allTasks.length,
+                      itemBuilder: (context, index) {
+                        final task = searchResults.isNotEmpty
+                            ? searchResults[index]
+                            : allTasks[
+                                index]; // Use filtered results or allTasks
+                        return FutureBuilder<String>(
+                          future: getDownloadUrl(
+                            key: task.taskCoverImage!,
+                            accessLevel: StorageAccessLevel.guest,
+                          ),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return GestureDetector(
+                                onTap: () {
+                                  // Navigate to the desired screen when a task card is tapped
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AdminEditSelectedTask(
+                                              title: 'Edit ${task.taskTitle}',
+                                              task: task),
+                                    ),
+                                  );
+                                },
+                                child: _buildTaskCard(
+                                    task.taskTitle ?? "Task Title Not Found",
+                                    snapshot.data ??
+                                        "", // Use the URL from the snapshot
+                                    task.id),
+                              );
+                            }
+                          },
+                        );
+                      },
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
+                      scrollDirection: Axis.vertical,
+                    ),
             ),
           ),
         ],
@@ -209,37 +236,66 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
   }
 
   // Search Bar
-  Widget _buildTaskSearchBar(context) => TextField(
-        controller: _textController,
-        style: const TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 30,
-            fontWeight: FontWeight.w300),
-        decoration: InputDecoration(
-          prefixIcon: IconButton(
-              padding: const EdgeInsets.only(left: 20, right: 10),
-              icon:
-                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
-              onPressed: () => _textController.clear()),
-          suffixIcon: IconButton(
-            padding: const EdgeInsets.only(left: 10, right: 20),
-            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
-            onPressed: () {
-              _textController.text = "";
-            },
+  Widget _buildTaskSearchBar(context) {
+    final maxListHeight = MediaQuery.of(context).size.height * 0.3;
+    final itemHeight = 70.0;
+    final listItemWidth = MediaQuery.of(context).size.width * 0.95;
+
+    return Autocomplete<Task>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<Task>.empty();
+        }
+        return allTasks.where((task) => task.taskTitle!
+            .toLowerCase()
+            .contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: (Task selectedTask) {
+        setState(() {
+          searchResults = [selectedTask];
+          this.selectedTask = selectedTask;
+          _textController.text = '${selectedTask.taskTitle}';
+        });
+      },
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return TextField(
+          controller: _textController,
+          focusNode: focusNode,
+          onChanged: _onSearchTextChanged,
+          style: TextStyle(
+            fontSize: 27, // Adjust the font size here
           ),
-          hintText: "Search Tasks",
-          hintStyle: const TextStyle(
+          decoration: InputDecoration(
+            prefixIcon:
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            suffixIcon: IconButton(
+              icon:
+                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
+              onPressed: () {
+                _textController.clear();
+                _onSearchTextChanged('');
+              },
+            ),
+            hintText: "Search Tasks",
+            hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
-              fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
+              fontWeight: FontWeight.w300,
+            ),
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
-        ),
-      );
+              borderSide: BorderSide.none,
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   String _getTitle(int index) {
     if (index < allTasks.length) {
@@ -249,12 +305,13 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
       return "Task Title Not Found"; // Fallback title if index exceeds the length of allTasks
     }
   }
+
   String _getUrl(int index) {
     if (index < allTasks.length) {
       String? imageUrl = allTasks[index].taskCoverImage;
       if (imageUrl != null && imageUrl.isNotEmpty) {
         return imageUrl;
-       // Return the task cover image URL if it's not null or empty
+        // Return the task cover image URL if it's not null or empty
       } else {
         return ""; // Return an empty string as a fallback if the URL is null or empty
       }
@@ -264,83 +321,75 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
   }
 
   // Task Card
-  Widget _buildTaskCard(String title, String taskCoverImageUrl, String currTaskId) => Card(
-  margin: const EdgeInsets.all(20),
-  elevation: 2,
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(50),
-  ),
-  color: Colors.white,
-  child: Column(
-    children: [
-      Container(
-        height: 260, // Set a fixed height for the image container
-        width: 400,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
+  Widget _buildTaskCard(
+          String title, String taskCoverImageUrl, String currTaskId) =>
+      Card(
+        margin: const EdgeInsets.all(20),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-          child: Image.network(taskCoverImageUrl, fit: BoxFit.cover), // Use BoxFit.contain
-        ),
-      ),
-      const SizedBox(height: 30),
-      Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        color: Colors.white,
+        child: Column(
           children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                child: AutoSizeText(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Lexend Exa',
-                    fontSize: 30,
-                    fontWeight: FontWeight.w300,
-                  ),
-                  maxLines: 1, // Limit the text to a single line
-                  minFontSize: 10, // Set the minimum font size
-                  overflow: TextOverflow.ellipsis, // Add ellipsis if the text overflows
+            Container(
+              height: 260, // Set a fixed height for the image container
+              width: 400,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50),
                 ),
               ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50),
+                ),
+                child: Image.network(taskCoverImageUrl,
+                    fit: BoxFit.cover), // Use BoxFit.contain
+              ),
             ),
-            IconButton(
-              onPressed: () => deleteTaskDialog(context, currTaskId), // change this later
-              //_deleteTask(context, mockTasks.indexOf(atask)),
-              icon: const Icon(Icons.remove_circle_rounded),
-              iconSize: 50,
-              color: Colors.red[600],
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      child: AutoSizeText(
+                        title,
+                        style: const TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 30,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        maxLines: 1, // Limit the text to a single line
+                        minFontSize: 10, // Set the minimum font size
+                        overflow: TextOverflow
+                            .ellipsis, // Add ellipsis if the text overflows
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => deleteTaskDialog(
+                        context, currTaskId), // change this later
+                    //_deleteTask(context, mockTasks.indexOf(atask)),
+                    icon: const Icon(Icons.remove_circle_rounded),
+                    iconSize: 50,
+                    color: Colors.red[600],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-      ),
-    ],
-  ),
-);
+      );
 
-
-
-
-
-  //Mock Data
-  final List<TaskItem> mockTasks = [
-    TaskItem(title: 'Dishes', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(
-        title: 'Clear Table', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(
-        title: 'Closing', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(title: 'Orders', assetImage: 'assets/images/task_placeholder.jpg'),
-    TaskItem(title: 'Opening', assetImage: 'assets/images/task_placeholder.jpg')
-  ];
+  
 
   //Delete selected task - pending backend functionality
   void deleteTaskDialog(BuildContext context, String currTaskId) {

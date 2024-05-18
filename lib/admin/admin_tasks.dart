@@ -191,56 +191,70 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: fetchAllTask,
-              child: GridView.builder(
-                itemCount:
-                    searchResults.isNotEmpty || _textController.text.isNotEmpty
-                        ? searchResults.length
-                        : allTasks.length,
-                itemBuilder: (context, index) {
-                  final task = searchResults.isNotEmpty ||
-                          _textController.text.isNotEmpty
-                      ? searchResults[index]
-                      : allTasks[
-                          index]; // Use searchResults if available, otherwise allTasks
+              child: searchResults.isEmpty && _textController.text.isNotEmpty
+                  ? Center(
+                      child: Text(
+                      'No tasks found',
+                      style: TextStyle(
+                        fontFamily: "Lexend Exa",
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ))
+                  : GridView.builder(
+                      itemCount: searchResults.isNotEmpty ||
+                              _textController.text.isNotEmpty
+                          ? searchResults.length
+                          : allTasks.length,
+                      itemBuilder: (context, index) {
+                        final task = searchResults.isNotEmpty ||
+                                _textController.text.isNotEmpty
+                            ? searchResults[index]
+                            : allTasks[
+                                index]; // Use searchResults if available, otherwise allTasks
 
-                  return FutureBuilder<String>(
-                    future: getDownloadUrl(
-                      key: task.taskCoverImage!,
-                      accessLevel: StorageAccessLevel.guest,
-                    ),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigate to the desired screen when a task card is tapped
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SelectedTask(
-                                  title: task.taskTitle!,
-                                  taskId: task.id,
-                                ),
-                              ),
-                            );
-                          },
-                          child: _buildTaskCard(
-                            task.taskTitle ?? "Task Title Not Found",
-                            snapshot.data ??
-                                "", // Use the URL from the snapshot
+                        return FutureBuilder<String>(
+                          future: getDownloadUrl(
+                            key: task.taskCoverImage!,
+                            accessLevel: StorageAccessLevel.guest,
                           ),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return GestureDetector(
+                                onTap: () {
+                                  // Navigate to the desired screen when a task card is tapped
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SelectedTask(
+                                        title: task.taskTitle!,
+                                        taskId: task.id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: _buildTaskCard(
+                                  task.taskTitle ?? "Task Title Not Found",
+                                  snapshot.data ??
+                                      "", // Use the URL from the snapshot
+                                ),
+                              );
+                            }
+                          },
                         );
-                      }
-                    },
-                  );
-                },
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-              ),
+                      },
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
+                    ),
             ),
           ),
         ],
@@ -283,10 +297,10 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
           ),
           decoration: InputDecoration(
             prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
             suffixIcon: IconButton(
               icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
+                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
               onPressed: () {
                 _textController.clear();
                 _onSearchTextChanged('');

@@ -276,39 +276,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     await fetchAllTaskNotes();
   }
 
-  // Search Bar
-  Widget _notesSearchBar(context) => TextField(
-        controller: _searchController,
-        style: TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 30,
-            fontWeight: FontWeight.w300),
-        decoration: InputDecoration(
-          prefixIcon: IconButton(
-              padding: EdgeInsets.only(left: 20, right: 10),
-              icon:
-                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
-              onPressed: () => _searchController.clear()),
-          suffixIcon: IconButton(
-            padding: EdgeInsets.only(left: 10, right: 20),
-            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
-            onPressed: () {
-              _searchController.text = "";
-            },
-          ),
-          hintText: "Search Notes",
-          hintStyle: TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 30,
-              fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
-        ),
-      );
-
   // Search Bar with Autocomplete
   Widget _buildTaskNotesSearchBar(context) {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
@@ -344,10 +311,10 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
           ),
           decoration: InputDecoration(
             prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
+                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
             suffixIcon: IconButton(
                 icon: Icon(Icons.clear_rounded,
-                    color: Colors.grey[600], size: 50),
+                    color: Colors.grey[600], size: 40),
                 onPressed: () {
                   _textController.clear();
                   _onSearchTextChanged('');
