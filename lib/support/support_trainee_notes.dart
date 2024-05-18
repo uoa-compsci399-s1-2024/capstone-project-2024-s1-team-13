@@ -31,6 +31,8 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
   late Trainee selectedTrainee;
   late List<TaskNotes> searchResults = []; // For autocomplete
 
+  String _selectedGroup = 'All';
+
   @override
   void initState() {
     super.initState();
@@ -179,15 +181,36 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
   void _onSearchTextChanged(String searchText) {
     setState(() {
       searchResults = allTaskNotes
-          .where((taskNote) => taskNote.taskTitle!
-              .toLowerCase()
-              .contains(searchText.toLowerCase()))
+          .where((taskNote) =>
+              taskNote.taskTitle!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()) ||
+              taskNote.taskDesc!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()))
           .toList();
     });
   }
 
+  // Group task notes by title
+  Map<String, List<TaskNotes>> _groupTaskNotesByTitle(List<TaskNotes> notes) {
+    Map<String, List<TaskNotes>> groupedNotes = {};
+    for (var note in notes) {
+      String title = note.taskTitle ?? 'Unknown';
+      if (!groupedNotes.containsKey(title)) {
+        groupedNotes[title] = [];
+      }
+      groupedNotes[title]!.add(note);
+    }
+    return groupedNotes;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Group task notes by title
+    Map<String, List<TaskNotes>> groupedTaskNotes =
+        _groupTaskNotesByTitle(allTaskNotes);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -230,8 +253,49 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
       body: Center(
         child: Column(
           children: [
+            // Dropdown Button
             Padding(
-                padding: EdgeInsets.all(25),
+              padding: const EdgeInsets.only(
+                  left: 25, right: 25, top: 25, bottom: 25),
+              child: DropdownButtonFormField(
+                value: _selectedGroup,
+                items: <String>['All', ...groupedTaskNotes.keys]
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedGroup = newValue!;
+                  });
+                },
+                icon: const Visibility(
+                    visible: false, child: Icon(Icons.arrow_downward)),
+                style: const TextStyle(
+                    fontFamily: "Lexend Exa",
+                    fontSize: 30,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black),
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.arrow_drop_down_circle_rounded,
+                        color: Colors.pink[900], size: 40),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide.none),
+                    filled: true,
+                    fillColor: Colors.grey[300]),
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.only(left: 25, right: 25, bottom: 25),
                 child: _buildTaskNotesSearchBar(context)),
             Expanded(
               child: RefreshIndicator(
@@ -250,13 +314,17 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
                         ),
                       ))
                     : ListView.builder(
-                        itemCount: _textController.text.isNotEmpty
-                            ? searchResults.length
-                            : allTaskNotes.length,
+                        itemCount: _selectedGroup == 'All'
+                            ? (_textController.text.isNotEmpty
+                                ? searchResults.length
+                                : allTaskNotes.length)
+                            : groupedTaskNotes[_selectedGroup]?.length ?? 0,
                         itemBuilder: (context, index) {
-                          final taskNote = _textController.text.isNotEmpty
-                              ? searchResults[index]
-                              : allTaskNotes[index];
+                          final taskNote = _selectedGroup == 'All'
+                              ? (_textController.text.isNotEmpty
+                                  ? searchResults[index]
+                                  : allTaskNotes[index])
+                              : groupedTaskNotes[_selectedGroup]![index];
                           return _NoteCard(
                             NoteItem(taskNote.taskTitle ?? '',
                                 taskNote.taskDesc ?? ''),
@@ -287,9 +355,13 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<TaskNotes>.empty();
         }
-        return allTaskNotes.where((taskNotes) => taskNotes.taskTitle!
-            .toLowerCase()
-            .contains(textEditingValue.text.toLowerCase()));
+        return allTaskNotes.where((taskNotes) =>
+            taskNotes.taskTitle!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()) ||
+            taskNotes.taskDesc!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()));
       },
       onSelected: (TaskNotes selectedTaskNote) {
         setState(() {
@@ -310,23 +382,29 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
             suffixIcon: IconButton(
-                icon: Icon(Icons.clear_rounded,
-                    color: Colors.grey[600], size: 40),
+                icon: Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 10),
+                  child: Icon(Icons.clear_rounded,
+                      color: Colors.grey[600], size: 40),
+                ),
                 onPressed: () {
                   _textController.clear();
                   _onSearchTextChanged('');
                 }),
-            hintText: "Search Task Notes",
+            hintText: "Search ${_selectedGroup}",
             hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
               fontWeight: FontWeight.w300,
             ),
             filled: true,
-            fillColor: Colors.grey[300],
+            fillColor: Colors.grey[200],
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
               borderSide: BorderSide.none,
