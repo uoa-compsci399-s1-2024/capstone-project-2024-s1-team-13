@@ -2,15 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_add_notes.dart';
 import 'package:inka_test/admin/admin_edit_notes.dart';
 import 'package:inka_test/items/note_item.dart';
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:inka_test/models/TaskNotes.dart';
 import 'package:inka_test/models/Trainee.dart';
-import 'package:inka_test/admin/admin_add_notes.dart';
-import 'package:inka_test/admin/admin_edit_notes.dart';
-import 'package:inka_test/items/note_item.dart';
 
 import '../models/TraineeNotes.dart';
 
@@ -32,6 +27,8 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
   late List<Trainee> allTrainees = [];
   late Trainee selectedTrainee;
   late List<TaskNotes> searchResults = []; // For autocomplete
+
+  String _selectedGroup = 'All';
 
   @override
   void initState() {
@@ -177,18 +174,40 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
 
   TaskNotes? selectedTaskNote;
 
+  // Autocomplete logic
   void _onSearchTextChanged(String searchText) {
     setState(() {
       searchResults = allTaskNotes
-          .where((taskNote) => taskNote.taskTitle!
-              .toLowerCase()
-              .contains(searchText.toLowerCase()))
+          .where((taskNote) =>
+              taskNote.taskTitle!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()) ||
+              taskNote.taskDesc!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()))
           .toList();
     });
   }
 
+  // Group task notes by title
+  Map<String, List<TaskNotes>> _groupTaskNotesByTitle(List<TaskNotes> notes) {
+    Map<String, List<TaskNotes>> groupedNotes = {};
+    for (var note in notes) {
+      String title = note.taskTitle ?? 'Unknown';
+      if (!groupedNotes.containsKey(title)) {
+        groupedNotes[title] = [];
+      }
+      groupedNotes[title]!.add(note);
+    }
+    return groupedNotes;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Group task notes by title
+    Map<String, List<TaskNotes>> groupedTaskNotes =
+        _groupTaskNotesByTitle(allTaskNotes);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -231,8 +250,49 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
       body: Center(
         child: Column(
           children: [
+            // Dropdown Button
             Padding(
-                padding: EdgeInsets.all(25),
+              padding: const EdgeInsets.only(
+                  left: 25, right: 25, top: 25, bottom: 25),
+              child: DropdownButtonFormField(
+                value: _selectedGroup,
+                items: <String>['All', ...groupedTaskNotes.keys]
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedGroup = newValue!;
+                  });
+                },
+                icon: const Visibility(
+                    visible: false, child: Icon(Icons.arrow_downward)),
+                style: const TextStyle(
+                    fontFamily: "Lexend Exa",
+                    fontSize: 30,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black),
+                decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.arrow_drop_down_circle_rounded,
+                        color: Colors.pink[900], size: 40),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide.none),
+                    filled: true,
+                    fillColor: Colors.grey[300]),
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.only(left: 25, right: 25, bottom: 25),
                 child: _buildTaskNotesSearchBar(context)),
             Expanded(
               child: RefreshIndicator(
@@ -252,13 +312,17 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
                             ),
                           ))
                         : ListView.builder(
-                            itemCount: _searchController.text.isNotEmpty
-                                ? searchResults.length
-                                : allTaskNotes.length,
+                            itemCount: _selectedGroup == 'All'
+                                ? (_searchController.text.isNotEmpty
+                                    ? searchResults.length
+                                    : allTaskNotes.length)
+                                : groupedTaskNotes[_selectedGroup]?.length ?? 0,
                             itemBuilder: (context, index) {
-                              final taskNote = _searchController.text.isNotEmpty
-                                  ? searchResults[index]
-                                  : allTaskNotes[index];
+                              final taskNote = _selectedGroup == 'All'
+                                  ? (_searchController.text.isNotEmpty
+                                      ? searchResults[index]
+                                      : allTaskNotes[index])
+                                  : groupedTaskNotes[_selectedGroup]![index];
                               return _NoteCard(
                                 NoteItem(taskNote.taskTitle ?? '',
                                     taskNote.taskDesc ?? ''),
@@ -278,6 +342,7 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
     await fetchAllTaskNotes();
   }
 
+  // Search Bar with Autocomplete
   Widget _buildTaskNotesSearchBar(context) {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
     final itemHeight = 70.0;
@@ -288,9 +353,13 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<TaskNotes>.empty();
         }
-        return allTaskNotes.where((taskNotes) => taskNotes.taskTitle!
-            .toLowerCase()
-            .contains(textEditingValue.text.toLowerCase()));
+        return allTaskNotes.where((taskNotes) =>
+            taskNotes.taskTitle!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()) ||
+            taskNotes.taskDesc!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()));
       },
       onSelected: (TaskNotes selectedTaskNote) {
         setState(() {
@@ -311,23 +380,29 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
             suffixIcon: IconButton(
-                icon: Icon(Icons.clear_rounded,
-                    color: Colors.grey[600], size: 40),
+                icon: Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 10),
+                  child: Icon(Icons.clear_rounded,
+                      color: Colors.grey[600], size: 40),
+                ),
                 onPressed: () {
                   _searchController.clear();
                   _onSearchTextChanged('');
                 }),
-            hintText: "Search Task Notes",
+            hintText: "Search ${_selectedGroup}",
             hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
               fontWeight: FontWeight.w300,
             ),
             filled: true,
-            fillColor: Colors.grey[300],
+            fillColor: Colors.grey[200],
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
               borderSide: BorderSide.none,
@@ -363,16 +438,4 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
                       fontSize: 25,
                       fontWeight: FontWeight.w500,
                       color: Colors.pink[900])))));
-
-// Mock Data
-  final List<NoteItem> mockNotes = [
-    NoteItem('General',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Dishes Evaluation',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Closing Evaluation',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-    NoteItem('Toilet Breaks',
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '),
-  ];
 }
