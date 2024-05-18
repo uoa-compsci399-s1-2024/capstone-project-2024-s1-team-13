@@ -58,22 +58,18 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
   }
   
   Future<void> displayImage() async {
-    String? imageKey = uploadedImageKey;
-    final String? imageUrl;
-
+    String? imageKey = uploadedImageKey ?? placeholderImageKey;
     try {
-      imageKey ??= placeholderImageKey;
-      if (imageKey == placeholderImageKey) {
-        hasPlaceholder = true;
-      }
-      imageUrl = await getDownloadUrl(key: imageKey, accessLevel: StorageAccessLevel.guest);
-      
+      final imageUrl = await getDownloadUrl(
+        key: imageKey,
+        accessLevel: StorageAccessLevel.guest,
+      );
       setState(() {
         downloadedImageUrl = imageUrl;
+        hasPlaceholder = (imageKey == placeholderImageKey); // Updated to set hasPlaceholder correctly
       });
-    
     } catch (e) {
-      safePrint('Error fetching image URL :$e');
+      safePrint('Error fetching image URL: $e');
     }
   }
 
@@ -102,6 +98,8 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
           safePrint('Fraction completed: ${progress.fractionCompleted}');
         },
       ).result;
+
+      safePrint('File uploaded successfully: ${platformFile.name}'); // Log statement added
 
       setState(() {
         uploadedImageKey = platformFile.name;
