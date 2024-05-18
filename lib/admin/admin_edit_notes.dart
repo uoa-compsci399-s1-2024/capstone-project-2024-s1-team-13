@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:inka_test/items/note_item.dart';
-import 'package:flutter/material.dart';
-import 'package:inka_test/items/note_item.dart';
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/models/TaskNotes.dart';
 import 'package:inka_test/models/Trainee.dart';
-import 'package:inka_test/admin/admin_add_notes.dart';
-import 'package:inka_test/admin/admin_edit_notes.dart';
-import 'package:inka_test/items/note_item.dart';
-
 import '../models/TraineeNotes.dart';
 
 class AdminEditNotes extends StatefulWidget {
@@ -314,14 +306,20 @@ class _AdminEditNotes extends State<AdminEditNotes> {
           focusNode: focusNode,
           onChanged: _onSearchTextChanged,
           style: TextStyle(
-            fontSize: 27, // Adjust the font size here
+            fontSize: 27,
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
             suffixIcon: IconButton(
-                icon: Icon(Icons.clear_rounded,
-                    color: Colors.grey[600], size: 40),
+                icon: Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 10),
+                  child: Icon(Icons.clear_rounded,
+                      color: Colors.grey[600], size: 40),
+                ),
                 onPressed: () {
                   _searchController.clear();
                   _onSearchTextChanged('');
@@ -379,19 +377,6 @@ class _AdminEditNotes extends State<AdminEditNotes> {
                       fontWeight: FontWeight.w500,
                       color: Colors.pink[900])))));
 
-// Mock Functions
-
-/*Edit selected note
-  void _editNote(BuildContext context, NoteItem note) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditSelectedNote(title: 'Edit Note', note: note),
-      ),
-    );
-  }*/
-
-//Delete selected note - pending backend functionality
   void deleteTaskNoteDialog(BuildContext context, String taNoId) {
     showDialog(
       context: context,
