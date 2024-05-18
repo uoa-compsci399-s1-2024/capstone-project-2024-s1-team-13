@@ -1,8 +1,6 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:inka_test/items/progress_item.dart';
-import 'package:inka_test/models/CurrTask.dart';
 import 'package:inka_test/models/Session.dart';
 import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/TaskNotes.dart';
@@ -28,7 +26,6 @@ class SupportTraineeProgress extends StatefulWidget {
 class _SupportTraineeProgress extends State<SupportTraineeProgress> {
   late List<Task> allTasks = []; // List to store all tasks
   final String title = '';
-  List<CurrTask>? currentTasks = [];
   TaskNotes taskNote = TaskNotes();
   late Trainee selectedTrainee;
   bool isLoading = true;
@@ -283,12 +280,6 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
   );
 }
 
-
-
-
-
-
-  //QUERY ALL THE SESSIONS FOR THE TRAINEE
   // QUERY ALL THE SESSIONS FOR THE TRAINEE AND SELECTED TASK
   Future<List<Session>?> querySession(String taskID, String traineeID) async {
   try {
@@ -321,10 +312,3 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
 
 
 }
-
-// Mock Data
-
-final List<ProgressItem> mockProgress = [
-  ProgressItem('Closing Evaluation', 'Independent', 'Good'),
-  ProgressItem('Dishes Evaluation', 'Gestural Prompt', 'Very Good')
-];
