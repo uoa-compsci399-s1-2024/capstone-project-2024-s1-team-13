@@ -18,8 +18,8 @@ class AdminAddNotes extends StatefulWidget {
 }
 
 class _AdminAddNotesState extends State<AdminAddNotes> {
+  //GLOBAL VARIABLES
   late Trainee selectedTrainee;
-
   late final String title;
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _notesTitleController = TextEditingController();
@@ -28,24 +28,24 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
   late List<TaskNotes> allTaskNotes = []; // List to store all task notes
   late String traineeID = widget.trainee.id; // Get the selected trainee's ID
 
+  //INIT STATE
   @override
   void initState() {
     super.initState();
     title = widget.title;
     traineeID = widget.trainee.id;
-    fetchAllTaskNotes(); // Call the function to fetch all task notes
+    fetchAllTaskNotes();
     fetchSelectedTrainee();
   }
 
-  //BACKEND ADDED
-
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedTrainee() async {
     try {
       final trainee = await queryTraineeById(
-          widget.trainee.id); // Query for the trainee by ID
+          widget.trainee.id);
 
       setState(() {
-        selectedTrainee = trainee!; // Store the selected trainee in the state
+        selectedTrainee = trainee!;
       });
     } catch (e) {
       safePrint('Error fetching selected trainee: $e');
@@ -55,9 +55,9 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
   Future<Trainee?> queryTraineeById(String traineeID) async {
     try {
       final request = ModelQueries.get(
-          Trainee.classType,
-          TraineeModelIdentifier(
-              id: traineeID)); // Use ModelQuery.get to fetch a single task by ID
+        Trainee.classType,
+        TraineeModelIdentifier(id: traineeID)
+      );
       final response = await Amplify.API.query(request: request).response;
 
       final trainee = response.data;
@@ -71,7 +71,6 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
     }
   }
 
-  // Function to fetch all task notes
   Future<void> fetchAllTaskNotes() async {
     try {
       final taskNotes = await queryTaskNotes();
@@ -84,7 +83,6 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
     }
   }
 
-  // Function to query all task notes
   Future<List<TaskNotes>> queryTaskNotes() async {
     try {
       final request = ModelQueries.list(TaskNotes.classType);
@@ -97,19 +95,17 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
         return [];
       }
       return taskNotes
-          .cast<TaskNotes>(); // Cast the task notes to the TaskNotes class
+          .cast<TaskNotes>();
     } catch (e) {
       safePrint('Query failed: $e');
       return [];
     }
   }
 
-  //query all of the task notes
   Future<List<TaskNotes?>> queryListItems() async {
     try {
       final request = ModelQueries.list(TaskNotes.classType);
       final response = await Amplify.API.query(request: request).response;
-      //safePrint('List of all the Task Notes:', response);
       safePrint('Testing!');
 
       final taskNotes = response.data?.items;
@@ -143,31 +139,32 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
     }
   }
 
-  //createTaskNotes section
   Future<void> createTaskNotes(String taskTitle, String taskDesc) async {
     try {
-      final String traineeID =
-          widget.trainee.id; // Get the selected trainee's ID
-      final aTaskNote = TaskNotes(
-        taskTitle: taskTitle,
-        taskDesc: taskDesc,
-        traineeID: traineeID,
-         // Assign the trainee's ID to the task note
-      );
-      final req = ModelMutations.create(aTaskNote);
-      final res = await Amplify.API.mutate(request: req).response;
+      if (widget.trainee.isWorking == true) {
+        final String traineeID = widget.trainee.id;
+        final aTaskNote = TaskNotes(
+          taskTitle: taskTitle,
+          taskDesc: taskDesc,
+          traineeID: traineeID,
+        );
 
-      final createdTaskNote = res.data;
-      if (createdTaskNote == null) {
-        safePrint('errors: ${res.errors}');
-        return;
+        final req = ModelMutations.create(aTaskNote);
+        final res = await Amplify.API.mutate(request: req).response;
+
+        final createdTaskNote = res.data;
+        if (createdTaskNote == null) {
+          safePrint('errors: ${res.errors}');
+          return;
+        }
+        safePrint('Successfully added a new note! NOTE: ${createdTaskNote.taskTitle}');
       }
-      safePrint('Mutation result: ${createdTaskNote.taskTitle}');
     } on ApiException catch (e) {
-      safePrint('Mutation Failed: $e');
+      safePrint('Error adding a note! ERROR: $e');
     }
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,7 +180,7 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
         actions: [
           IconButton(
             onPressed: () {
-              _addNote(); // Dummy functionality
+              _addNote();
             },
             iconSize: 50,
             icon: Icon(Icons.done_rounded),
@@ -246,40 +243,52 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
     );
   }
 
-  // Dummy add function - pending backend functionality
   void _addNote() async {
-    // Get the title and description from the text controllers
     String title = _notesTitleController.text;
     String description = _notesController.text;
-    //final String traineeID = widget.trainee.id; // Get the selected trainee's ID
-    //Trainee traineeTaskNote  = widget.trainee; // Assign the trainee's ID to the task note
 
-    await createTaskNotes(title, description); // Create the task note
+    await createTaskNotes(title, description);
     await fetchAllTaskNotes();
 
-    // Validate input - pending backend functionality
-    if (title.isNotEmpty && description.isNotEmpty) {
-      // Navigate back to the previous screen and pass the new note data
+    if (title.isNotEmpty && description.isNotEmpty && widget.trainee.isWorking == true) {
       Navigator.pop(context, {'title': title, 'description': description});
-    } else {
-      // Show an error message if input is empty
+    } else if (widget.trainee.isWorking == false) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50))),
-            elevation: 10,
-            content: Text(
-              'Please fill in both title and description',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.pink[900]),
-            )),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50))),
+          elevation: 10,
+          content: Text(
+            'Cannot create a note for archived trainee!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900]),
+          )),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50))),
+          elevation: 10,
+          content: Text(
+            'Please fill in both title and description',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900]),
+          )),
       );
     }
   }

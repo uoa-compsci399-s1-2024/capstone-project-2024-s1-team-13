@@ -161,40 +161,7 @@ class _SupportAddNotes extends State<SupportAddNotes> {
     }
   }
 
-  void _addNote() async {
-    String title = _notesTitleController.text;
-    String description = _notesController.text;
-
-    if (title.isEmpty != true && description.isEmpty != true){
-      await createTaskNotes(title, description);
-      await fetchAllTaskNotes();
-    }
-
-    if (title.isNotEmpty && description.isNotEmpty) {
-      Navigator.pop(context, {'title': title, 'description': description});
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50))),
-            elevation: 10,
-            content: Text(
-              'Please fill in both title and description',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.pink[900]),
-            )),
-      );
-    }
-  }
-
-  //SCREEN BUILD
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -271,5 +238,57 @@ class _SupportAddNotes extends State<SupportAddNotes> {
         ),
       ),
     );
+  }
+
+  void _addNote() async {
+    String title = _notesTitleController.text;
+    String description = _notesController.text;
+
+    if (title.isEmpty != true && description.isEmpty != true){
+      await createTaskNotes(title, description);
+      await fetchAllTaskNotes();
+    }
+
+    if (title.isNotEmpty && description.isNotEmpty) {
+      Navigator.pop(context, {'title': title, 'description': description});
+    } else if (widget.trainee.isWorking == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50))),
+          elevation: 10,
+          content: Text(
+            'Cannot create a note for archived trainee!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900]),
+          )),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50))),
+            elevation: 10,
+            content: Text(
+              'Please fill in both title and description',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.pink[900]),
+            )),
+      );
+    }
   }
 }
