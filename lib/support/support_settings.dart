@@ -3,10 +3,10 @@ import 'package:inka_test/admin/admin_selection.dart';
 import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/support/support_trainees.dart';
 import 'package:inka_test/welcome/inka_welcome.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 class SupportSettings extends StatelessWidget {
-  const SupportSettings({Key? key, required this.title})
-      : super(key: key);
+  const SupportSettings({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,9 @@ class SupportSettings extends StatelessWidget {
         ElevatedButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SupportTrainees(title: 'Trainees', );
+                return SupportTrainees(
+                  title: 'Trainees',
+                );
               }));
             },
             child: Text("Switch Trainee"),
@@ -86,10 +88,16 @@ class SupportSettings extends StatelessWidget {
 
         // Logout Button - pending backend functionality
         ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return InkaWelcome(title: 'Welcome');
-              }));
+            onPressed: () async {
+              try {
+                await Amplify.Auth.signOut();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) {
+                  return InkaWelcome(title: 'Welcome');
+                }));
+              } catch (e) {
+                print('Error signing out: $e');
+              }
             },
             child: Text("Logout"),
             style: ElevatedButton.styleFrom(

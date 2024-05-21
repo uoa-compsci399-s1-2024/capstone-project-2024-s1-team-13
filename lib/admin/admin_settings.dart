@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_change_login.dart';
 import 'package:inka_test/welcome/inka_welcome.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 class AdminSettings extends StatelessWidget {
   const AdminSettings({super.key, required this.title});
@@ -13,7 +14,8 @@ class AdminSettings extends StatelessWidget {
         leading: IconButton(
             iconSize: 40,
             icon: const Icon(Icons.arrow_back_ios),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
               Navigator.pop(context);
             }),
@@ -62,7 +64,8 @@ class AdminSettings extends StatelessWidget {
         ElevatedButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const AdminChangeLogin(title: 'Change Login'); // To change
+                return const AdminChangeLogin(
+                    title: 'Change Login'); // To change
               }));
             },
             style: ElevatedButton.styleFrom(
@@ -83,10 +86,16 @@ class AdminSettings extends StatelessWidget {
 
         // Logout Button - pending backend functionality
         ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const InkaWelcome(title: 'Welcome');
-              }));
+            onPressed: () async {
+              try {
+                await Amplify.Auth.signOut();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) {
+                  return InkaWelcome(title: 'Welcome');
+                }));
+              } catch (e) {
+                print('Error signing out: $e');
+              }
             },
             style: ElevatedButton.styleFrom(
                 minimumSize: const Size(700, 100),

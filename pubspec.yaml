@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  amplify_flutter: ^1.0.0
+  amplify_flutter: ^1.8.0
   amplify_api: ^1.0.0
   amplify_datastore: ^1.0.0
   cached_network_image: ^3.3.0

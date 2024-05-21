@@ -114,49 +114,42 @@ class _SupportLoginState extends State<SupportLogin> {
       });
     }
   }*/
-  void _logIn(context) async {
+  void _logIn(BuildContext context) async {
     try {
-      // Check if a user is already signed in
       var authSession = await Amplify.Auth.fetchAuthSession();
       if (authSession.isSignedIn) {
-        // If a user is signed in, sign them out first
         await Amplify.Auth.signOut();
       }
 
-      print('step 1');
       SignInResult result = await Amplify.Auth.signIn(
         username: _usernameController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
       if (result.isSignedIn) {
-        print('step 2');
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          print('step 3');
-          return SupportSelectTrainee(title: 'Select Trainee');
-        }));
-        print('step 4');
-      } else if (result.nextStep.signInStep == 'confirmSignInWithNewPassword') {
-        // Handle confirmSignInWithNewPassword step
-        print('step 5');
+        List<AuthUserAttribute> attributes =
+            await Amplify.Auth.fetchUserAttributes();
+        String role = attributes
+            .firstWhere(
+                (attribute) => attribute.userAttributeKey.key == 'custom:role')
+            .value;
 
-        setState(() {
-          print('step 6');
-
-          _errorMessage = 'Additional information required';
-        });
-
-        // Prompt the user to provide the required attributes (preferred username and name)
-        // and call confirmSignIn method to confirm the sign-in with the new password and additional attributes
+        if (role == 'support') {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return SupportSelectTrainee(title: 'Select Trainee');
+          }));
+        } else {
+          setState(() {
+            _errorMessage = 'Access denied: You are not a support worker';
+            Amplify.Auth.signOut();
+          });
+        }
       } else {
-        print('step 5');
         setState(() {
-          print('step 6');
-
           _errorMessage = 'Invalid username or password';
         });
       }
     } catch (error) {
-      print('Error signing in: $error');
       setState(() {
         if (error is AuthException) {
           _errorMessage = 'Error signing in: ${error.message}';

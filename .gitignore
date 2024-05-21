@@ -63,3 +63,4 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+lib/welcome/login.dart
