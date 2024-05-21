@@ -156,7 +156,24 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
               } else {
                 print('Image upload failed.');
               }
-
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(50),
+                          topRight: Radius.circular(50))),
+                  elevation: 10,
+                  content: Text(
+                    'Successfully edited trainee!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.pink[900]),
+                  )),
+              );
               Navigator.pop(context);
             },
             iconSize: 50,

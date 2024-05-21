@@ -342,31 +342,6 @@ class _AdminEditTraineesState extends State<AdminEditTrainees> {
             )),
       );
 
-  //Mock Data
-  final List<TraineeItem> mockTrainees = [
-    TraineeItem(
-        firstName: 'John',
-        lastName: 'Doe',
-        traineePhoto: 'assets/images/trainee_placeholder.jpeg',
-        id: ''),
-    TraineeItem(
-        firstName: 'Tom',
-        lastName: 'Stevens',
-        traineePhoto: 'assets/images/trainee_placeholder.jpeg',
-        id: ''),
-    TraineeItem(
-        firstName: 'Clark',
-        lastName: 'Johnson',
-        traineePhoto: 'assets/images/trainee_placeholder.jpeg',
-        id: ''),
-    TraineeItem(
-        firstName: 'Sam',
-        lastName: 'Wood',
-        traineePhoto: 'assets/images/trainee_placeholder.jpeg',
-        id: '')
-  ];
-
-  // Mock Functionality
   void deleteTraineeDialog(BuildContext context, index, Trainee currTrainee) {
     showDialog(
       context: context,
