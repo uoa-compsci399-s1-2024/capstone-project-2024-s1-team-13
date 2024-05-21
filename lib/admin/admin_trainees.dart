@@ -331,7 +331,7 @@ class _AdminTraineesState extends State<AdminTrainees> {
         margin: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         elevation: 2,
-        color: Colors.white,
+        color: trainee.isWorking == true ? Colors.white : Colors.grey[400],
         child: ListTile(
           // Avatar containing image - set as leading for Card instance, needs fixing
           leading: FutureBuilder<String>(
@@ -363,11 +363,13 @@ class _AdminTraineesState extends State<AdminTrainees> {
             padding: EdgeInsets.only(top: 100, bottom: 100),
             child: Text(
               '${trainee.firstName} ${trainee.lastName}',
-              style: const TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 40,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(
+                  fontFamily: "Lexend Exa",
+                  fontSize: 40,
+                  fontWeight: FontWeight.w500,
+                  color: trainee.isWorking == true
+                      ? Colors.black
+                      : Colors.grey[600]),
             ),
           ),
         ),
