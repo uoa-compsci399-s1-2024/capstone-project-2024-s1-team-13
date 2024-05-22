@@ -25,7 +25,6 @@
 <br />
 <div align="center">
   <a href="https://github.com/github_username/repo_name">
-    <div style="background-color: white; display: inline-block; padding: 10px;">
       <img src="assets/images/inka_white_bg.svg" alt="Logo" width="300">
   </a>
 
