@@ -612,7 +612,7 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
                 topRight: Radius.circular(50))),
         elevation: 10,
         content: Text(
-          'Successfully created a task!',
+          'Successfully created a recipe!',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontFamily: 'Lexend Exa',
