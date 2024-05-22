@@ -193,105 +193,128 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
               onPressed: () {
                 Navigator.pop(context);
               }),
-          actions: [
-          IconButton(
-            onPressed: () {
-              
-                if (globalCoverImageUrl != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && taskSteps.isNotEmpty == true) {
-                  updateTask(_taskTitleController.text, taskSteps, globalCoverImageUrl!, taskStepImages);
-                  saveTask();
-                } else if (_taskTitleController.text.isEmpty == true) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(50))),
-                        elevation: 10,
-                        content: Text(
-                          'Please add a task title!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.pink[900]),
-                        )),
-                  );
-                } else if (taskSteps.isEmpty == true) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(50))),
-                        elevation: 10,
-                        content: Text(
-                          'Please add at least 1 task step!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.pink[900]),
-                        )),
-                  );
-                } else if (globalCoverImageUrl == null){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(50))),
-                        elevation: 10,
-                        content: Text(
-                          'Please add a task cover image!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.pink[900]),
-                        )),
-                  );
-                } else {
-                  for (int i = 0; i < taskSteps.length; i++){
-                    if (taskSteps[i].isEmpty == true){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(50),
-                                    topRight: Radius.circular(50))),
-                            elevation: 10,
-                            content: Text(
-                              'No instructions in Step ${i+1}!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: 'Lexend Exa',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.pink[900]),
-                            )),
-                      );
-                      hasInstructions = false;
-                      break;
-                    }
-                    hasInstructions = true;
-                  }
-
-                  
-                }
-            },
-            iconSize: 50,
-            icon: const Icon(Icons.done_rounded),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+         actions: [
+  IconButton(
+    onPressed: () {
+      if (_taskTitleController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+            ),
+            elevation: 10,
+            content: Text(
+              'Please add a task title!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900],
+              ),
+            ),
           ),
-        ],
+        );
+        return;
+      }
+
+      if (taskSteps.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+            ),
+            elevation: 10,
+            content: Text(
+              'Please add at least 1 task step!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900],
+              ),
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (globalCoverImageUrl == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50),
+              ),
+            ),
+            elevation: 10,
+            content: Text(
+              'Please add a task cover image!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900],
+              ),
+            ),
+          ),
+        );
+        return;
+      }
+
+      for (int i = 0; i < taskSteps.length; i++) {
+        if (taskSteps[i].isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50),
+                ),
+              ),
+              elevation: 10,
+              content: Text(
+                'No instructions in Step ${i + 1}!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.pink[900],
+                ),
+              ),
+            ),
+          );
+          hasInstructions = false;
+          return;
+        }
+        hasInstructions = true;
+      }
+
+      if (globalCoverImageUrl != null && _taskTitleController.text.isNotEmpty && hasInstructions! && taskSteps.isNotEmpty) {
+        updateTask(_taskTitleController.text, taskSteps, globalCoverImageUrl!, taskStepImages);
+        saveTask();
+      }
+    },
+    iconSize: 50,
+    icon: const Icon(Icons.done_rounded),
+    padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+  ),
+],
+
       ),
         // Grid View
         body: Column(
@@ -747,4 +770,3 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
     );
   }
 }
-
