@@ -14,6 +14,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
       TextEditingController();
   final TextEditingController _verificationCodeController =
       TextEditingController();
+
   bool _isCodeSent = false;
   String _errorMessage = '';
   bool _hasMinLength = false;
@@ -21,6 +22,9 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   bool _hasNumber = false;
   bool _hasSpecialChar = false;
   bool _passwordsMatch = false;
+  bool _isNewPasswordVisible = false; // For toggling new password visibility
+  bool _isConfirmPasswordVisible =
+      false; // For toggling confirm password visibility
 
   void _validatePassword(String password) {
     setState(() {
@@ -65,7 +69,6 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
       });
       return;
     }
-
     try {
       await Amplify.Auth.confirmResetPassword(
         username: _usernameController.text.trim(),
@@ -105,14 +108,42 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
               ),
               TextField(
                 controller: _newPasswordController,
-                decoration: InputDecoration(labelText: 'New Password'),
-                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'New Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isNewPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isNewPasswordVisible = !_isNewPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+                obscureText: !_isNewPasswordVisible,
                 onChanged: _validatePassword,
               ),
               TextField(
                 controller: _confirmPasswordController,
-                decoration: InputDecoration(labelText: 'Confirm Password'),
-                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+                obscureText: !_isConfirmPasswordVisible,
                 onChanged: _validateConfirmPassword,
               ),
               _buildPasswordValidationIndicators(),

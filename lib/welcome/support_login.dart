@@ -1,16 +1,13 @@
 import 'dart:async';
-
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:inka_test/admin/admin_selection.dart';
 import 'package:inka_test/support/support_select_trainee.dart';
 import 'package:inka_test/welcome/reset_password.dart';
 
 class SupportLogin extends StatefulWidget {
   SupportLogin({super.key, required this.title});
   final String title;
-
   @override
   _SupportLoginState createState() => _SupportLoginState();
 }
@@ -21,6 +18,7 @@ class _SupportLoginState extends State<SupportLogin> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _errorMessage = '';
+  bool _isPasswordVisible = false; // For toggling password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +91,7 @@ class _SupportLoginState extends State<SupportLogin> {
           }));
         } else {
           setState(() {
-            _errorMessage = 'Access denied: You are not an admin';
+            _errorMessage = 'Access denied: You are not a Support Worker';
             Amplify.Auth.signOut();
           });
         }
@@ -138,7 +136,7 @@ class _SupportLoginState extends State<SupportLogin> {
   Widget _supportAdminIcon() => Column(
         children: [
           Icon(Icons.person_rounded, size: 200, color: Colors.pink[900]),
-          Text("Support Staff",
+          Text("Support",
               style: TextStyle(
                   fontFamily: "Lexend Exa",
                   fontSize: 25,
@@ -192,7 +190,7 @@ class _SupportLoginState extends State<SupportLogin> {
           ),
           TextFormField(
             controller: _passwordController,
-            obscureText: true,
+            obscureText: !_isPasswordVisible,
             style: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 25,
@@ -211,6 +209,16 @@ class _SupportLoginState extends State<SupportLogin> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(50),
                 borderSide: BorderSide.none,
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
               ),
             ),
           ),

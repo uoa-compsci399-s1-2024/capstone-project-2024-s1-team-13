@@ -19,6 +19,7 @@ class _AdminLoginState extends State<AdminLogin> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _errorMessage = '';
+  bool _isPasswordVisible = false; // For toggling password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +92,7 @@ class _AdminLoginState extends State<AdminLogin> {
           }));
         } else {
           setState(() {
-            _errorMessage = 'Access denied: You are not an admin';
+            _errorMessage = 'Access denied: You are not an Admin';
             Amplify.Auth.signOut();
           });
         }
@@ -190,7 +191,7 @@ class _AdminLoginState extends State<AdminLogin> {
           ),
           TextFormField(
             controller: _passwordController,
-            obscureText: true,
+            obscureText: !_isPasswordVisible,
             style: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 25,
@@ -209,6 +210,16 @@ class _AdminLoginState extends State<AdminLogin> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(50),
                 borderSide: BorderSide.none,
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
               ),
             ),
           ),
