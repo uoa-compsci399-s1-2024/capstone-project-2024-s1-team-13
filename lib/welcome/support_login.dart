@@ -279,8 +279,9 @@ class _SupportLoginState extends State<SupportLogin> {
         child: const Text(
           'Forgot Password?',
           style: TextStyle(
+            fontFamily: 'Lexend Exa',
             fontSize: 18,
-            color: Colors.blue,
+            color: Colors.red,
             decoration: TextDecoration.underline,
           ),
         ),
