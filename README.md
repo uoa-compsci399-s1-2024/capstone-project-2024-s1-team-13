@@ -24,12 +24,11 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">
+<div align="left">
   <a href="https://github.com/github_username/repo_name">
       <img src="assets/images/inka_white_bg_2.svg" alt="Logo" width="300">
   </a>
 
-<h3 align="center">INKA</h3>
 
   <p align="center">
     project_description
