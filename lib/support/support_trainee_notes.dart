@@ -7,7 +7,6 @@ import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/support_add_notes.dart';
 import 'package:inka_test/support/support_edit_notes.dart';
 import 'package:inka_test/items/note_item.dart';
-
 import '../models/TraineeNotes.dart';
 
 class SupportTraineeNotes extends StatefulWidget {
@@ -180,7 +179,11 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
   // Autocomplete logic
   void _onSearchTextChanged(String searchText) {
     setState(() {
-      searchResults = allTaskNotes
+      List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+          ? allTaskNotes
+          : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+
+      searchResults = notesToSearch
           .where((taskNote) =>
               taskNote.taskTitle!
                   .toLowerCase()
@@ -318,13 +321,18 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
                             ? (_textController.text.isNotEmpty
                                 ? searchResults.length
                                 : allTaskNotes.length)
-                            : groupedTaskNotes[_selectedGroup]?.length ?? 0,
+                            : (_textController.text.isNotEmpty
+                                ? searchResults.length
+                                : groupedTaskNotes[_selectedGroup]?.length ??
+                                    0),
                         itemBuilder: (context, index) {
                           final taskNote = _selectedGroup == 'All'
                               ? (_textController.text.isNotEmpty
                                   ? searchResults[index]
                                   : allTaskNotes[index])
-                              : groupedTaskNotes[_selectedGroup]![index];
+                              : (_textController.text.isNotEmpty
+                                  ? searchResults[index]
+                                  : groupedTaskNotes[_selectedGroup]![index]);
                           return _NoteCard(
                             NoteItem(taskNote.taskTitle ?? '',
                                 taskNote.taskDesc ?? ''),
@@ -355,7 +363,10 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<TaskNotes>.empty();
         }
-        return allTaskNotes.where((taskNotes) =>
+        List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+            ? allTaskNotes
+            : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+        return notesToSearch.where((taskNotes) =>
             taskNotes.taskTitle!
                 .toLowerCase()
                 .contains(textEditingValue.text.toLowerCase()) ||

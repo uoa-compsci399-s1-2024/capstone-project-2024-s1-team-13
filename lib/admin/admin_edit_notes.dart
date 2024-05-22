@@ -25,6 +25,7 @@ class _AdminEditNotes extends State<AdminEditNotes> {
   late List<TaskNotes> searchResults = []; // For autocomplete
   late Future<Trainee?> _selectedTraineeFuture;
   TaskNotes? selectedTaskNote;
+  String _selectedGroup = 'All';
 
   @override
   void initState() {
@@ -183,18 +184,48 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     }
   }
 
+  // Autocomplete search
   void _onSearchTextChanged(String searchText) {
     setState(() {
-      searchResults = allTaskNotes
-          .where((taskNote) => taskNote.taskTitle!
-              .toLowerCase()
-              .contains(searchText.toLowerCase()))
+      List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+          ? allTaskNotes
+          : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+
+      searchResults = notesToSearch
+          .where((taskNote) =>
+              taskNote.taskTitle!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()) ||
+              taskNote.taskDesc!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()))
           .toList();
     });
   }
 
+  // Group task notes by title
+  Map<String, List<TaskNotes>> _groupTaskNotesByTitle(List<TaskNotes> notes) {
+    Map<String, List<TaskNotes>> groupedNotes = {};
+    for (var note in notes) {
+      String title = note.taskTitle ?? 'Unknown';
+      if (!groupedNotes.containsKey(title)) {
+        groupedNotes[title] = [];
+      }
+      groupedNotes[title]!.add(note);
+    }
+    return groupedNotes;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Group task notes by title
+    Map<String, List<TaskNotes>> groupedTaskNotes =
+        _groupTaskNotesByTitle(allTaskNotes);
+
+    List<TaskNotes> filteredTaskNotes = _selectedGroup == 'All'
+        ? allTaskNotes
+        : groupedTaskNotes[_selectedGroup] ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -222,44 +253,91 @@ class _AdminEditNotes extends State<AdminEditNotes> {
             return Center(
               child: Column(
                 children: [
+                  // Dropdown Button
                   Padding(
-                    padding: EdgeInsets.all(25),
+                    padding: const EdgeInsets.only(
+                        left: 25, right: 25, top: 25, bottom: 25),
+                    child: DropdownButtonFormField(
+                      value: _selectedGroup,
+                      items: <String>['All', ...groupedTaskNotes.keys]
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                                fontFamily: 'Lexend Exa',
+                                fontSize: 30,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedGroup = newValue!;
+                          _onSearchTextChanged(_searchController.text);
+                        });
+                      },
+                      icon: const Visibility(
+                          visible: false, child: Icon(Icons.arrow_downward)),
+                      style: const TextStyle(
+                          fontFamily: "Lexend Exa",
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                      decoration: InputDecoration(
+                          suffixIcon: Icon(Icons.arrow_drop_down_circle_rounded,
+                              color: Colors.pink[900], size: 40),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50),
+                              borderSide: BorderSide.none),
+                          filled: true,
+                          fillColor: Colors.grey[300]),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 25, right: 25, bottom: 25),
                     child: _buildTaskNotesSearchBar(context),
                   ),
                   Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: _refreshTaskNotes,
-                      child: searchResults.isNotEmpty ||
-                              _searchController.text.isEmpty
-                          ? ListView.builder(
-                              itemCount: _searchController.text.isNotEmpty
-                                  ? searchResults.length
-                                  : allTaskNotes.length,
-                              itemBuilder: (context, index) {
-                                final taskNote =
-                                    _searchController.text.isNotEmpty
-                                        ? searchResults[index]
-                                        : allTaskNotes[index];
-                                return _NoteCard(
-                                  NoteItem(
-                                    taskNote.taskTitle ?? '',
-                                    taskNote.taskDesc ?? '',
-                                  ),
-                                  taskNote.id ?? "",
-                                );
-                              },
-                            )
-                          : Center(
-                              child: Text(
-                              'No task notes found',
-                              style: TextStyle(
-                                fontFamily: "Lexend Exa",
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey,
-                              ),
-                            )),
-                    ),
+                    child: _searchController.text.isEmpty
+                        ? ListView.builder(
+                            itemCount: filteredTaskNotes.length,
+                            itemBuilder: (context, index) {
+                              final taskNote = filteredTaskNotes[index];
+                              return _NoteCard(
+                                NoteItem(
+                                  taskNote.taskTitle ?? '',
+                                  taskNote.taskDesc ?? '',
+                                ),
+                                taskNote.id ?? "",
+                              );
+                            },
+                          )
+                        : (searchResults.isEmpty
+                            ? Center(
+                                child: Text(
+                                'No task notes found',
+                                style: TextStyle(
+                                  fontFamily: "Lexend Exa",
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ))
+                            : ListView.builder(
+                                itemCount: searchResults.length,
+                                itemBuilder: (context, index) {
+                                  final taskNote = searchResults[index];
+                                  return _NoteCard(
+                                    NoteItem(
+                                      taskNote.taskTitle ?? '',
+                                      taskNote.taskDesc ?? '',
+                                    ),
+                                    taskNote.id ?? "",
+                                  );
+                                },
+                              )),
                   ),
                 ],
               ),
@@ -275,7 +353,7 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     setState(() {});
   }
 
-  // Search Bar
+  // Search Bar with Autocomplete
   Widget _buildTaskNotesSearchBar(context) {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
     final itemHeight = 70.0;
@@ -286,9 +364,16 @@ class _AdminEditNotes extends State<AdminEditNotes> {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<TaskNotes>.empty();
         }
-        return allTaskNotes.where((taskNotes) => taskNotes.taskTitle!
-            .toLowerCase()
-            .contains(textEditingValue.text.toLowerCase()));
+        List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+            ? allTaskNotes
+            : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+        return notesToSearch.where((taskNotes) =>
+            taskNotes.taskTitle!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()) ||
+            taskNotes.taskDesc!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()));
       },
       onSelected: (TaskNotes selectedTaskNote) {
         setState(() {
@@ -306,7 +391,7 @@ class _AdminEditNotes extends State<AdminEditNotes> {
           focusNode: focusNode,
           onChanged: _onSearchTextChanged,
           style: TextStyle(
-            fontSize: 27,
+            fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
             prefixIcon: Padding(
@@ -324,14 +409,14 @@ class _AdminEditNotes extends State<AdminEditNotes> {
                   _searchController.clear();
                   _onSearchTextChanged('');
                 }),
-            hintText: "Search Task Notes",
+            hintText: "Search ${_selectedGroup}",
             hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
               fontWeight: FontWeight.w300,
             ),
             filled: true,
-            fillColor: Colors.grey[300],
+            fillColor: Colors.grey[200],
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
               borderSide: BorderSide.none,

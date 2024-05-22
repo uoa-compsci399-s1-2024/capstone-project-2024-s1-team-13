@@ -177,7 +177,11 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
   // Autocomplete logic
   void _onSearchTextChanged(String searchText) {
     setState(() {
-      searchResults = allTaskNotes
+      List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+          ? allTaskNotes
+          : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+
+      searchResults = notesToSearch
           .where((taskNote) =>
               taskNote.taskTitle!
                   .toLowerCase()
@@ -299,36 +303,41 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
                 onRefresh: () async {
                   await _refreshData();
                 },
-                child:
-                    _searchController.text.isNotEmpty && searchResults.isEmpty
-                        ? Center(
-                            child: Text(
-                            'No task notes found',
-                            style: TextStyle(
-                              fontFamily: "Lexend Exa",
-                              fontSize: 24,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey,
-                            ),
-                          ))
-                        : ListView.builder(
-                            itemCount: _selectedGroup == 'All'
-                                ? (_searchController.text.isNotEmpty
-                                    ? searchResults.length
-                                    : allTaskNotes.length)
-                                : groupedTaskNotes[_selectedGroup]?.length ?? 0,
-                            itemBuilder: (context, index) {
-                              final taskNote = _selectedGroup == 'All'
-                                  ? (_searchController.text.isNotEmpty
-                                      ? searchResults[index]
-                                      : allTaskNotes[index])
-                                  : groupedTaskNotes[_selectedGroup]![index];
-                              return _NoteCard(
-                                NoteItem(taskNote.taskTitle ?? '',
-                                    taskNote.taskDesc ?? ''),
-                              );
-                            },
-                          ),
+                child: _searchController.text.isNotEmpty &&
+                        searchResults.isEmpty
+                    ? Center(
+                        child: Text(
+                        'No task notes found',
+                        style: TextStyle(
+                          fontFamily: "Lexend Exa",
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
+                      ))
+                    : ListView.builder(
+                        itemCount: _selectedGroup == 'All'
+                            ? (_searchController.text.isNotEmpty
+                                ? searchResults.length
+                                : allTaskNotes.length)
+                            : (_searchController.text.isNotEmpty
+                                ? searchResults.length
+                                : groupedTaskNotes[_selectedGroup]?.length ??
+                                    0),
+                        itemBuilder: (context, index) {
+                          final taskNote = _selectedGroup == 'All'
+                              ? (_searchController.text.isNotEmpty
+                                  ? searchResults[index]
+                                  : allTaskNotes[index])
+                              : (_searchController.text.isNotEmpty
+                                  ? searchResults[index]
+                                  : groupedTaskNotes[_selectedGroup]![index]);
+                          return _NoteCard(
+                            NoteItem(taskNote.taskTitle ?? '',
+                                taskNote.taskDesc ?? ''),
+                          );
+                        },
+                      ),
               ),
             ),
           ],
@@ -353,7 +362,10 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<TaskNotes>.empty();
         }
-        return allTaskNotes.where((taskNotes) =>
+        List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+            ? allTaskNotes
+            : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+        return notesToSearch.where((taskNotes) =>
             taskNotes.taskTitle!
                 .toLowerCase()
                 .contains(textEditingValue.text.toLowerCase()) ||

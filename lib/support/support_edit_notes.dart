@@ -30,6 +30,8 @@ class _SupportEditNotes extends State<SupportEditNotes> {
 
   late Future<Trainee?> _selectedTraineeFuture;
 
+  String _selectedGroup = 'All';
+
   @override
   void initState() {
     super.initState();
@@ -86,14 +88,36 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     }
   }
 
+  // Autocomplete search
   void _onSearchTextChanged(String searchText) {
     setState(() {
-      searchResults = allTaskNotes
-          .where((taskNote) => taskNote.taskTitle!
-              .toLowerCase()
-              .contains(searchText.toLowerCase()))
+      List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+          ? allTaskNotes
+          : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+
+      searchResults = notesToSearch
+          .where((taskNote) =>
+              taskNote.taskTitle!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()) ||
+              taskNote.taskDesc!
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()))
           .toList();
     });
+  }
+
+  // Group task notes by title
+  Map<String, List<TaskNotes>> _groupTaskNotesByTitle(List<TaskNotes> notes) {
+    Map<String, List<TaskNotes>> groupedNotes = {};
+    for (var note in notes) {
+      String title = note.taskTitle ?? 'Unknown';
+      if (!groupedNotes.containsKey(title)) {
+        groupedNotes[title] = [];
+      }
+      groupedNotes[title]!.add(note);
+    }
+    return groupedNotes;
   }
 
   // Function to query all task notes
@@ -199,6 +223,14 @@ class _SupportEditNotes extends State<SupportEditNotes> {
 
   @override
   Widget build(BuildContext context) {
+    // Group task notes by title
+    Map<String, List<TaskNotes>> groupedTaskNotes =
+        _groupTaskNotesByTitle(allTaskNotes);
+
+    List<TaskNotes> filteredTaskNotes = _selectedGroup == 'All'
+        ? allTaskNotes
+        : groupedTaskNotes[_selectedGroup] ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -226,16 +258,58 @@ class _SupportEditNotes extends State<SupportEditNotes> {
             return Center(
               child: Column(
                 children: [
+                  // Dropdown Button
                   Padding(
-                    padding: EdgeInsets.all(25),
+                    padding: const EdgeInsets.only(
+                        left: 25, right: 25, top: 25, bottom: 25),
+                    child: DropdownButtonFormField(
+                      value: _selectedGroup,
+                      items: <String>['All', ...groupedTaskNotes.keys]
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                                fontFamily: 'Lexend Exa',
+                                fontSize: 30,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedGroup = newValue!;
+                          _onSearchTextChanged(_searchController.text);
+                        });
+                      },
+                      icon: const Visibility(
+                          visible: false, child: Icon(Icons.arrow_downward)),
+                      style: const TextStyle(
+                          fontFamily: "Lexend Exa",
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                      decoration: InputDecoration(
+                          suffixIcon: Icon(Icons.arrow_drop_down_circle_rounded,
+                              color: Colors.pink[900], size: 40),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50),
+                              borderSide: BorderSide.none),
+                          filled: true,
+                          fillColor: Colors.grey[300]),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 25, right: 25, bottom: 25),
                     child: _buildTaskNotesSearchBar(context),
                   ),
                   Expanded(
                     child: _searchController.text.isEmpty
                         ? ListView.builder(
-                            itemCount: allTaskNotes.length,
+                            itemCount: filteredTaskNotes.length,
                             itemBuilder: (context, index) {
-                              final taskNote = allTaskNotes[index];
+                              final taskNote = filteredTaskNotes[index];
                               return _NoteCard(
                                 NoteItem(
                                   taskNote.taskTitle ?? '',
@@ -279,7 +353,7 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     );
   }
 
-  // Search Bar
+  // Search Bar with Autocomplete
   Widget _buildTaskNotesSearchBar(context) {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
     final itemHeight = 70.0;
@@ -290,9 +364,16 @@ class _SupportEditNotes extends State<SupportEditNotes> {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<TaskNotes>.empty();
         }
-        return allTaskNotes.where((taskNotes) => taskNotes.taskTitle!
-            .toLowerCase()
-            .contains(textEditingValue.text.toLowerCase()));
+        List<TaskNotes> notesToSearch = _selectedGroup == 'All'
+            ? allTaskNotes
+            : _groupTaskNotesByTitle(allTaskNotes)[_selectedGroup] ?? [];
+        return notesToSearch.where((taskNotes) =>
+            taskNotes.taskTitle!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()) ||
+            taskNotes.taskDesc!
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()));
       },
       onSelected: (TaskNotes selectedTaskNote) {
         setState(() {
@@ -328,14 +409,14 @@ class _SupportEditNotes extends State<SupportEditNotes> {
                   _searchController.clear();
                   _onSearchTextChanged('');
                 }),
-            hintText: "Search Task Notes",
+            hintText: "Search ${_selectedGroup}",
             hintStyle: TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 30,
               fontWeight: FontWeight.w300,
             ),
             filled: true,
-            fillColor: Colors.grey[300],
+            fillColor: Colors.grey[200],
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(50),
               borderSide: BorderSide.none,
