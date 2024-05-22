@@ -196,6 +196,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
           actions: [
           IconButton(
             onPressed: () {
+              
                 if (globalCoverImageUrl != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && taskSteps.isNotEmpty == true) {
                   updateTask(_taskTitleController.text, taskSteps, globalCoverImageUrl!, taskStepImages);
                   saveTask();
@@ -283,24 +284,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                     hasInstructions = true;
                   }
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(50))),
-                        elevation: 10,
-                        content: Text(
-                          'Task could not be saved.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.pink[900]),
-                        )),
-                  );
+                  
                 }
             },
             iconSize: 50,

@@ -146,7 +146,7 @@ SPEC CHECKSUMS:
   Amplify: 944412239a678ab161ddf854d92e520a43bc51ec
   amplify_auth_cognito: 76b5a54f05f66f69966b468b8121a0dd33a32c70
   amplify_datastore: 37a8779bb5f59df11d3483fae7a7861333f28aab
-  amplify_secure_storage: 501cbdac671a050090d48dfcc002d5637d3f4a55
+  amplify_secure_storage: be403397a8ba39f5e0f2a05303b3ca03b53b9ee9
   AmplifyPlugins: 58a6212101b8f2d9f071caf4c312986c2d44b934
   AppSyncRealTimeClient: 36ff2f65f330bce7f1d0d2157a4ae5d255483dac
   AWSCore: 3c1a3dad47fcf9db8bebc633f296f10b690328c6
@@ -158,9 +158,9 @@ SPEC CHECKSUMS:
   file_picker: 09aa5ec1ab24135ccd7a1621c46c84134bfd6655
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_tts: 0f492aab6accf87059b72354fcb4ba934304771d
-  image_picker_ios: b545a5f16c0fa88e3ecbbce3ed4de45567a8ec18
+  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
-  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   SDWebImage: 40b0b4053e36c660a764958bff99eed16610acbb
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   SQLite.swift: 4fc2be46c36392e3b87afe6fe7f1801c1daa07ef

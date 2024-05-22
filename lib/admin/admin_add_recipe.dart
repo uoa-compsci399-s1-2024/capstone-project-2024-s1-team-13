@@ -196,101 +196,126 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
                 Navigator.pop(context);
               }),
           actions: [
-            IconButton(
-              onPressed: () {
-                if (uploadedImageKey != null && _recipeTitleController.text.isNotEmpty == true && hasInstructions == true && steps.isNotEmpty == true) {
-                  createRecipe(_recipeTitleController.text, steps, uploadedImageKey!, stepImageUrls);
-                  saveRecipe();
-                } else if (_recipeTitleController.text.isEmpty == true) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(50),
-                              topRight: Radius.circular(50))),
-                      elevation: 10,
-                      content: Text(
-                        'Please add a recipe title!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Lexend Exa',
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.pink[900]),
-                      )),
-                  );
-                } else if (uploadedImageKey == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(50),
-                              topRight: Radius.circular(50))),
-                      elevation: 10,
-                      content: Text(
-                        'Please add a recipe cover image!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Lexend Exa',
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.pink[900]),
-                      )),
-                  );
-                } else if (steps.isEmpty == true){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(50),
-                              topRight: Radius.circular(50))),
-                      elevation: 10,
-                      content: Text(
-                        'Please add at least 1 recipe step!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Lexend Exa',
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.pink[900]),
-                      )),
-                  );
-                } else {
-                  for (int i = 0; i < steps.length; i++){
-                    if (steps[i].isEmpty == true){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(50),
-                                  topRight: Radius.circular(50))),
-                          elevation: 10,
-                          content: Text(
-                            'No instructions in Step ${i+1}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: 'Lexend Exa',
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.pink[900]),
-                          )),
-                      );
-                      hasInstructions = false;
-                      break;
-                    }
-                    hasInstructions = true;
-                  }
-                }
-            },
-              iconSize: 50,
-              icon: const Icon(Icons.done_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-            ),
-          ],
+        IconButton(
+          onPressed: () {
+            if (_recipeTitleController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
+                    ),
+                  ),
+                  elevation: 10,
+                  content: Text(
+                    'Please add a task title!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.pink[900],
+                    ),
+                  ),
+                ),
+              );
+              return;
+            }
+
+            if (steps.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
+                    ),
+                  ),
+                  elevation: 10,
+                  content: Text(
+                    'Please add at least 1 task step!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.pink[900],
+                    ),
+                  ),
+                ),
+              );
+              return;
+            }
+
+            if (uploadedImageKey == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
+                    ),
+                  ),
+                  elevation: 10,
+                  content: Text(
+                    'Please add a task cover image!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.pink[900],
+                    ),
+                  ),
+                ),
+              );
+              return;
+            }
+
+            for (int i = 0; i < steps.length; i++) {
+              if (steps[i].isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                      ),
+                    ),
+                    elevation: 10,
+                    content: Text(
+                      'No instructions in Step ${i + 1}!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.pink[900],
+                      ),
+                    ),
+                  ),
+                );
+                hasInstructions = false;
+                return;
+              }
+              hasInstructions = true;
+            }
+
+            if (uploadedImageKey != null && _recipeTitleController.text.isNotEmpty && hasInstructions! && steps.isNotEmpty) {
+              createRecipe(_recipeTitleController.text, steps, uploadedImageKey!, stepImageUrls);
+              saveRecipe();
+            }
+          },
+          iconSize: 50,
+          icon: const Icon(Icons.done_rounded),
+          padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+        ),
+      ],
         ),
 
         // Grid View
