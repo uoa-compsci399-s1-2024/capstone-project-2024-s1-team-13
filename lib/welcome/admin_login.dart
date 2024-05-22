@@ -2,13 +2,9 @@ import 'dart:async';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:inka_test/admin/admin_selection.dart';
-//import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-
-/// NOTE - ADMIN LOGIN SCREEN, code copied over from original login.dart file which only directs to SUPPORT
-/// Make the necessary changes - have already changed material page route to redirect to ADMIN UI
+import 'package:inka_test/admin/admin_selection.dart';
+import 'package:inka_test/welcome/reset_password.dart';
 
 class AdminLogin extends StatefulWidget {
   AdminLogin({super.key, required this.title});
@@ -28,71 +24,48 @@ class _AdminLoginState extends State<AdminLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-            child: SafeArea(
-                child: Form(
-                    child: Column(
-      children: [
-        Padding(
-            padding: EdgeInsets.only(left: 150, top: 100, bottom: 100),
-            child: _LoginTitle()),
-        _adminIcon(),
-        SizedBox(height: 40),
-        Padding(
-            padding: EdgeInsets.only(left: 150, right: 150),
-            child: _LoginForm()),
-        SizedBox(height: 10),
-        _LoginButton(context),
-        if (_errorMessage.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 30, left: 75, right: 75),
-            child: Text(
-              _errorMessage,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 20,
-                  fontFamily: 'Lexend Exa',
-                  fontWeight: FontWeight.w500),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 150, top: 100, bottom: 100),
+                  child: _LoginTitle(),
+                ),
+                _adminIcon(),
+                SizedBox(height: 40),
+                Padding(
+                  padding: EdgeInsets.only(left: 150, right: 150),
+                  child: _LoginForm(),
+                ),
+                SizedBox(height: 10),
+                _LoginButton(context),
+                _forgotPasswordButton(context),
+                if (_errorMessage.isNotEmpty)
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 30, left: 75, right: 75),
+                    child: Text(
+                      _errorMessage,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 20,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          )
-      ],
-    )))));
+          ),
+        ),
+      ),
+    );
   }
 
-  /*void _logIn(BuildContext context) async {
-    try {
-      print('step 1');
-      SignInResult result = await Amplify.Auth.signIn(
-        username: _usernameController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-      print('Sign in result: $result'); // Check the result object
-      if (result.isSignedIn) {
-        print('step 2');
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          print('step 3');
-          return SupportSelectTrainee(title: 'Select Trainee');
-        }));
-        print('step 4');
-      } else {
-        print('step 5');
-        setState(() {
-          print('step 6');
-          _errorMessage = 'Invalid username or password';
-        });
-      }
-    } catch (error) {
-      print('Error signing in: $error');
-      setState(() {
-        if (error is AuthException) {
-          _errorMessage = 'Error signing in: ${error.message}';
-        } else {
-          _errorMessage = 'Error signing in: $error';
-        }
-      });
-    }
-  }*/
   void _logIn(BuildContext context) async {
     try {
       var authSession = await Amplify.Auth.fetchAuthSession();
@@ -139,113 +112,43 @@ class _AdminLoginState extends State<AdminLogin> {
     }
   }
 
-  Widget _LoginTitle() =>
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Text("LOG IN",
-              style: TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 60,
-                  fontWeight: FontWeight.w800)),
-          Icon(Icons.login_rounded, size: 80, color: Colors.black)
-        ]),
-        Text("Please login to continue",
-            style: TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
-                color: Color.fromARGB(255, 219, 75, 72)))
-      ]);
-
-  Widget _adminIcon() => Column(children: [
-        Icon(Icons.person_rounded, size: 200, color: Colors.pink[900]),
-        Text("Admin",
-            style: TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.pink[900]))
-      ]);
-
-/* OG (keep)
-  Widget _LoginForm() =>
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Username
-        Text(
-          "Username",
-          style: TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 25,
-              fontWeight: FontWeight.w500),
-        ),
-        TextFormField(
-            controller: _usernameController,
-            style: TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 25,
-                fontWeight: FontWeight.w500),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.grey[300],
-              hintText: "Enter username",
-              hintStyle: TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[400]),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide.none),
-            )),
-        SizedBox(height: 30),
-
-        // Password
-        Text(
-          "Password",
-          style: TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 25,
-              fontWeight: FontWeight.w500),
-        ),
-        TextFormField(
-            controller: _passwordController,
-            obscureText: true,
-            style: TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 25,
-                fontWeight: FontWeight.w500),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.grey[300],
-              hintText: "Enter password",
-              hintStyle: TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[400]),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide.none),
-            )),
-        SizedBox(height: 30),
-      ]);
-        // Error message
-        
-        if (_errorMessage.isNotEmpty)
-          Padding(
-          padding: const EdgeInsets.all(8.0),
-          Text("(_errorMessage)",
-          style: TextStyle(color: Colors.red),
-          ),
-          ),
-      */
-
-  Widget _LoginForm() => Form(
-      key: _formKey,
-      child: Column(
+  Widget _LoginTitle() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Username
+          Row(
+            children: [
+              Text("LOG IN",
+                  style: TextStyle(
+                      fontFamily: "Lexend Exa",
+                      fontSize: 60,
+                      fontWeight: FontWeight.w800)),
+              Icon(Icons.login_rounded, size: 80, color: Colors.black)
+            ],
+          ),
+          Text("Please login to continue",
+              style: TextStyle(
+                  fontFamily: "Lexend Exa",
+                  fontSize: 30,
+                  fontWeight: FontWeight.w500,
+                  color: Color.fromARGB(255, 219, 75, 72)))
+        ],
+      );
+
+  Widget _adminIcon() => Column(
+        children: [
+          Icon(Icons.person_rounded, size: 200, color: Colors.pink[900]),
+          Text("Admin",
+              style: TextStyle(
+                  fontFamily: "Lexend Exa",
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.pink[900]))
+        ],
+      );
+
+  Widget _LoginForm() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
             "Username",
             style: TextStyle(
@@ -278,8 +181,6 @@ class _AdminLoginState extends State<AdminLogin> {
             ),
           ),
           SizedBox(height: 30),
-
-          // Password
           Text(
             "Password",
             style: TextStyle(
@@ -314,41 +215,10 @@ class _AdminLoginState extends State<AdminLogin> {
           ),
           SizedBox(height: 50),
         ],
-      ));
-
-//Login Button
-
-  late Gradient _gradient; // Declare gradient variable
-  late List<Color> _startColors; // Start color for gradient
-  late List<Color> _endColors; // End color for gradient
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Define start and end colors for the gradient
-    _startColors = [Colors.pinkAccent, Colors.lightBlue];
-    _endColors = [Colors.lightBlue, Colors.pinkAccent];
-
-    // Initialize gradient with start colors
-    _gradient = LinearGradient(colors: _startColors);
-
-    // Start a timer to animate the gradient transition
-    Timer.periodic(Duration(seconds: 2), (Timer timer) {
-      setState(() {
-        // Toggle between start and end colors for the gradient
-        if (_gradient.colors == _startColors) {
-          _gradient = LinearGradient(colors: _endColors);
-        } else {
-          _gradient = LinearGradient(colors: _startColors);
-        }
-      });
-    });
-  }
+      );
 
   Widget _LoginButton(context) => ElevatedButton(
         onPressed: () {
-          // to change
           _logIn(context);
         },
         child: Text('Login'),
@@ -366,5 +236,20 @@ class _AdminLoginState extends State<AdminLogin> {
                 borderRadius: BorderRadius.circular(50))),
       );
 
-  //OG Login method here
+  Widget _forgotPasswordButton(context) => TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PasswordResetPage()),
+          );
+        },
+        child: Text(
+          'Forgot Password?',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+          ),
+        ),
+      );
 }
