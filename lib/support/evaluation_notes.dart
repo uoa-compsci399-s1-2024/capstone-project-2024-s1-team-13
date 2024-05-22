@@ -11,9 +11,7 @@ import 'package:inka_test/models/TaskFeeling.dart';
 import 'package:inka_test/models/TaskNotes.dart';
 import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/support_evaluate.dart';
-import 'package:inka_test/support/support_items/evaluate_item.dart';
 import 'package:inka_test/items/note_item.dart';
-import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/support/support_settings.dart';
 import 'package:intl/intl.dart';
 
@@ -36,9 +34,10 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
   late List<TaskNotes> allTaskNotes = []; // List to store all task notes
   late Task selectedTask;
   List<Task> allTasks = []; // List to store all tasks
-  List<Session> sessions = []; //List to store all of the trainee's sessions (ALL OF IT)  
-  Map<String, List<Session>> taskSessionsMap = {}; //Another way to store sessions in a more efficient way
-
+  List<Session> sessions =
+      []; //List to store all of the trainee's sessions (ALL OF IT)
+  Map<String, List<Session>> taskSessionsMap =
+      {}; //Another way to store sessions in a more efficient way
 
   // For typing notes.
   final TextEditingController _notesController = TextEditingController();
@@ -48,65 +47,63 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
   void initState() {
     super.initState();
     fetchSelectedTask();
-    fetchJudgementCall(); 
-    fetchTaskFeeling(); 
+    fetchJudgementCall();
+    fetchTaskFeeling();
     querySession(widget.task.id, widget.trainee.id);
     fetchSession();
     selectedTask = widget.task;
   }
 
-
-
-
   Future<void> fetchSession() async {
-  try {
-    final session = await querySession(widget.task.id, widget.trainee.id);
+    try {
+      final session = await querySession(widget.task.id, widget.trainee.id);
 
-    setState(() {
-      sessions = session!;
-    });
-    fetchMatchingSessions();
+      setState(() {
+        sessions = session!;
+      });
+      fetchMatchingSessions();
 
-    // Debug prints to check the sorted sessions
-    print('Sorted sessions:');
-    sessions.forEach((session) {
-      print('Session ID: ${session.id}, Created At: ${session.createdAt}');
-    });
-    
-  } catch (e) {
-    print('Error fetching session: $e');
+      // Debug prints to check the sorted sessions
+      print('Sorted sessions:');
+      sessions.forEach((session) {
+        print('Session ID: ${session.id}, Created At: ${session.createdAt}');
+      });
+    } catch (e) {
+      print('Error fetching session: $e');
+    }
   }
-}
-
 
   //QUERY ALL THE SESSIONS FOR THE TRAINEE
   Future<List<Session>?> querySession(String taskID, String traineeID) async {
-  try {
-    final request = ModelQueries.list(
-      Session.classType,
-      where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
-    );
-    final response = await Amplify.API.query(request: request).response;
+    try {
+      final request = ModelQueries.list(
+        Session.classType,
+        where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
+      );
+      final response = await Amplify.API.query(request: request).response;
 
-    final session = response.data?.items;
-    if (session == null) {
-      safePrint('errors: ${response.errors}');
-    } else {
-      session.sort((a, b) {
-        if (a == null || a.createdAt == null || b == null || b.createdAt == null) {
-          return 0; // Handle null values
-        }
-        return a.createdAt!.compareTo(b.createdAt!);
-      });
-      // Sort sessions by createdAt in ascending order
+      final session = response.data?.items;
+      if (session == null) {
+        safePrint('errors: ${response.errors}');
+      } else {
+        session.sort((a, b) {
+          if (a == null ||
+              a.createdAt == null ||
+              b == null ||
+              b.createdAt == null) {
+            return 0; // Handle null values
+          }
+          return a.createdAt!.compareTo(b.createdAt!);
+        });
+        // Sort sessions by createdAt in ascending order
+      }
+
+      return session?.cast<Session>();
+    } on ApiException catch (e) {
+      safePrint('Query failed: $e');
+      return [];
     }
-
-    return session?.cast<Session>();
-  } on ApiException catch (e) {
-    safePrint('Query failed: $e');
-    return [];
   }
-}
 
   //FILTER OUT THE SESSIONS BASED ON THE SELECTED TASK
   Future<void> fetchMatchingSessions() async {
@@ -161,12 +158,12 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
 
   Future<void> fetchJudgementCall() async {
     try {
-      final judgementCall = await queryJudgementCall(widget.task.id, widget.trainee.id);
+      final judgementCall =
+          await queryJudgementCall(widget.task.id, widget.trainee.id);
       if (judgementCall != null && judgementCall.isNotEmpty) {
         setState(() {
           widget.judgementCalls = judgementCall;
         });
-        
       } else {
         safePrint('Judgement call not found');
       }
@@ -177,12 +174,12 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
 
   Future<void> fetchTaskFeeling() async {
     try {
-      final taskFeeling = await queryTaskFeeling(widget.task.id, widget.trainee.id);
+      final taskFeeling =
+          await queryTaskFeeling(widget.task.id, widget.trainee.id);
       if (taskFeeling != null && taskFeeling.isNotEmpty) {
         setState(() {
           widget.taskFeelings = taskFeeling;
         });
-        
       } else {
         safePrint('Task feeling not found');
       }
@@ -191,12 +188,13 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
     }
   }
 
-
-  Future<List<JudgementCall>?> queryJudgementCall(String taskID, String traineeID) async {
+  Future<List<JudgementCall>?> queryJudgementCall(
+      String taskID, String traineeID) async {
     try {
       final request = ModelQueries.list(
         JudgementCall.classType,
-        where: JudgementCall.TRAINEEID.eq(traineeID) & JudgementCall.TASKID.eq(taskID),
+        where: JudgementCall.TRAINEEID.eq(traineeID) &
+            JudgementCall.TASKID.eq(taskID),
       );
       final response = await Amplify.API.query(request: request).response;
 
@@ -212,11 +210,13 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
     }
   }
 
-  Future<List<TaskFeeling>?> queryTaskFeeling(String taskID, String traineeID) async {
+  Future<List<TaskFeeling>?> queryTaskFeeling(
+      String taskID, String traineeID) async {
     try {
       final request = ModelQueries.list(
         TaskFeeling.classType,
-        where: TaskFeeling.TRAINEEID.eq(traineeID) & TaskFeeling.TASKID.eq(taskID),
+        where:
+            TaskFeeling.TRAINEEID.eq(traineeID) & TaskFeeling.TASKID.eq(taskID),
       );
       final response = await Amplify.API.query(request: request).response;
 
@@ -233,49 +233,51 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
   }
 
 // Fetch latest judgement call
-Future<JudgementCall?> fetchLatestJudgementCall(String taskID, String traineeID) async {
-  try {
-    final judgementCalls = await queryJudgementCall(taskID, traineeID);
-    if (judgementCalls != null && judgementCalls.isNotEmpty) {
-      // Sort judgement calls by createdAt in descending order to get the latest one
-      judgementCalls.sort((a, b) {
-        // Handle null values for createdAt
-        final aCreatedAt = a.createdAt ?? TemporalDateTime(DateTime.now());
-        final bCreatedAt = b.createdAt ?? TemporalDateTime(DateTime.now());
-        return bCreatedAt.compareTo(aCreatedAt);
-      });
-      return judgementCalls.first;
-    } else {
-      safePrint('No judgement call found');
+  Future<JudgementCall?> fetchLatestJudgementCall(
+      String taskID, String traineeID) async {
+    try {
+      final judgementCalls = await queryJudgementCall(taskID, traineeID);
+      if (judgementCalls != null && judgementCalls.isNotEmpty) {
+        // Sort judgement calls by createdAt in descending order to get the latest one
+        judgementCalls.sort((a, b) {
+          // Handle null values for createdAt
+          final aCreatedAt = a.createdAt ?? TemporalDateTime(DateTime.now());
+          final bCreatedAt = b.createdAt ?? TemporalDateTime(DateTime.now());
+          return bCreatedAt.compareTo(aCreatedAt);
+        });
+        return judgementCalls.first;
+      } else {
+        safePrint('No judgement call found');
+        return null;
+      }
+    } catch (e) {
+      safePrint('Error fetching judgement call: $e');
       return null;
     }
-  } catch (e) {
-    safePrint('Error fetching judgement call: $e');
-    return null;
   }
-}
 
-Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) async {
-  try {
-    final taskFeelings = await queryTaskFeeling(taskID, traineeID);
-    if (taskFeelings != null && taskFeelings.isNotEmpty) {
-      // Sort judgement calls by createdAt in descending order to get the latest one
-      taskFeelings.sort((a, b) {
-        // Handle null values for createdAt
-        final aCreatedAt = a.createdAt ?? TemporalDateTime(DateTime.now());
-        final bCreatedAt = b.createdAt ?? TemporalDateTime(DateTime.now());
-        return bCreatedAt.compareTo(aCreatedAt);
-      });
-      return taskFeelings.first;
-    } else {
-      safePrint('No judgement call found');
+  Future<TaskFeeling?> fetchLatestTaskFeeling(
+      String taskID, String traineeID) async {
+    try {
+      final taskFeelings = await queryTaskFeeling(taskID, traineeID);
+      if (taskFeelings != null && taskFeelings.isNotEmpty) {
+        // Sort judgement calls by createdAt in descending order to get the latest one
+        taskFeelings.sort((a, b) {
+          // Handle null values for createdAt
+          final aCreatedAt = a.createdAt ?? TemporalDateTime(DateTime.now());
+          final bCreatedAt = b.createdAt ?? TemporalDateTime(DateTime.now());
+          return bCreatedAt.compareTo(aCreatedAt);
+        });
+        return taskFeelings.first;
+      } else {
+        safePrint('No judgement call found');
+        return null;
+      }
+    } catch (e) {
+      safePrint('Error fetching judgement call: $e');
       return null;
     }
-  } catch (e) {
-    safePrint('Error fetching judgement call: $e');
-    return null;
   }
-}
 
   // Function to fetch all task notes
   Future<void> fetchAllTaskNotes() async {
@@ -311,17 +313,18 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
   }
 
   //createTaskNotes section
-  Future<void> createTaskNotes(String taskTitle, String taskDesc, String taskID) async {
+  Future<void> createTaskNotes(
+      String taskTitle, String taskDesc, String taskID) async {
     try {
       final String traineeID =
           widget.trainee.id; // Get the selected trainee's ID
       final aTaskNote = TaskNotes(
-        taskTitle: taskTitle,
-        taskDesc: taskDesc,
-        traineeID: traineeID,
-        taskID: taskID 
-        // Assign the trainee's ID to the task note
-      );
+          taskTitle: taskTitle,
+          taskDesc: taskDesc,
+          traineeID: traineeID,
+          taskID: taskID
+          // Assign the trainee's ID to the task note
+          );
       final req = ModelMutations.create(aTaskNote);
       final res = await Amplify.API.mutate(request: req).response;
 
@@ -362,22 +365,26 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
             ),
           ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Question
-              _notesQuestion(),
-              // TextField
-              SizedBox(height: 50),
-              Padding(
-                  padding: EdgeInsets.only(left: 100, right: 100),
-                  child: _notesTextBox()),
-              // Buttons
-              SizedBox(height: 50),
-              _addNoteButton(),
-              _skipButton(context)
-            ],
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Question
+                  _notesQuestion(),
+                  // TextField
+                  SizedBox(height: 50),
+                  Padding(
+                      padding: EdgeInsets.only(left: 100, right: 100),
+                      child: _notesTextBox()),
+                  // Buttons
+                  SizedBox(height: 50),
+                  _addNoteButton(),
+                  _skipButton(context)
+                ],
+              ),
+            ),
           ),
         ));
   }
@@ -430,7 +437,8 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
   // Buttons
   Widget _addNoteButton() => ElevatedButton(
       onPressed: () async {
-        await createSessionWithLatestJudgementCall(widget.trainee.id, widget.task.id);
+        await createSessionWithLatestJudgementCall(
+            widget.trainee.id, widget.task.id);
         _submitNote();
       },
       child: Text("ADD NOTE"),
@@ -449,7 +457,8 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
 
   Widget _skipButton(context) => TextButton(
       onPressed: () async {
-        await createSessionWithLatestJudgementCall(widget.trainee.id, widget.task.id);
+        await createSessionWithLatestJudgementCall(
+            widget.trainee.id, widget.task.id);
         _submitNote();
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return SupportEvaluate(
@@ -472,8 +481,8 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
     String description = _notesController.text;
     if (_notesController.text.isNotEmpty) {
       // Save the note -- pending backend functionality
-      await createTaskNotes(
-          widget.task.taskTitle ?? '', description, widget.task.id); // Create the task note
+      await createTaskNotes(widget.task.taskTitle ?? '', description,
+          widget.task.id); // Create the task note
       await fetchAllTaskNotes();
 
       NoteItem newNote = NoteItem(
@@ -491,56 +500,59 @@ Future<TaskFeeling?> fetchLatestTaskFeeling(String taskID, String traineeID) asy
                 )), // To change
       );
     }
-    
   }
 
   //CREATES A NEW SESSION
-  Future<void> createSessionWithLatestJudgementCall(String traineeID, String taskID) async {
-  try {
-    // Fetch the latest judgment call
-    final latestJudgementCall = await fetchLatestJudgementCall(taskID, traineeID);
-    final latestTaskFeeling = await fetchLatestTaskFeeling(taskID, traineeID);
-    if (latestJudgementCall == null) {
-      safePrint('No judgement call available for creating session');
-      return;
+  Future<void> createSessionWithLatestJudgementCall(
+      String traineeID, String taskID) async {
+    try {
+      // Fetch the latest judgment call
+      final latestJudgementCall =
+          await fetchLatestJudgementCall(taskID, traineeID);
+      final latestTaskFeeling = await fetchLatestTaskFeeling(taskID, traineeID);
+      if (latestJudgementCall == null) {
+        safePrint('No judgement call available for creating session');
+        return;
+      }
+      if (latestTaskFeeling == null) {
+        safePrint('No task feeling available for creating session');
+        return;
+      }
+      // Get the current date in New Zealand timezone
+      final nzTime = DateTime.now()
+          .toUtc()
+          .add(Duration(hours: 12)); // UTC +12 for New Zealand
+
+      // Format the date to store only the date portion
+      final formattedDate = DateFormat('yyyy-MM-dd').format(nzTime);
+
+      // Create session with latest judgement call
+      List<String> evals = [
+        _notesController.text,
+        latestTaskFeeling.feeling ?? '',
+        latestJudgementCall.call ?? '',
+        formattedDate,
+      ];
+
+      List<Sess> newSL = [];
+      final newSession = Sess(aSess: evals);
+      newSL.add(newSession);
+      final session =
+          Session(traineeID: traineeID, taskID: taskID, sessionList: newSL);
+
+      final createReq = ModelMutations.create(session);
+      final createRes = await Amplify.API.mutate(request: createReq).response;
+
+      final createdSess = createRes.data;
+      if (createdSess == null) {
+        safePrint('Error creating session: ${createRes.errors}');
+        return;
+      }
+      safePrint('Session created successfully!');
+      safePrint(createdSess);
+    } catch (e) {
+      safePrint('Error creating a session: $e');
     }
-    if (latestTaskFeeling == null) {
-      safePrint('No task feeling available for creating session');
-      return;
-    }
-    // Get the current date in New Zealand timezone
-    final nzTime = DateTime.now().toUtc().add(Duration(hours: 12)); // UTC +12 for New Zealand
-
-    // Format the date to store only the date portion
-    final formattedDate = DateFormat('yyyy-MM-dd').format(nzTime);
-
-
-    // Create session with latest judgement call
-    List<String> evals = [
-      _notesController.text,
-      latestTaskFeeling.feeling ?? '',
-      latestJudgementCall.call ?? '',
-      formattedDate, 
-    ];
-
-    List<Sess> newSL = [];
-    final newSession = Sess(aSess: evals);
-    newSL.add(newSession);
-    final session = Session(traineeID: traineeID, taskID: taskID, sessionList: newSL);
-
-    final createReq = ModelMutations.create(session);
-    final createRes = await Amplify.API.mutate(request: createReq).response;
-
-    final createdSess = createRes.data;
-    if (createdSess == null) {
-      safePrint('Error creating session: ${createRes.errors}');
-      return;
-    }
-    safePrint('Session created successfully!');
-    safePrint(createdSess);
-  } catch (e) {
-    safePrint('Error creating a session: $e');
   }
-}
   // Pop-up dialog for when addNoteButton - to add
 }

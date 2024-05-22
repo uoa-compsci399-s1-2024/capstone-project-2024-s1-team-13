@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -29,17 +28,42 @@ class _SupportLoginState extends State<SupportLogin> {
             key: _formKey,
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Row(
+                    children: [
+                      IconButton(
+                          iconSize: 50,
+                          color: Colors.grey[500],
+                          icon: const Icon(Icons.arrow_back_ios),
+                          padding: const EdgeInsets.only(
+                              left: 30.0, bottom: 10.0, top: 10.0),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
+                      Text(
+                        "Login Type",
+                        style: TextStyle(
+                            fontFamily: 'Lexend Exa',
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[500]),
+                      )
+                    ],
+                  ),
+                ),
                 Padding(
-                  padding: EdgeInsets.only(left: 150, top: 100, bottom: 100),
+                  padding:
+                      const EdgeInsets.only(left: 150, top: 60, bottom: 50),
                   child: _LoginTitle(),
                 ),
                 _supportAdminIcon(),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Padding(
-                  padding: EdgeInsets.only(left: 150, right: 150),
+                  padding: const EdgeInsets.only(left: 150, right: 150),
                   child: _LoginForm(),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _LoginButton(context),
                 _forgotPasswordButton(context),
                 if (_errorMessage.isNotEmpty)
@@ -49,7 +73,7 @@ class _SupportLoginState extends State<SupportLogin> {
                     child: Text(
                       _errorMessage,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 20,
                         fontFamily: 'Lexend Exa',
@@ -87,7 +111,7 @@ class _SupportLoginState extends State<SupportLogin> {
 
         if (role == 'support') {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return SupportSelectTrainee(title: 'Select Trainee');
+            return const SupportSelectTrainee(title: 'Select Trainee');
           }));
         } else {
           setState(() {
@@ -111,7 +135,7 @@ class _SupportLoginState extends State<SupportLogin> {
     }
   }
 
-  Widget _LoginTitle() => Column(
+  Widget _LoginTitle() => const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -148,7 +172,7 @@ class _SupportLoginState extends State<SupportLogin> {
   Widget _LoginForm() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Username",
             style: TextStyle(
               fontFamily: "Lexend Exa",
@@ -158,7 +182,7 @@ class _SupportLoginState extends State<SupportLogin> {
           ),
           TextFormField(
             controller: _usernameController,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 25,
               fontWeight: FontWeight.w500,
@@ -179,8 +203,8 @@ class _SupportLoginState extends State<SupportLogin> {
               ),
             ),
           ),
-          SizedBox(height: 30),
-          Text(
+          const SizedBox(height: 30),
+          const Text(
             "Password",
             style: TextStyle(
               fontFamily: "Lexend Exa",
@@ -191,7 +215,7 @@ class _SupportLoginState extends State<SupportLogin> {
           TextFormField(
             controller: _passwordController,
             obscureText: !_isPasswordVisible,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 25,
               fontWeight: FontWeight.w500,
@@ -222,7 +246,7 @@ class _SupportLoginState extends State<SupportLogin> {
               ),
             ),
           ),
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
         ],
       );
 
@@ -230,11 +254,11 @@ class _SupportLoginState extends State<SupportLogin> {
         onPressed: () {
           _logIn(context);
         },
-        child: Text('Login'),
+        child: const Text('Login'),
         style: ElevatedButton.styleFrom(
-            minimumSize: Size(530, 100),
+            minimumSize: const Size(530, 100),
             foregroundColor: Colors.white,
-            textStyle: TextStyle(
+            textStyle: const TextStyle(
               fontSize: 30,
               fontFamily: 'Lexend Exa',
               fontWeight: FontWeight.w500,
@@ -252,7 +276,7 @@ class _SupportLoginState extends State<SupportLogin> {
             MaterialPageRoute(builder: (context) => PasswordResetPage()),
           );
         },
-        child: Text(
+        child: const Text(
           'Forgot Password?',
           style: TextStyle(
             fontSize: 18,

@@ -3,9 +3,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:inka_test/admin/admin_edit_selected_trainee.dart';
-
-import 'package:inka_test/admin/admin_items/admin_greeting_text.dart';
-import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/models/Trainee.dart';
 
 import '../models/ModelProvider.dart';
@@ -156,14 +153,14 @@ class _AdminEditTraineesState extends State<AdminEditTrainees> {
                         ),
                       ),
                     )
-                  :   ListView.builder(
-                            itemCount: _textController.text.isNotEmpty
-                            ? searchResults.length
-                            : allTrainees.length,
-                        itemBuilder: (context, index) {
-                         final trainee = _textController.text.isNotEmpty
-                              ? searchResults[index]
-                              : allTrainees[index];
+                  : ListView.builder(
+                      itemCount: _textController.text.isNotEmpty
+                          ? searchResults.length
+                          : allTrainees.length,
+                      itemBuilder: (context, index) {
+                        final trainee = _textController.text.isNotEmpty
+                            ? searchResults[index]
+                            : allTrainees[index];
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -228,11 +225,17 @@ class _AdminEditTraineesState extends State<AdminEditTrainees> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
             suffixIcon: IconButton(
-              icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 15, right: 10),
+                child: Icon(Icons.clear_rounded,
+                    color: Colors.grey[600], size: 40),
+              ),
               onPressed: () {
                 _textController.clear();
                 _onSearchTextChanged('');

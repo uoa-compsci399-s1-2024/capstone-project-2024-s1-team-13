@@ -273,15 +273,21 @@ class _AdminRecipesScreenState extends State<AdminEditRecipes> {
             fontSize: 27, // Adjust the font size here
           ),
           decoration: InputDecoration(
-            prefixIcon:
-                Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
-            suffixIcon: IconButton(
-              icon:
-                  Icon(Icons.clear_rounded, color: Colors.grey[600], size: 40),
-              onPressed: () {
-                _textController.clear();
-                _onSearchTextChanged('');
-              },
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
+            suffixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child: IconButton(
+                icon: Icon(Icons.clear_rounded,
+                    color: Colors.grey[600], size: 40),
+                onPressed: () {
+                  _textController.clear();
+                  _onSearchTextChanged('');
+                },
+              ),
             ),
             hintText: "Search Recipes",
             hintStyle: TextStyle(

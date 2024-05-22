@@ -30,8 +30,32 @@ class _AdminLoginState extends State<AdminLogin> {
             key: _formKey,
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Row(
+                    children: [
+                      IconButton(
+                          iconSize: 50,
+                          color: Colors.grey[500],
+                          icon: const Icon(Icons.arrow_back_ios),
+                          padding: const EdgeInsets.only(
+                              left: 30.0, bottom: 10.0, top: 10.0),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
+                      Text(
+                        "Login Type",
+                        style: TextStyle(
+                            fontFamily: 'Lexend Exa',
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[500]),
+                      )
+                    ],
+                  ),
+                ),
                 Padding(
-                  padding: EdgeInsets.only(left: 150, top: 100, bottom: 100),
+                  padding: EdgeInsets.only(left: 150, top: 60, bottom: 50),
                   child: _LoginTitle(),
                 ),
                 _adminIcon(),
@@ -46,7 +70,7 @@ class _AdminLoginState extends State<AdminLogin> {
                 if (_errorMessage.isNotEmpty)
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 30, left: 75, right: 75),
+                        const EdgeInsets.only(top: 20, left: 75, right: 75),
                     child: Text(
                       _errorMessage,
                       textAlign: TextAlign.center,

@@ -20,7 +20,8 @@ class _AdminChangeLoginState extends State<AdminChangeLogin> {
           leading: IconButton(
               iconSize: 40,
               icon: const Icon(Icons.arrow_back_ios),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+              padding:
+                  const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
               onPressed: () {
                 Navigator.pop(context);
               }),
@@ -32,7 +33,8 @@ class _AdminChangeLoginState extends State<AdminChangeLogin> {
               },
               iconSize: 50,
               icon: const Icon(Icons.done_rounded),
-              padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+              padding:
+                  const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             ),
           ],
         ),
@@ -41,7 +43,11 @@ class _AdminChangeLoginState extends State<AdminChangeLogin> {
         body: Padding(
           padding: const EdgeInsets.all(100),
           child: Column(
-            children: [_LoginType(), const SizedBox(height: 50), _LoginDetails()],
+            children: [
+              _LoginType(),
+              const SizedBox(height: 50),
+              _LoginDetails()
+            ],
           ),
         ));
   }
@@ -77,8 +83,8 @@ class _AdminChangeLoginState extends State<AdminChangeLogin> {
               },
               elevation: 2,
               dropdownColor: Colors.grey[100],
-              icon:
-                  const Visibility(visible: false, child: Icon(Icons.arrow_downward)),
+              icon: const Visibility(
+                  visible: false, child: Icon(Icons.arrow_downward)),
               style: const TextStyle(
                   fontFamily: "Lexend Exa",
                   fontSize: 30,

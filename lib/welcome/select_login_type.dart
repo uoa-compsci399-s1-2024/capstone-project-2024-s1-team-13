@@ -25,10 +25,10 @@ class SelectLoginTypeState extends State<SelectLoginType> {
 
     _startColors = [
       Color.fromARGB(255, 87, 195, 245),
-      Color.fromARGB(255, 196, 155, 175)
+      Color.fromARGB(255, 249, 129, 187)
     ];
     _endColors = [
-      Color.fromARGB(255, 234, 159, 195),
+      Color.fromARGB(255, 249, 129, 187),
       Color.fromARGB(255, 87, 195, 245)
     ];
 
@@ -54,74 +54,102 @@ class SelectLoginTypeState extends State<SelectLoginType> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text("Select Login Type",
-            style: TextStyle(
-                fontFamily: 'Lexend Exa',
-                fontSize: 55,
-                fontWeight: FontWeight.w600)),
-
-        SizedBox(height: 75),
-
-        // Support Login Button
-        AnimatedContainer(
-          duration: Duration(seconds: 2),
-          decoration: BoxDecoration(
-            gradient: _gradient,
-            borderRadius: BorderRadius.circular(70),
-          ),
-          child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return SupportLogin(title: 'Login');
-                }));
-              },
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(700, 125),
-                  foregroundColor: Colors.white,
-                  textStyle: const TextStyle(
-                    fontSize: 35,
-                    fontFamily: 'Lexend Exa',
-                    fontWeight: FontWeight.w500,
-                  ),
-                  backgroundColor: Color.fromARGB(33, 255, 255, 255),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(70))),
-              child: const Text("Support")),
+        body: SafeArea(
+            child: Column(children: [
+      Align(
+        alignment: Alignment.topLeft,
+        child: Row(
+          children: [
+            IconButton(
+                iconSize: 50,
+                color: Colors.grey[500],
+                icon: const Icon(Icons.arrow_back_ios),
+                padding:
+                    const EdgeInsets.only(left: 30.0, bottom: 10.0, top: 10.0),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            Text(
+              "Welcome",
+              style: TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[500]),
+            )
+          ],
         ),
+      ),
+      Expanded(
+          child: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text("Select Login Type",
+              style: TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 55,
+                  fontWeight: FontWeight.w600)),
 
-        SizedBox(height: 40),
+          SizedBox(height: 75),
 
-        // Admin Login Button
-        AnimatedContainer(
-          duration: Duration(seconds: 3),
-          decoration: BoxDecoration(
-            gradient: _gradient,
-            borderRadius: BorderRadius.circular(70),
+          // Support Login Button
+          AnimatedContainer(
+            duration: Duration(seconds: 1),
+            decoration: BoxDecoration(
+              gradient: _gradient,
+              borderRadius: BorderRadius.circular(70),
+            ),
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return SupportLogin(title: 'Login');
+                  }));
+                },
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(700, 125),
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(
+                      fontSize: 35,
+                      fontFamily: 'Lexend Exa',
+                      fontWeight: FontWeight.w500,
+                    ),
+                    backgroundColor: Color.fromARGB(33, 255, 255, 255),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(70))),
+                child: const Text("Support")),
           ),
-          child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return AdminLogin(title: 'Login');
-                }));
-              },
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(700, 125),
-                  foregroundColor: Colors.white,
-                  textStyle: const TextStyle(
-                    fontSize: 35,
-                    fontFamily: 'Lexend Exa',
-                    fontWeight: FontWeight.w500,
-                  ),
-                  backgroundColor: Color.fromARGB(33, 255, 255, 255),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(70))),
-              child: const Text("Admin")),
-        )
-      ]),
-    ));
+
+          SizedBox(height: 40),
+
+          // Admin Login Button
+          AnimatedContainer(
+            duration: Duration(seconds: 1),
+            decoration: BoxDecoration(
+              gradient: _gradient,
+              borderRadius: BorderRadius.circular(70),
+            ),
+            child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AdminLogin(title: 'Login');
+                  }));
+                },
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(700, 125),
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(
+                      fontSize: 35,
+                      fontFamily: 'Lexend Exa',
+                      fontWeight: FontWeight.w500,
+                    ),
+                    backgroundColor: Color.fromARGB(33, 255, 255, 255),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(70))),
+                child: const Text("Admin")),
+          )
+        ]),
+      ))
+    ])));
   }
 }

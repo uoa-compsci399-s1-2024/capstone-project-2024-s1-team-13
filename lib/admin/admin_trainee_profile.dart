@@ -7,13 +7,12 @@ import 'package:inka_test/admin/admin_tasks.dart';
 import 'package:inka_test/admin/admin_trainee_notes.dart';
 import 'package:inka_test/admin/admin_trainee_progress.dart';
 import 'package:inka_test/admin/admin_trainees.dart';
-import 'package:inka_test/items/trainee_item.dart';
 import 'package:inka_test/models/Trainee.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
-
 class AdminTraineeProfile extends StatefulWidget {
-  const AdminTraineeProfile({super.key, required this.title, required this.trainee});
+  const AdminTraineeProfile(
+      {super.key, required this.title, required this.trainee});
   final String title;
   final Trainee trainee;
 
@@ -51,7 +50,8 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const AdminRecipesScreen(title: 'Recipes')));
+                builder: (context) =>
+                    const AdminRecipesScreen(title: 'Recipes')));
         break;
       default:
         break;
@@ -66,7 +66,8 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
         leading: IconButton(
             iconSize: 40,
             icon: const Icon(Icons.arrow_back_ios),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
             onPressed: () {
               Navigator.pop(context);
             }),
@@ -79,7 +80,8 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
             },
             iconSize: 45,
             icon: const Icon(Icons.settings),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           ),
         ],
       ),
@@ -105,20 +107,25 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
 
       // Body of screen
 
-      body: Center(
-          child: Column(
-        children: [
-          Padding(padding: const EdgeInsets.all(50), child: _profileDetails()),
-          const SizedBox(height: 10),
-          _progressButton(context),
-          const SizedBox(height: 50),
-          _notesButton(context)
-        ],
-      )),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+              child: Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.all(50), child: _profileDetails()),
+              const SizedBox(height: 10),
+              _progressButton(context),
+              const SizedBox(height: 50),
+              _notesButton(context)
+            ],
+          )),
+        ),
+      ),
     );
   }
 
-Future<String> getDownloadUrl({
+  Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
   }) async {
@@ -142,94 +149,99 @@ Future<String> getDownloadUrl({
 
   // Widgets
 
-Widget _profileDetails() => Row(
-  children: [
-    FutureBuilder<String>(
-      future: getDownloadUrl(
-        key: widget.trainee.traineePhoto!,
-        accessLevel: StorageAccessLevel.guest,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircleAvatar(
-            radius: 100,
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasError) {
-          return CircleAvatar(
-            radius: 100,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.error),
-          );
-        }
-        return CircleAvatar(
-          radius: 100,
-          backgroundImage: NetworkImage(snapshot.data!),
-        );
-      },
-    ),
-    const SizedBox(width: 50),
-    Flexible(
-    child: AutoSizeText(
-      "${widget.trainee.firstName} ${widget.trainee.lastName}",
-      style: const TextStyle(
-        fontFamily: 'Lexend Exa',
-        fontSize: 50,
-        fontWeight: FontWeight.w500),
-      maxLines: 1,
-      minFontSize: 10, 
-      overflow: TextOverflow.ellipsis,
-      ))
-    
-  ],
-);
-
+  Widget _profileDetails() => Row(
+        children: [
+          FutureBuilder<String>(
+            future: getDownloadUrl(
+              key: widget.trainee.traineePhoto!,
+              accessLevel: StorageAccessLevel.guest,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircleAvatar(
+                  radius: 100,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasError) {
+                return CircleAvatar(
+                  radius: 100,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.error),
+                );
+              }
+              return CircleAvatar(
+                radius: 100,
+                backgroundImage: NetworkImage(snapshot.data!),
+              );
+            },
+          ),
+          const SizedBox(width: 50),
+          Flexible(
+              child: AutoSizeText(
+            "${widget.trainee.firstName} ${widget.trainee.lastName}",
+            style: const TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 50,
+                fontWeight: FontWeight.w500),
+            maxLines: 1,
+            minFontSize: 10,
+            overflow: TextOverflow.ellipsis,
+          ))
+        ],
+      );
 
   // Progress Button
   Widget _progressButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AdminTraineeProgress(title: 'Progress', trainee: widget.trainee,);
+            return AdminTraineeProgress(
+              title: 'Progress',
+              trainee: widget.trainee,
+            );
           }));
         },
-        child: Container(
-          width: 750,
-          height: 250,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(50),
-            gradient: const LinearGradient(
-              colors: [
-                Color.fromARGB(255, 196, 155, 175),
-                Color.fromARGB(255, 87, 195, 245)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5), // Shadow color
-                spreadRadius: 1, // Spread radius
-                blurRadius: 5, // Blur radius
-                offset: const Offset(0, 3), // Offset in the x and y direction
+        child: Padding(
+          padding: const EdgeInsets.only(left: 50, right: 50),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 250,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(50),
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 196, 155, 175),
+                  Color.fromARGB(255, 87, 195, 245)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          child: const Center(
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.auto_graph_rounded, size: 70, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                'Progress',
-                style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 45,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  spreadRadius: 1, // Spread radius
+                  blurRadius: 5, // Blur radius
+                  offset: const Offset(0, 3), // Offset in the x and y direction
                 ),
-              )
-            ]),
+              ],
+            ),
+            child: const Center(
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.auto_graph_rounded, size: 70, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  'Progress',
+                  style: TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 45,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                )
+              ]),
+            ),
           ),
         ),
       );
@@ -239,46 +251,53 @@ Widget _profileDetails() => Row(
   Widget _notesButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AdminTraineeNotes(title: 'Notes', trainee: widget.trainee,);
+            return AdminTraineeNotes(
+              title: 'Notes',
+              trainee: widget.trainee,
+            );
           }));
         },
-        child: Container(
-          width: 750,
-          height: 250,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(50),
-            gradient: const LinearGradient(
-              colors: [
-                Color.fromARGB(255, 196, 155, 175),
-                Color.fromARGB(255, 87, 195, 245)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5), // Shadow color
-                spreadRadius: 1, // Spread radius
-                blurRadius: 5, // Blur radius
-                offset: const Offset(0, 3), // Offset in the x and y direction
+        child: Padding(
+          padding: const EdgeInsets.only(left: 50, right: 50),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 250,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(50),
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 196, 155, 175),
+                  Color.fromARGB(255, 87, 195, 245)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          child: const Center(
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.notes_rounded, size: 70, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                'Notes',
-                style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 45,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  spreadRadius: 1, // Spread radius
+                  blurRadius: 5, // Blur radius
+                  offset: const Offset(0, 3), // Offset in the x and y direction
                 ),
-              )
-            ]),
+              ],
+            ),
+            child: const Center(
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.notes_rounded, size: 70, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  'Notes',
+                  style: TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 45,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                )
+              ]),
+            ),
           ),
         ),
       );

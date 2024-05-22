@@ -6,7 +6,6 @@ import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-
 class SelectedTask extends StatefulWidget {
   const SelectedTask({super.key, required this.title, required this.taskId});
 
@@ -48,7 +47,8 @@ class _SelectedTaskState extends State<SelectedTask> {
 
   Future<Task?> queryTaskById(String taskId) async {
     try {
-      final request = ModelQueries.get(Task.classType, TaskModelIdentifier(id: taskId));
+      final request =
+          ModelQueries.get(Task.classType, TaskModelIdentifier(id: taskId));
       final response = await Amplify.API.query(request: request).response;
 
       final task = response.data;
@@ -99,18 +99,6 @@ class _SelectedTaskState extends State<SelectedTask> {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const ModulesSettings(title: 'Settings');
-              }));
-            },
-            iconSize: 45,
-            icon: const Icon(Icons.settings),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          ),
-        ],
       ),
       body: selectedTask != null ? buildTaskContent() : buildLoadingIndicator(),
     );
@@ -123,7 +111,8 @@ class _SelectedTaskState extends State<SelectedTask> {
           child: PageView.builder(
             itemCount: selectedTask!.taskStep?.length ?? 0,
             itemBuilder: (context, index) {
-              String description = selectedTask!.taskStep != null && selectedTask!.taskStep!.isNotEmpty
+              String description = selectedTask!.taskStep != null &&
+                      selectedTask!.taskStep!.isNotEmpty
                   ? selectedTask!.taskStep![index]
                   : '';
 
@@ -163,9 +152,11 @@ class _SelectedTaskState extends State<SelectedTask> {
           child: Row(
             children: [
               Expanded(
-                child: selectedTask!.taskStep != null && selectedTask!.taskStep!.isNotEmpty
+                child: selectedTask!.taskStep != null &&
+                        selectedTask!.taskStep!.isNotEmpty
                     ? LinearProgressIndicator(
-                        value: (_currentPageIndex + 1) / selectedTask!.taskStep!.length,
+                        value: (_currentPageIndex + 1) /
+                            selectedTask!.taskStep!.length,
                         borderRadius: BorderRadius.circular(50),
                         minHeight: 30,
                         backgroundColor: Colors.grey[350],
@@ -181,7 +172,8 @@ class _SelectedTaskState extends State<SelectedTask> {
               ),
               const SizedBox(width: 10),
               Text(
-                selectedTask?.taskStep != null && selectedTask!.taskStep!.isNotEmpty
+                selectedTask?.taskStep != null &&
+                        selectedTask!.taskStep!.isNotEmpty
                     ? '${(((_currentPageIndex + 1) / selectedTask!.taskStep!.length) * 100).toInt()}%'
                     : '0%',
                 style: const TextStyle(

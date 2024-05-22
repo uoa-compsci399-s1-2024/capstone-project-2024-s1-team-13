@@ -49,7 +49,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
             context,
             MaterialPageRoute(
                 builder: (context) => SupportEvaluate(
-                      title: "Evaluate",
+                      title: "Evaluate ${widget.trainee.firstName}",
                       trainee: widget.trainee,
                       task: widget.task,
                     )));
@@ -107,17 +107,21 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
 
       // Body of screen
 
-      body: Center(
-          child: Column(
-        children: [
-          Padding(padding: EdgeInsets.all(50), child: _profileDetails()),
-          SizedBox(height: 10),
-          //_progressButton(context),
-          _progressButton(context),
-          SizedBox(height: 50),
-          _notesButton(context)
-        ],
-      )),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+              child: Column(
+            children: [
+              Padding(padding: EdgeInsets.all(50), child: _profileDetails()),
+              SizedBox(height: 10),
+              //_progressButton(context),
+              _progressButton(context),
+              SizedBox(height: 50),
+              _notesButton(context)
+            ],
+          )),
+        ),
+      ),
     );
   }
 
@@ -198,43 +202,47 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
             );
           }));
         },
-        child: Container(
-          width: 750,
-          height: 250,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(50),
-            gradient: LinearGradient(
-              colors: [
-                const Color.fromARGB(255, 196, 155, 175),
-                const Color.fromARGB(255, 87, 195, 245)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5), // Shadow color
-                spreadRadius: 1, // Spread radius
-                blurRadius: 5, // Blur radius
-                offset: Offset(0, 3), // Offset in the x and y direction
+        child: Padding(
+          padding: const EdgeInsets.only(left: 50, right: 50),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 250,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(50),
+              gradient: LinearGradient(
+                colors: [
+                  const Color.fromARGB(255, 196, 155, 175),
+                  const Color.fromARGB(255, 87, 195, 245)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          child: Center(
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.auto_graph_rounded, size: 70, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                'Progress',
-                style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 45,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  spreadRadius: 1, // Spread radius
+                  blurRadius: 5, // Blur radius
+                  offset: Offset(0, 3), // Offset in the x and y direction
                 ),
-              )
-            ]),
+              ],
+            ),
+            child: Center(
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.auto_graph_rounded, size: 70, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  'Progress',
+                  style: TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 45,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                )
+              ]),
+            ),
           ),
         ),
       );
@@ -250,43 +258,47 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
             );
           }));
         },
-        child: Container(
-          width: 750,
-          height: 250,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(50),
-            gradient: LinearGradient(
-              colors: [
-                const Color.fromARGB(255, 196, 155, 175),
-                const Color.fromARGB(255, 87, 195, 245)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5), // Shadow color
-                spreadRadius: 1, // Spread radius
-                blurRadius: 5, // Blur radius
-                offset: Offset(0, 3), // Offset in the x and y direction
+        child: Padding(
+          padding: const EdgeInsets.only(left: 50, right: 50),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 250,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(50),
+              gradient: LinearGradient(
+                colors: [
+                  const Color.fromARGB(255, 196, 155, 175),
+                  const Color.fromARGB(255, 87, 195, 245)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          child: Center(
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.notes_rounded, size: 70, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                'Notes',
-                style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 45,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  spreadRadius: 1, // Spread radius
+                  blurRadius: 5, // Blur radius
+                  offset: Offset(0, 3), // Offset in the x and y direction
                 ),
-              )
-            ]),
+              ],
+            ),
+            child: Center(
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.notes_rounded, size: 70, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  'Notes',
+                  style: TextStyle(
+                    fontFamily: 'Lexend Exa',
+                    fontSize: 45,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                )
+              ]),
+            ),
           ),
         ),
       );

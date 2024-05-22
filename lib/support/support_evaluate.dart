@@ -219,7 +219,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
             context,
             MaterialPageRoute(
                 builder: (context) => SupportEvaluate(
-                    title: "Evaluate",
+                    title: "Evaluate ${widget.trainee.firstName}",
                     trainee: widget.trainee,
                     task: selectedTask)));
         break;

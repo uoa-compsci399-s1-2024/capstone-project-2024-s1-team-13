@@ -7,9 +7,9 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-
 class SelectedRecipe extends StatefulWidget {
-  const SelectedRecipe({super.key, required this.title, required this.recipeId});
+  const SelectedRecipe(
+      {super.key, required this.title, required this.recipeId});
 
   final String title;
   final String recipeId; // Add taskId parameter
@@ -29,12 +29,13 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
     super.initState();
     //fetchAllTask(); // Call the function to fetch all task notes
     _configureTts(); // Configure TTS settings
-    fetchSelectedRecipe(); 
+    fetchSelectedRecipe();
   }
 
   Future<void> fetchSelectedRecipe() async {
     try {
-      final recipe = await queryRecipeById(widget.recipeId); // Query for the task by ID
+      final recipe =
+          await queryRecipeById(widget.recipeId); // Query for the task by ID
 
       setState(() {
         selectedRecipe = recipe!; // Store the selected task in the state
@@ -52,7 +53,10 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
 
   Future<Recipe?> queryRecipeById(String recipeId) async {
     try {
-      final request = ModelQueries.get(Recipe.classType, RecipeModelIdentifier(id: recipeId)); // Use ModelQuery.get to fetch a single task by ID
+      final request = ModelQueries.get(
+          Recipe.classType,
+          RecipeModelIdentifier(
+              id: recipeId)); // Use ModelQuery.get to fetch a single task by ID
       final response = await Amplify.API.query(request: request).response;
 
       final recipe = response.data;
@@ -61,9 +65,9 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
       }
       return recipe;
     } on ApiException catch (e) {
-    safePrint('Query failed: $e');
-    return null;
-  }
+      safePrint('Query failed: $e');
+      return null;
+    }
   }
 
   Future<String> getDownloadUrl({
@@ -80,7 +84,6 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
             expiresIn: Duration(days: 7),
           ),
         ),
-
       ).result;
       return result.url.toString();
     } on StorageException catch (e) {
@@ -88,8 +91,6 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
       rethrow;
     }
   }
-  
-
 
   int _currentPageIndex = 0;
 
@@ -106,111 +107,100 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const ModulesSettings(title: 'Settings');
-              }));
-            },
-            // To add functionality to settings
-            iconSize: 45,
-            icon: const Icon(Icons.settings),
-            padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          ),
-        ],
       ),
-      body: selectedRecipe != null ? buildRecipeContent() : buildLoadingIndicator(), // Check if selectedTask is null
-      
+      body: selectedRecipe != null
+          ? buildRecipeContent()
+          : buildLoadingIndicator(), // Check if selectedTask is null
     );
   }
 
-
   // Build task content
   // Build task content
-Widget buildRecipeContent() {
-  return Column(
-    children: [
-      Expanded(
-        child: PageView.builder(
-          itemCount: selectedRecipe!.recipeStep?.length ?? 0,
-          itemBuilder: (context, index) {
-            String description = selectedRecipe!.recipeStep != null && selectedRecipe!.recipeStep!.isNotEmpty
-              ? selectedRecipe!.recipeStep![index]
-              : ''; // Assign empty string if taskStep is null or empty
+  Widget buildRecipeContent() {
+    return Column(
+      children: [
+        Expanded(
+          child: PageView.builder(
+            itemCount: selectedRecipe!.recipeStep?.length ?? 0,
+            itemBuilder: (context, index) {
+              String description = selectedRecipe!.recipeStep != null &&
+                      selectedRecipe!.recipeStep!.isNotEmpty
+                  ? selectedRecipe!.recipeStep![index]
+                  : ''; // Assign empty string if taskStep is null or empty
 
-            Future<String> url = getDownloadUrl(
-              key: selectedRecipe!.recipeStepImage![index] ?? "",
-              accessLevel: StorageAccessLevel.guest,
-            );// Assign empty string if taskStepImage is null or empty
+              Future<String> url = getDownloadUrl(
+                key: selectedRecipe!.recipeStepImage![index] ?? "",
+                accessLevel: StorageAccessLevel.guest,
+              ); // Assign empty string if taskStepImage is null or empty
 
-            return FutureBuilder<String>(
-              future: url,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  String image = snapshot.data ?? "";
-                  RecipesStep step = RecipesStep(
-                    stepNumber: index + 1,
-                    description: description,
-                    stepImage: image,
-                  );
-                  return StepScreen(step: step, flutterTts: flutterTts);
-                }
-              },
-            );
-          },
-          onPageChanged: (index) {
-            setState(() {
-              _currentPageIndex = index;
-            });
-          },
+              return FutureBuilder<String>(
+                future: url,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    String image = snapshot.data ?? "";
+                    RecipesStep step = RecipesStep(
+                      stepNumber: index + 1,
+                      description: description,
+                      stepImage: image,
+                    );
+                    return StepScreen(step: step, flutterTts: flutterTts);
+                  }
+                },
+              );
+            },
+            onPageChanged: (index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
+            },
+          ),
         ),
-      ),
-
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
-        child: Row(
-          children: [
-            Expanded(
-              child: selectedRecipe!.recipeStep != null && selectedRecipe!.recipeStep!.isNotEmpty
-                ? LinearProgressIndicator(
-                    value: (_currentPageIndex + 1) / selectedRecipe!.recipeStep!.length,
-                    borderRadius: BorderRadius.circular(50),
-                    minHeight: 30,
-                    backgroundColor: Colors.grey[350],
-                    color: Colors.pink[900],
-                  )
-                : LinearProgressIndicator(
-                    value: 0.0, // Set value to 0 if taskStep is null or empty
-                    borderRadius: BorderRadius.circular(50),
-                    minHeight: 30,
-                    backgroundColor: Colors.grey[350],
-                    color: Colors.pink[900],
-                  ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              selectedRecipe?.recipeStep != null && selectedRecipe!.recipeStep!.isNotEmpty
-                ? '${(((_currentPageIndex + 1) / selectedRecipe!.recipeStep!.length) * 100).toInt()}%'
-                : '0%', // Set text to '0%' if taskStep is null or empty
-              style: const TextStyle(
-                fontFamily: "Lexend Exa",
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 75),
+          child: Row(
+            children: [
+              Expanded(
+                child: selectedRecipe!.recipeStep != null &&
+                        selectedRecipe!.recipeStep!.isNotEmpty
+                    ? LinearProgressIndicator(
+                        value: (_currentPageIndex + 1) /
+                            selectedRecipe!.recipeStep!.length,
+                        borderRadius: BorderRadius.circular(50),
+                        minHeight: 30,
+                        backgroundColor: Colors.grey[350],
+                        color: Colors.pink[900],
+                      )
+                    : LinearProgressIndicator(
+                        value:
+                            0.0, // Set value to 0 if taskStep is null or empty
+                        borderRadius: BorderRadius.circular(50),
+                        minHeight: 30,
+                        backgroundColor: Colors.grey[350],
+                        color: Colors.pink[900],
+                      ),
               ),
-            )
-          ],
-        ),
-      )
-
-    ],
-  );
-}
-
+              const SizedBox(width: 10),
+              Text(
+                selectedRecipe?.recipeStep != null &&
+                        selectedRecipe!.recipeStep!.isNotEmpty
+                    ? '${(((_currentPageIndex + 1) / selectedRecipe!.recipeStep!.length) * 100).toInt()}%'
+                    : '0%', // Set text to '0%' if taskStep is null or empty
+                style: const TextStyle(
+                  fontFamily: "Lexend Exa",
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
 
   // Build loading indicator while fetching data
   Widget buildLoadingIndicator() {
@@ -220,18 +210,15 @@ Widget buildRecipeContent() {
   }
 }
 
-  
-
-
 class RecipesStep {
   final int stepNumber;
   final String description;
   final String stepImage;
 
   RecipesStep(
-      { required this.stepNumber,
-       required this.description,
-       required this.stepImage});
+      {required this.stepNumber,
+      required this.description,
+      required this.stepImage});
 }
 
 // Step Screen
@@ -278,8 +265,7 @@ class StepScreen extends StatelessWidget {
                       fontSize: 25,
                       fontWeight: FontWeight.w500),
                 )),
-
-          IconButton(
+            IconButton(
               icon: Icon(Icons.volume_up, size: 45, color: Colors.pink[900]),
               onPressed: () async {
                 await flutterTts.speak(step.description);
@@ -292,19 +278,14 @@ class StepScreen extends StatelessWidget {
 
         const SizedBox(height: 50),
         ClipRRect(
-  borderRadius: const BorderRadius.all(Radius.circular(50)),
-  
-  child: Image.network(
-    step.stepImage,
-    
-    width: 700,
-    height: 500,
-    fit: BoxFit.cover,
-    
-  ),
-  
-  
-),
+          borderRadius: const BorderRadius.all(Radius.circular(50)),
+          child: Image.network(
+            step.stepImage,
+            width: 700,
+            height: 500,
+            fit: BoxFit.cover,
+          ),
+        ),
       ],
     );
   }

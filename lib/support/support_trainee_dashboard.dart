@@ -280,7 +280,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
           context,
           MaterialPageRoute(
             builder: (context) => SupportEvaluate(
-              title: "Evaluate",
+              title: "Evaluate ${widget.trainee.firstName}",
               trainee: widget.trainee,
               task: selectedTask!,
             ),
@@ -388,12 +388,16 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                     ),
                   ),
                 ),
-                _buildProgressCard(
-                  context,
-                  selectedTask != null ? selectedTask!.taskProgress : '0.0',
-                  selectedTask != null
-                      ? selectedTask!.taskTitle ?? "No Current Task"
-                      : "No Current Task",
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 50, right: 50, top: 20, bottom: 20),
+                  child: _buildProgressCard(
+                    context,
+                    selectedTask != null ? selectedTask!.taskProgress : '0.0',
+                    selectedTask != null
+                        ? selectedTask!.taskTitle ?? "No Current Task"
+                        : "No Current Task",
+                  ),
                 ),
                 SizedBox(height: 50),
                 Padding(
@@ -434,9 +438,9 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   Widget _traineeNoteCard(BuildContext context, String title) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
         child: SizedBox(
-          width: 750,
+          width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(20),
@@ -571,50 +575,54 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
               );
             }));
           },
-          child: Container(
-            width: 750,
-            height: 190, // Start with a fixed height
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(50),
-              color: Colors.grey[200],
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // Shadow color
-                  spreadRadius: 1, // Spread radius
-                  blurRadius: 5, // Blur radius
-                  offset: Offset(0, 3), // Offset in the x and y direction
-                ),
-              ],
-            ),
-            child: Padding(
-              padding:
-                  EdgeInsets.only(top: 30, bottom: 30, left: 50, right: 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Task Notes',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 35,
-                      fontWeight: FontWeight.w500,
-                    ),
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 190, // Start with a fixed height
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.grey[200],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5), // Shadow color
+                    spreadRadius: 1, // Spread radius
+                    blurRadius: 5, // Blur radius
+                    offset: Offset(0, 3), // Offset in the x and y direction
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Text(
-                        "Latest Note: ${taskNote.taskTitle != null ? '${taskNote.taskTitle}\n' : ''}${taskNote.taskDesc ?? 'No Note'}", // Display the fetched note here
-                        style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900],
+                ],
+              ),
+              child: Padding(
+                padding:
+                    EdgeInsets.only(top: 30, bottom: 30, left: 50, right: 50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Task Notes',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 35,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Text(
+                          "Latest Note: ${taskNote.taskTitle != null ? '${taskNote.taskTitle}\n' : ''}${taskNote.taskDesc ?? 'No Note'}", // Display the fetched note here
+                          style: TextStyle(
+                            fontFamily: 'Lexend Exa',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.pink[900],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -668,7 +676,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Container(
                         // Return a container with a loading indicator
-                        width: 750,
+                        width: MediaQuery.of(context).size.width,
                         height: 250,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -691,7 +699,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       return Container(
-                        width: 750,
+                        width: MediaQuery.of(context).size.width,
                         height: 250,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -714,7 +722,6 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                           ],
                         ),
                         child: Center(
-                          // Centering the task title text
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 50),
                             child: Text(
