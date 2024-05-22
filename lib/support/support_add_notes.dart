@@ -270,6 +270,44 @@ class _SupportAddNotes extends State<SupportAddNotes> {
                 color: Colors.pink[900]),
           )),
       );
+    } else if (title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50))),
+            elevation: 10,
+            content: Text(
+              'Please enter a title!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.pink[900]),
+            )),
+      );
+    } else if (description.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50))),
+            elevation: 10,
+            content: Text(
+              'Please enter a description!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'Lexend Exa',
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.pink[900]),
+            )),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -280,7 +318,7 @@ class _SupportAddNotes extends State<SupportAddNotes> {
                     topRight: Radius.circular(50))),
             elevation: 10,
             content: Text(
-              'Please fill in both title and description',
+              'Please fill in both title and description!',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: 'Lexend Exa',
