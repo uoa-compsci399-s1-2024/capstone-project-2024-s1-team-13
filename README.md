@@ -1,2 +1,2 @@
-![](/assets/images/inka.svg)
+![](/assets/images/inka_logo.png)
 
