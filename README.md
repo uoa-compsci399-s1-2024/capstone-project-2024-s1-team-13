@@ -21,11 +21,6 @@
 [![LinkedIn][linkedin-shield]][linkedin-url] -->
 
 
-<div style="background-color: lightgray; padding: 20px; text-align: center;">
-  <p style="color: blue;">This is a paragraph with a light gray background and blue text.</p>
-  <img src="https://via.placeholder.com/150" alt="Placeholder Image" style="border: 2px solid red;">
-</div>
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
