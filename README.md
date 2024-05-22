@@ -29,7 +29,7 @@
       <img src="assets/images/inka_white_bg_2.svg" alt="Logo" width="300"  >
   </a>
 
-
+<br />
   <p align="left">
       Te Tuhi Disability Training Cafe platform for Trainees
     <br />
