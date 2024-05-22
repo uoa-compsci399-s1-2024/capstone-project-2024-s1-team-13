@@ -156,6 +156,7 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
       safePrint('The recipe has been edited!: $res');
 
     } catch (e) {
+      errorSnackbar();
       safePrint('Error editing recipe: $e');
     }
   }
@@ -193,32 +194,6 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
           actions: [
           IconButton(
             onPressed: () {
-                for (int i = 0; i < recipeSteps.length; i++){
-                  if (recipeSteps[i].isEmpty == true){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(50),
-                                  topRight: Radius.circular(50))),
-                          elevation: 10,
-                          content: Text(
-                            'No instructions in Step ${i+1}!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: 'Lexend Exa',
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.pink[900]),
-                          )),
-                    );
-                    hasInstructions = false;
-                    break;
-                  }
-                  hasInstructions = true;
-                }
-
                 if (globalCoverImageUrl != null && _recipeTitleController.text.isNotEmpty == true && hasInstructions == true && recipeSteps.isNotEmpty == true) {
                   updateRecipe(_recipeTitleController.text, recipeStepImages, globalCoverImageUrl!, recipeStepImages);
                   saveRecipe();
@@ -280,24 +255,31 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
                         )),
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(50))),
-                        elevation: 10,
-                        content: Text(
-                          'Recipe could not be saved.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.pink[900]),
-                        )),
-                  );
+                  for (int i = 0; i < recipeSteps.length; i++){
+                    if (recipeSteps[i].isEmpty == true){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(50),
+                                    topRight: Radius.circular(50))),
+                            elevation: 10,
+                            content: Text(
+                              'No instructions in Step ${i+1}!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: 'Lexend Exa',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.pink[900]),
+                            )),
+                      );
+                      hasInstructions = false;
+                      break;
+                    }
+                    hasInstructions = true;
+                  }
                 }
             },
             iconSize: 50,
@@ -714,6 +696,27 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
     );
   }
 
+  void errorSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50))),
+        elevation: 10,
+        content: Text(
+          'Error saving changes!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              color: Colors.pink[900]),
+        )),
+    );
+  }
+
   void saveRecipe() {
     String recipeName = _recipeTitleController.text;
     print('Recipe Name: $recipeName');
@@ -728,7 +731,7 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
                 topRight: Radius.circular(50))),
         elevation: 10,
         content: Text(
-          'Recipe saved successfully!',
+          'Successfully edited recipe!',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontFamily: 'Lexend Exa',

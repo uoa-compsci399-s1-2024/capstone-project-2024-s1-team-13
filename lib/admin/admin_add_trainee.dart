@@ -184,12 +184,14 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
 
       final createdTrainee = res.data;
       if (createdTrainee == null) {
+        errorSnackbar();
         safePrint('errors: ${res.errors}');
         return;
       }
       safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
       Navigator.pop(context);  // Pop the screen only on success
     } on ApiException catch (e) {
+      errorSnackbar();
       safePrint('Error creating a trainee: $e');
     }
   }
@@ -460,4 +462,25 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
           ),
         ],
       );
+
+  void errorSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50))),
+        elevation: 10,
+        content: Text(
+          'Error saving changes!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              color: Colors.pink[900]),
+        )),
+    );
+  }
 }

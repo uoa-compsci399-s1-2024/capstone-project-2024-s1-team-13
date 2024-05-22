@@ -22,8 +22,8 @@ class _AdminAddTaskState extends State<AdminAddTask> {
   //GLOBAL VARIABLES
   final TextEditingController _taskTitleController = TextEditingController();
   String? uploadedImageKey;
-  List<String> steps = [];
-  List<String> stepImageUrls = [];
+  List<String> taskSteps = [];
+  List<String> taskStepImages= [];
   bool? hasInstructions;
 
   //BACKEND FUNCTIONS
@@ -155,13 +155,31 @@ class _AdminAddTaskState extends State<AdminAddTask> {
 
       final createdTask = res.data;
       if (createdTask == null) {
+        errorSnackbar();
         safePrint('errors: ${res.errors}');
         return;
       }
       safePrint('Successfully created a task! TASK: ${createdTask.taskTitle}');
     } on ApiException catch (e) {
+      errorSnackbar();
       safePrint('Error creating a task: $e');
     }
+  }
+
+  void deleteStep(int index) {
+    if (index >= 0 && index < taskSteps.length) {
+      setState(() {
+        taskSteps.removeAt(index);
+      });
+    } else {
+      safePrint('Invalid index!: $index');
+    }   
+  }
+
+  Future<void> _refresh() async {
+    setState(() {
+      taskSteps = taskSteps;
+    });
   }
 
   //SCREEN BUILD
@@ -181,34 +199,8 @@ class _AdminAddTaskState extends State<AdminAddTask> {
         actions: [
           IconButton(
             onPressed: () {
-                for (int i = 0; i < steps.length; i++){
-                  if (steps[i].isEmpty == true){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(50),
-                                topRight: Radius.circular(50))),
-                        elevation: 10,
-                        content: Text(
-                          'No instructions in Step ${i+1}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontFamily: 'Lexend Exa',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.pink[900]),
-                        )),
-                    );
-                    hasInstructions = false;
-                    break;
-                  }
-                  hasInstructions = true;
-                }
-
-                if (uploadedImageKey != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && steps.isNotEmpty == true) {
-                  createTask(_taskTitleController.text, steps, uploadedImageKey!, stepImageUrls);
+                if (uploadedImageKey != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && taskSteps.isNotEmpty == true) {
+                  createTask(_taskTitleController.text, taskSteps, uploadedImageKey!, taskStepImages);
                   saveTask();
                 } else if (_taskTitleController.text.isEmpty == true) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -248,7 +240,7 @@ class _AdminAddTaskState extends State<AdminAddTask> {
                           color: Colors.pink[900]),
                     )),
                   );
-                } else if (steps.isEmpty == true) {
+                } else if (taskSteps.isEmpty == true) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       backgroundColor: Colors.white,
@@ -268,25 +260,32 @@ class _AdminAddTaskState extends State<AdminAddTask> {
                       )),
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50))),
-                    elevation: 10,
-                    content: Text(
-                      'Task could not be saved.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900]),
-                    )),
-                  );
-                }
+                  for (int i = 0; i < taskSteps.length; i++){
+                    if (taskSteps[i].isEmpty == true){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(50),
+                                  topRight: Radius.circular(50))),
+                          elevation: 10,
+                          content: Text(
+                            'No instructions in Step ${i+1}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontFamily: 'Lexend Exa',
+                                fontSize: 25,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.pink[900]),
+                          )),
+                      );
+                      hasInstructions = false;
+                      break;
+                    }
+                    hasInstructions = true;
+                  }
+              }
             },
             iconSize: 50,
             icon: const Icon(Icons.done_rounded),
@@ -316,9 +315,9 @@ class _AdminAddTaskState extends State<AdminAddTask> {
           const SizedBox(height: 30),
           Expanded(
             child: ListView.builder(
-              itemCount: steps.length, 
+              itemCount: taskSteps.length, 
               itemBuilder: (context, index) {
-                return _StepCard(context, steps[index], index + 1);
+                return _StepCard(context, taskSteps[index], index + 1);
               },
             ),
           ),
@@ -460,6 +459,14 @@ class _AdminAddTaskState extends State<AdminAddTask> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
+              IconButton(
+                onPressed: () {
+                  _deleteStep(context, stepNumber);
+                },
+                icon: const Icon(Icons.remove_circle_rounded),
+                iconSize: 50,
+                color: Colors.red[600],
+              ),
             ],
           ),
         ),
@@ -476,10 +483,10 @@ class _AdminAddTaskState extends State<AdminAddTask> {
       children: [
         Expanded(
           child: TextFormField(
-            initialValue: steps[stepNumber - 1],
+            initialValue: taskSteps[stepNumber - 1],
             onChanged: (value) {
               setState(() {
-                steps[stepNumber - 1] = value;
+                taskSteps[stepNumber - 1] = value;
               });
             },
             maxLines: 4,
@@ -512,10 +519,10 @@ class _AdminAddTaskState extends State<AdminAddTask> {
           String? key = await uploadStepImage(stepNumber);
           if (key != null) {
             setState(() {
-              if (stepImageUrls.length >= stepNumber) {
-                stepImageUrls[stepNumber - 1] = key;
+              if (taskStepImages.length >= stepNumber) {
+                taskStepImages[stepNumber - 1] = key;
               } else {
-                stepImageUrls.add(key);
+                taskStepImages.add(key);
               }
             });
           }
@@ -531,9 +538,9 @@ class _AdminAddTaskState extends State<AdminAddTask> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(35),
-                child: stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null
+                child: taskStepImages.length >= stepNumber && taskStepImages[stepNumber - 1] != null
                     ? FutureBuilder<String>(
-                        future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
+                        future: getDownloadUrl(key: taskStepImages[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
@@ -575,8 +582,8 @@ class _AdminAddTaskState extends State<AdminAddTask> {
   Widget _AddStepButton() => ElevatedButton(
     onPressed: () {
       setState(() {
-        steps.add('');
-        stepImageUrls.add('placeholder.png'); //Include placeholder every initialisation, can be updated
+        taskSteps.add('');
+        taskStepImages.add('placeholder.png'); //Include placeholder every initialisation, can be updated
       });
     },
     style: ElevatedButton.styleFrom(
@@ -596,11 +603,95 @@ class _AdminAddTaskState extends State<AdminAddTask> {
     child: const Text('+ ADD STEP'),
   );
 
+  //Delete selected task
+  void _deleteStep(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          title: const Padding(
+              padding: EdgeInsets.all(30),
+              child: Text('Are you sure you want to delete this step?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 35,
+                      fontWeight: FontWeight.w500))),
+          actionsPadding: const EdgeInsets.only(bottom: 60),
+          actions: [
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 100),
+                      textStyle: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      backgroundColor: Colors.grey[300],
+                      foregroundColor: Colors.pink[900],
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50))),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("NO")),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 100),
+                      textStyle: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      backgroundColor: Colors.pink[900],
+                      foregroundColor: Colors.white,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50))),
+                  onPressed: () {
+                    deleteStep(index-1);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("YES"))
+            ])
+          ],
+        );
+      },
+    );
+  }
+  
+  void errorSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50))),
+        elevation: 10,
+        content: Text(
+          'Error saving changes!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              color: Colors.pink[900]),
+        )),
+    );
+  }
+
   void saveTask() {
     String taskName = _taskTitleController.text;
 
     safePrint('Task Name: $taskName');
-    safePrint('Steps: $steps');
+    safePrint('Steps: $taskSteps');
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

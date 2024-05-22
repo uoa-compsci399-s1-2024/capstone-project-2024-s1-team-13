@@ -23,6 +23,7 @@ class AdminEditSelectedTrainee extends StatefulWidget {
 }
 
 class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
+  //GLOBAL VARIABLES
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   String? uploadedImageKey;
@@ -31,14 +32,13 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
   @override
   void initState() {
     super.initState();
-    // Retrieve the image key from the trainee object
     uploadedImageKey = widget.trainee.traineePhoto;
-    // Call displayImage to fetch and display the trainee's image
     if (uploadedImageKey != null) {
       displayImage(uploadedImageKey!);
     }
   }
 
+  //BACKEND FUNCTIONS
   Future<void> displayImage(String imageKey) async {
     try {
       final String imageUrl = await getDownloadUrl(
@@ -49,7 +49,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
         downloadedImageUrl = imageUrl;
       });
     } catch (e) {
-      print('Error displaying image: $e');
+      safePrint('Error displaying image: $e');
     }
   }
 
@@ -70,7 +70,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
       ).result;
       return result.url.toString();
     } on StorageException catch (e) {
-      print('Could not get a downloadable URL: ${e.message}');
+      safePrint('Could not get a downloadable URL: ${e.message}');
       rethrow;
     }
   }
@@ -84,7 +84,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
     );
 
     if (result == null) {
-      print('No file selected');
+      safePrint('No file selected');
       return null;
     }
 
@@ -97,7 +97,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
         ),
         key: platformFile.name,
         onProgress: (progress) {
-          print('Fraction completed: ${progress.fractionCompleted}');
+          safePrint('Fraction completed: ${progress.fractionCompleted}');
         },
       );
       setState(() {
@@ -105,7 +105,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
       });
       return platformFile.name;
     } catch (e) {
-      print('Error uploading file: $e');
+      safePrint('Error uploading file: $e');
       throw e;
     }
   }
@@ -126,9 +126,10 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
     final request = ModelMutations.update(updatedTrainee);
     try {
       final response = await Amplify.API.mutate(request: request).response;
-      print('Response: $response');
+      safePrint('Response: $response');
     } catch (e) {
-      print('Error updating trainee: $e');
+      errorSnackbar();
+      safePrint('Error updating trainee: $e');
     }
   }
 
@@ -346,6 +347,27 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
           ),
         ),
       ],
+    );
+  }
+
+  void errorSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50))),
+        elevation: 10,
+        content: Text(
+          'Error saving changes!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              color: Colors.pink[900]),
+        )),
     );
   }
 }

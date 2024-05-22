@@ -159,6 +159,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
       safePrint('The task has been edited!: $res');
 
     } catch (e) {
+      errorSnackbar();
       safePrint('Error editing task: $e');
     }
   }
@@ -195,36 +196,9 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
           actions: [
           IconButton(
             onPressed: () {
-                for (int i = 0; i < taskSteps.length; i++){
-                  if (taskSteps[i].isEmpty == true){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(50),
-                                  topRight: Radius.circular(50))),
-                          elevation: 10,
-                          content: Text(
-                            'No instructions in Step ${i+1}!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: 'Lexend Exa',
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.pink[900]),
-                          )),
-                    );
-                    hasInstructions = false;
-                    break;
-                  }
-                  hasInstructions = true;
-                }
-
                 if (globalCoverImageUrl != null && _taskTitleController.text.isNotEmpty == true && hasInstructions == true && taskSteps.isNotEmpty == true) {
                   updateTask(_taskTitleController.text, taskSteps, globalCoverImageUrl!, taskStepImages);
                   saveTask();
-                  
                 } else if (_taskTitleController.text.isEmpty == true) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -263,7 +237,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                               color: Colors.pink[900]),
                         )),
                   );
-                }else if (globalCoverImageUrl == null){
+                } else if (globalCoverImageUrl == null){
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         backgroundColor: Colors.white,
@@ -283,6 +257,32 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                         )),
                   );
                 } else {
+                  for (int i = 0; i < taskSteps.length; i++){
+                    if (taskSteps[i].isEmpty == true){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(50),
+                                    topRight: Radius.circular(50))),
+                            elevation: 10,
+                            content: Text(
+                              'No instructions in Step ${i+1}!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: 'Lexend Exa',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.pink[900]),
+                            )),
+                      );
+                      hasInstructions = false;
+                      break;
+                    }
+                    hasInstructions = true;
+                  }
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         backgroundColor: Colors.white,
@@ -490,13 +490,13 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                 ),
               ),
               IconButton(
-                  onPressed: () {
-                    _deleteStep(context, stepNumber);
-                  },
-                  icon: const Icon(Icons.remove_circle_rounded),
-                  iconSize: 50,
-                  color: Colors.red[600],
-                ),
+                onPressed: () {
+                  _deleteStep(context, stepNumber);
+                },
+                icon: const Icon(Icons.remove_circle_rounded),
+                iconSize: 50,
+                color: Colors.red[600],
+              ),
             ],
           ),
         ),
@@ -716,6 +716,27 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
     );
   }
 
+  void errorSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50))),
+        elevation: 10,
+        content: Text(
+          'Error saving changes!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              color: Colors.pink[900]),
+        )),
+    );
+  }
+
   void saveTask() {
     String taskName = _taskTitleController.text;
 
@@ -731,7 +752,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                 topRight: Radius.circular(50))),
         elevation: 10,
         content: Text(
-          'Task saved successfully!',
+          'Successfully edited task!',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontFamily: 'Lexend Exa',
