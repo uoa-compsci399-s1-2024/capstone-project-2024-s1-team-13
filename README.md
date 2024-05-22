@@ -25,7 +25,7 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">
+<div align="center", style="background-color: white; display: inline-block; padding: 10px;">
   <a href="https://github.com/github_username/repo_name">
     <img src="assets/images/inka_logo.png" alt="Logo" width="300">
   </a>
