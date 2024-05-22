@@ -20,27 +20,24 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url] -->
 
-# Inka
+# Inka  
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="left">
   <a href="https://github.com/github_username/repo_name">
-      <img src="assets/images/inka_white_bg_2.svg" alt="Logo" width="300">
+      <img src="assets/images/inka_white_bg_2.svg" alt="Logo" width="300"  >
   </a>
 
 
   <p align="left">
-    An app for Te Tuhi cafe 
+      Te Tuhi Disability Training Cafe platform for Trainees
     <br />
     <!-- <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a> -->
     <br />
     <br />
     <a href="https://github.com/github_username/repo_name">View Demo</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
