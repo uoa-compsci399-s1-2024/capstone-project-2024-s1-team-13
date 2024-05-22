@@ -19,6 +19,10 @@ class RecipesScreen extends StatefulWidget {
 }
 
 class _RecipesScreenState extends State<RecipesScreen> {
+  late List<Recipe> searchResults = []; // For autocomplete
+  Recipe? selectedRecipe;
+
+
   int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
@@ -66,6 +70,16 @@ class _RecipesScreenState extends State<RecipesScreen> {
   void initState() {
     super.initState();
     fetchAllRecipe(); // Call the function to fetch all task notes
+  }
+
+  void _onSearchTextChanged(String searchText) {
+    setState(() {
+      searchResults = allRecipes
+          .where((recipe) => recipe.recipeTitle!
+              .toLowerCase()
+              .contains(searchText.toLowerCase()))
+          .toList();
+    });
   }
 
   Future<void> fetchAllRecipe() async {
@@ -122,6 +136,76 @@ class _RecipesScreenState extends State<RecipesScreen> {
 
   final TextEditingController _textController = TextEditingController();
 
+
+  // Search Bar with Autocomplete
+  Widget _buildRecipeSearchBar(context) {
+    final maxListHeight = MediaQuery.of(context).size.height * 0.3;
+    final itemHeight = 70.0;
+    final listItemWidth = MediaQuery.of(context).size.width * 0.95;
+
+    return Autocomplete<Recipe>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return const Iterable<Recipe>.empty();
+        }
+        return allRecipes.where((recipe) => recipe.recipeTitle!
+            .toLowerCase()
+            .contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: (Recipe selectedRecipe) {
+        setState(() {
+          searchResults = [selectedRecipe];
+          this.selectedRecipe = selectedRecipe;
+          _textController.text = '${selectedRecipe.recipeTitle}';
+        });
+      },
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return TextField(
+          controller: _textController,
+          focusNode: focusNode,
+          onChanged: _onSearchTextChanged,
+          style: TextStyle(
+            fontSize: 27, // Adjust the font size here
+          ),
+          decoration: InputDecoration(
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 10),
+              child:
+                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 40),
+            ),
+            suffixIcon: IconButton(
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 25, right: 10),
+                child: Icon(Icons.clear_rounded,
+                    color: Colors.grey[600], size: 40),
+              ),
+              onPressed: () {
+                _textController.clear();
+                _onSearchTextChanged('');
+              },
+            ),
+            hintText: "Search Recipes",
+            hintStyle: TextStyle(
+              fontFamily: "Lexend Exa",
+              fontSize: 30,
+              fontWeight: FontWeight.w300,
+            ),
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,84 +244,88 @@ class _RecipesScreenState extends State<RecipesScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      body: Expanded(
-        child: GridView.builder(
-          itemCount: allRecipes.length,
-          itemBuilder: (context, index) {
-            final recipe = allRecipes[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectedRecipe(
-                      title: recipe.recipeTitle ?? "Recipe Title Not Found",
-                      recipeId: recipe.id,
-                    ),
-                  ),
-                );
-              },
-              child: FutureBuilder<String>(
-                future: getDownloadUrl(
-                  key: recipe.recipeCoverImage ?? "",
-                  accessLevel: StorageAccessLevel.guest,
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(); // Placeholder while loading
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    final url = snapshot.data;
-                    return _buildRecipeCard(
-                        recipe.recipeTitle ?? "Recipe Title Not Found",
-                        url ?? "");
-                  }
-                },
-              ),
-            );
-          },
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+          // Body
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(25),
+            child: _buildRecipeSearchBar(context),
           ),
-          scrollDirection: Axis.vertical,
-        ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: fetchAllRecipe,
+              child: searchResults.isEmpty && _textController.text.isNotEmpty
+                  ? Center(
+                      child: Text(
+                      'No recipes found',
+                      style: TextStyle(
+                        fontFamily: "Lexend Exa",
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ))
+                  : GridView.builder(
+                      itemCount: searchResults.isNotEmpty ||
+                              _textController.text.isNotEmpty
+                          ? searchResults.length
+                          : allRecipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = searchResults.isNotEmpty ||
+                                _textController.text.isNotEmpty
+                            ? searchResults[index]
+                            : allRecipes[
+                                index]; // Use searchResults if available, otherwise allRecipes
+
+                        return FutureBuilder<String>(
+                          future: getDownloadUrl(
+                            key: recipe.recipeCoverImage!,
+                            accessLevel: StorageAccessLevel.guest,
+                          ),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return GestureDetector(
+                                onTap: () {
+                                  // Navigate to the desired screen when a recipe card is tapped
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SelectedRecipe(
+                                        title: recipe.recipeTitle!,
+                                        recipeId: recipe.id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: _buildRecipeCard(
+                                  recipe.recipeTitle ??
+                                      "Recipe Title Not Found",
+                                  snapshot.data ??
+                                      "", // Use the URL from the snapshot
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      },
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
-
-  // Search Bar
-  Widget _buildRecipeSearchBar(context) => TextField(
-        controller: _textController,
-        style: const TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 30,
-            fontWeight: FontWeight.w300),
-        decoration: InputDecoration(
-          prefixIcon: IconButton(
-              padding: const EdgeInsets.only(left: 20, right: 10),
-              icon:
-                  Icon(Icons.search_rounded, color: Colors.grey[600], size: 50),
-              onPressed: () => _textController.clear()),
-          suffixIcon: IconButton(
-            padding: const EdgeInsets.only(left: 10, right: 20),
-            icon: Icon(Icons.clear_rounded, color: Colors.grey[600], size: 50),
-            onPressed: () {
-              _textController.text = "";
-            },
-          ),
-          hintText: "Search Recipes",
-          hintStyle: const TextStyle(
-              fontFamily: "Lexend Exa",
-              fontSize: 30,
-              fontWeight: FontWeight.w300),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
-        ),
-      );
+  
 
   String _getTitle(int index) {
     if (index < allRecipes.length) {
