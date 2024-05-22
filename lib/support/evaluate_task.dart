@@ -86,11 +86,16 @@ class _EvaluateTaskState extends State<EvaluateTask> {
   Future<void> fetchSelectedTrainee() async {
     try {
       final trainee = await queryTraineeById(
-          widget.trainee.id); // Query for the trainee by ID
+          widget.trainee.id
+      );
 
-      setState(() {
-        selectedTrainee = trainee!; // Store the selected trainee in the state
-      });
+      if (trainee?.isWorking == true){
+        setState(() {
+          selectedTrainee = trainee!;
+        });
+      } else {
+        errorDialog();
+      }
     } catch (e) {
       safePrint('Error fetching selected trainee: $e');
     }
@@ -241,7 +246,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
                     setState(() {
                       _isCheckedList[index] = value!;
                     });
-
+                    
                     await updateSelectedTask(_isCheckedList, widget.trainee.id);
                   },
                 );
@@ -260,15 +265,16 @@ class _EvaluateTaskState extends State<EvaluateTask> {
 
   // 'Task Analysis' Widget
   Widget _buildText() => Padding(
-      padding: EdgeInsets.all(25),
-      child: Text(
-        'Task Analysis',
-        textAlign: TextAlign.left,
-        style: TextStyle(
-            fontFamily: 'Lexend Exa',
-            fontSize: 60,
-            fontWeight: FontWeight.w500),
-      ));
+    padding: EdgeInsets.all(25),
+    child: Text(
+      'Task Analysis',
+      textAlign: TextAlign.left,
+      style: TextStyle(
+          fontFamily: 'Lexend Exa',
+          fontSize: 60,
+          fontWeight: FontWeight.w500),
+    )
+  );
 
   // Done Button
   Widget _buildDoneButton() => ElevatedButton(
@@ -289,5 +295,50 @@ class _EvaluateTaskState extends State<EvaluateTask> {
           backgroundColor: Colors.pink[900],
           elevation: 2,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))));
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)))
+  );
+  
+  void errorDialog() {
+    Navigator.of(context).pop();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          title: const Padding(
+              padding: EdgeInsets.all(30),
+              child: Text('Cannot evaluate archived trainee!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 35,
+                      fontWeight: FontWeight.w500))),
+          actionsPadding: const EdgeInsets.only(bottom: 60),
+          actions: [
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 100),
+                      textStyle: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      backgroundColor: Colors.pink[900],
+                      foregroundColor: Colors.white,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50))),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("BACK"))
+            ])
+          ],
+        );
+      },
+    );
+  }
 }

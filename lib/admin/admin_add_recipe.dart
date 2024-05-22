@@ -166,6 +166,22 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
     }
   }
 
+  void deleteStep(int index) {
+    if (index >= 0 && index < steps.length) {
+      setState(() {
+        steps.removeAt(index);
+      });
+    } else {
+      safePrint('Invalid index!: $index');
+    }   
+  }
+
+  Future<void> _refresh() async {
+    setState(() {
+      steps = steps;
+    });
+  }
+
   //FRONTEND
   @override
   Widget build(BuildContext context) {
@@ -442,6 +458,14 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
+              IconButton(
+                onPressed: () {
+                  _deleteStep(context, stepNumber);
+                },
+                icon: const Icon(Icons.remove_circle_rounded),
+                iconSize: 50,
+                color: Colors.red[600],
+              ),
             ],
           ),
         ),
@@ -598,6 +622,68 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
               fontWeight: FontWeight.w500,
               color: Colors.pink[900]),
         )),
+    );
+  }
+
+  void _deleteStep(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          title: const Padding(
+              padding: EdgeInsets.all(30),
+              child: Text('Are you sure you want to delete this step?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'Lexend Exa',
+                      fontSize: 35,
+                      fontWeight: FontWeight.w500))),
+          actionsPadding: const EdgeInsets.only(bottom: 60),
+          actions: [
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 100),
+                      textStyle: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      backgroundColor: Colors.grey[300],
+                      foregroundColor: Colors.pink[900],
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50))),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("NO")),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 100),
+                      textStyle: const TextStyle(
+                        fontSize: 30,
+                        fontFamily: 'Lexend Exa',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      backgroundColor: Colors.pink[900],
+                      foregroundColor: Colors.white,
+                      elevation: 1,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50))),
+                  onPressed: () {
+                    deleteStep(index-1);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("YES"))
+            ])
+          ],
+        );
+      },
     );
   }
 
