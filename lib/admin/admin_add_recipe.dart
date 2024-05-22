@@ -26,18 +26,7 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
   List<String> stepImageUrls = [];
   bool? hasInstructions;
 
-  //FUNCTIONS
-  void saveRecipe() {
-    String recipeName = _recipeTitleController.text;
-
-    safePrint('Recipe Name: $recipeName');
-    safePrint('Steps: $steps');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Recipe saved successfully')),
-    );
-  }
-
+  //BACKEND FUNCTIONS
   Future<Admin?> queryItem(Admin queriedAdmin) async {
     try {
       final request = ModelQueries.get(
@@ -175,7 +164,7 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
     }
   }
 
-  //SCREEN BUILD
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,7 +183,22 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
                 for (int i = 0; i < steps.length; i++){
                   if (steps[i].isEmpty == true){
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('No instructions in step: ${i+1}')),
+                      SnackBar(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(50),
+                                topRight: Radius.circular(50))),
+                        elevation: 10,
+                        content: Text(
+                          'No instructions in Step ${i+1}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontFamily: 'Lexend Exa',
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.pink[900]),
+                        )),
                     );
                     hasInstructions = false;
                     break;
@@ -207,26 +211,82 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
                   saveRecipe();
                 } else if (_recipeTitleController.text.isEmpty == true) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please add a recipe title!')),
+                    SnackBar(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(50))),
+                      elevation: 10,
+                      content: Text(
+                        'Please add a recipe title!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Lexend Exa',
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.pink[900]),
+                      )),
                   );
-                } else if (steps.isEmpty == true) {
+                } else if (uploadedImageKey == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please add atleast 1 recipe step!')),
+                    SnackBar(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(50))),
+                      elevation: 10,
+                      content: Text(
+                        'Please add a recipe cover image!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Lexend Exa',
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.pink[900]),
+                      )),
                   );
-                }
-                  else if (uploadedImageKey == null){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please add a recipe cover image!')),
-                  );
-                  }
-                else {
+                } else if (steps.isEmpty == true){
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Recipe could not be saved')),
+                    SnackBar(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(50))),
+                      elevation: 10,
+                      content: Text(
+                        'Please add at least 1 recipe step!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Lexend Exa',
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.pink[900]),
+                      )),
                   );
-                  
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(50))),
+                      elevation: 10,
+                      content: Text(
+                        'Recipe could not be saved',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Lexend Exa',
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.pink[900]),
+                      )),
+                  );
                 }
             },
-
               iconSize: 50,
               icon: const Icon(Icons.done_rounded),
               padding: const EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -271,94 +331,93 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
 
   // Recipe Title - text form field and image
   Widget _RecipeTitle() => Row(
-  children: [
-    Expanded(
-      child: TextField(
-        controller: _recipeTitleController,
-        style: const TextStyle(
-          fontFamily: "Lexend Exa",
-          fontSize: 30,
-          fontWeight: FontWeight.w300,
-        ),
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-          hintText: "Enter recipe name",
-          hintStyle: const TextStyle(
+    children: [
+      Expanded(
+        child: TextField(
+          controller: _recipeTitleController,
+          style: const TextStyle(
             fontFamily: "Lexend Exa",
             fontSize: 30,
             fontWeight: FontWeight.w300,
           ),
-          filled: true,
-          fillColor: Colors.grey[300],
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: BorderSide.none,
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+            hintText: "Enter recipe name",
+            hintStyle: const TextStyle(
+              fontFamily: "Lexend Exa",
+              fontSize: 30,
+              fontWeight: FontWeight.w300,
+            ),
+            filled: true,
+            fillColor: Colors.grey[300],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide.none,
+            ),
           ),
         ),
       ),
-    ),
-    const SizedBox(width: 20),
-    InkWell(
-      onTap: () async {
-        String? key = await uploadImage();
-        if (key != null) {
-          setState(() {
-            uploadedImageKey = key;
-          });
-        }
-      },
-      child: Stack(
-        children: [
-          Container(
-            width: 180,
-            height: 180,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(35),
-              color: Colors.grey[300],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(35),
-              child: uploadedImageKey == null
-                  ? Center(
-                      child: Icon(
-                        Icons.add_a_photo,
-                        size: 40,
-                        color: Colors.grey[600],
+      const SizedBox(width: 20),
+      InkWell(
+        onTap: () async {
+          String? key = await uploadImage();
+          if (key != null) {
+            setState(() {
+              uploadedImageKey = key;
+            });
+          }
+        },
+        child: Stack(
+          children: [
+            Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: Colors.grey[300],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(35),
+                child: uploadedImageKey == null
+                    ? Center(
+                        child: Icon(
+                          Icons.add_a_photo,
+                          size: 40,
+                          color: Colors.grey[600],
+                        ),
+                      )
+                    : FutureBuilder<String>(
+                        future: getDownloadUrl(key: uploadedImageKey!, accessLevel: StorageAccessLevel.guest),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            );
+                          }
+                        },
                       ),
-                    )
-                  : FutureBuilder<String>(
-                      future: getDownloadUrl(key: uploadedImageKey!, accessLevel: StorageAccessLevel.guest),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else {
-                          return Image.network(
-                            snapshot.data!,
-                            fit: BoxFit.cover,
-                          );
-                        }
-                      },
-                    ),
+              ),
             ),
-          ),
 
-          Positioned(
-            top: 70,
-            right: 70,
-            child: Icon(
-              Icons.add_a_photo,
-              size: 40,
-              color: Colors.grey[300]!.withOpacity(0.7),
+            Positioned(
+              top: 70,
+              right: 70,
+              child: Icon(
+                Icons.add_a_photo,
+                size: 40,
+                color: Colors.grey[300]!.withOpacity(0.7),
+              ),
             ),
-          ),
-          
-        ],
+          ],
+        ),
       ),
-    ),
-  ],
-);
+    ],
+  );
 
 
   Widget _StepCard(BuildContext context, String step, int stepNumber) {
@@ -413,105 +472,105 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
 
   // Step Card helper widget - text field
   Widget _stepDesc(int stepNumber) {
-  return Row(
-    children: [
-      Expanded(
-        child: TextFormField(
-          initialValue: steps[stepNumber - 1],
-          onChanged: (value) {
-            setState(() {
-              steps[stepNumber - 1] = value;
-            });
-          },
-          maxLines: 4,
-          style: const TextStyle(
-            fontFamily: "Lexend Exa",
-            fontSize: 25,
-            fontWeight: FontWeight.w500,
-          ),
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
-            filled: true,
-            fillColor: Colors.grey[300],
-            hintText: "Enter instruction",
-            hintStyle: TextStyle(
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            initialValue: steps[stepNumber - 1],
+            onChanged: (value) {
+              setState(() {
+                steps[stepNumber - 1] = value;
+              });
+            },
+            maxLines: 4,
+            style: const TextStyle(
               fontFamily: "Lexend Exa",
               fontSize: 25,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[400],
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+              filled: true,
+              fillColor: Colors.grey[300],
+              hintText: "Enter instruction",
+              hintStyle: TextStyle(
+                fontFamily: "Lexend Exa",
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[400],
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
         ),
-      ),
-      const SizedBox(width: 20),
-      InkWell(
-        onTap: () async {
-          String? key = await uploadStepImage(stepNumber);
-          if (key != null) {
-            setState(() {
-              if (stepImageUrls.length >= stepNumber) {
-                stepImageUrls[stepNumber - 1] = key;
-              } else {
-                stepImageUrls.add(key);
-              }
-            });
-          }
-        },
-        child: Stack(
-          children: [
-            Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35),
-                color: Colors.grey[300],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(35),
-                child: stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null
-                    ? FutureBuilder<String>(
-                        future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(child: Text('Error: ${snapshot.error}'));
-                          } else {
-                            return Image.network(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
-                            );
-                          }
-                        },
-                      )
-                    : Center(
-                        child: Icon(
-                          Icons.add_a_photo,
-                          size: 40,
-                          color: Colors.grey[600],
+        const SizedBox(width: 20),
+        InkWell(
+          onTap: () async {
+            String? key = await uploadStepImage(stepNumber);
+            if (key != null) {
+              setState(() {
+                if (stepImageUrls.length >= stepNumber) {
+                  stepImageUrls[stepNumber - 1] = key;
+                } else {
+                  stepImageUrls.add(key);
+                }
+              });
+            }
+          },
+          child: Stack(
+            children: [
+              Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(35),
+                  color: Colors.grey[300],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(35),
+                  child: stepImageUrls.length >= stepNumber && stepImageUrls[stepNumber - 1] != null
+                      ? FutureBuilder<String>(
+                          future: getDownloadUrl(key: stepImageUrls[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(child: Text('Error: ${snapshot.error}'));
+                            } else {
+                              return Image.network(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                              );
+                            }
+                          },
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.add_a_photo,
+                            size: 40,
+                            color: Colors.grey[600],
+                          ),
                         ),
-                      ),
+                ),
               ),
-            ),
-            Positioned(
-              top: 70,
-              right: 70,
-              child: Icon(
-                Icons.add_a_photo,
-                size: 40,
-                color: Colors.grey[300]!.withOpacity(0.8),
+              Positioned(
+                top: 70,
+                right: 70,
+                child: Icon(
+                  Icons.add_a_photo,
+                  size: 40,
+                  color: Colors.grey[300]!.withOpacity(0.8),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   // Add Step Button
   Widget _AddStepButton() => ElevatedButton(
@@ -537,4 +596,30 @@ class _AdminAddRecipeState extends State<AdminAddRecipe> {
     ),
     child: const Text('+ ADD STEP'),
   );
+
+  void saveRecipe() {
+    String recipeName = _recipeTitleController.text;
+
+    safePrint('Recipe Name: $recipeName');
+    safePrint('Steps: $steps');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(50),
+                topRight: Radius.circular(50))),
+        elevation: 10,
+        content: Text(
+          'Successfully created a task!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              color: Colors.pink[900]),
+        )),
+    );
+  }
 }

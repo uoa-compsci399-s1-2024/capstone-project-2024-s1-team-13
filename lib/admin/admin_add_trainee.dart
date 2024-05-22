@@ -34,7 +34,7 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
     displayImage();
   }
 
-  //FUNCTIONS
+  //BACKEND FUNCTIONS
   Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
@@ -113,57 +113,88 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
   }
 
   Future<void> createTrainee() async {
-  if (_firstNameController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please enter First Name')),
-    );
-    return;
-  }
-
-  if (_lastNameController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please enter Surname')),
-    );
-    return;
-  }
-
-  try {
-    Trainee aTrainee;
-    if (hasPlaceholder != true) {
-      aTrainee = Trainee(
-        traineePhoto: uploadedImageKey,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
-        adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
-        isWorking: true, //default value
+    if (_firstNameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50))),
+          elevation: 10,
+          content: Text(
+            'Please enter a first name!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900]),
+          )),
       );
-    } else {
-      aTrainee = Trainee(
-        traineePhoto: placeholderImageKey,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
-        adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
-        isWorking: true, //default value
-      );
-    }
-
-    final req = ModelMutations.create(aTrainee);
-    final res = await Amplify.API.mutate(request: req).response;
-
-    final createdTrainee = res.data;
-    if (createdTrainee == null) {
-      safePrint('errors: ${res.errors}');
       return;
     }
-    safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
-    Navigator.pop(context);  // Pop the screen only on success
-  } on ApiException catch (e) {
-    safePrint('Error creating a trainee: $e');
-  }
-}
 
+    if (_lastNameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50))),
+          elevation: 10,
+          content: Text(
+            'Please enter a surname!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'Lexend Exa',
+                fontSize: 25,
+                fontWeight: FontWeight.w500,
+                color: Colors.pink[900]),
+          )),
+      );
+      return;
+    }
+
+    try {
+      Trainee aTrainee;
+      if (hasPlaceholder != true) {
+        aTrainee = Trainee(
+          traineePhoto: uploadedImageKey,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
+          adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
+          isWorking: true, //default value
+        );
+      } else {
+        aTrainee = Trainee(
+          traineePhoto: placeholderImageKey,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          supportID: '2801781d-ff27-4fec-92a7-f1b1cd632b36', //dummy value
+          adminID: 'e7bd6941-2f8f-4949-a4ed-6803cd2ab42b', //dummy value
+          isWorking: true, //default value
+        );
+      }
+
+      final req = ModelMutations.create(aTrainee);
+      final res = await Amplify.API.mutate(request: req).response;
+
+      final createdTrainee = res.data;
+      if (createdTrainee == null) {
+        safePrint('errors: ${res.errors}');
+        return;
+      }
+      safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
+      Navigator.pop(context);  // Pop the screen only on success
+    } on ApiException catch (e) {
+      safePrint('Error creating a trainee: $e');
+    }
+  }
+
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -180,8 +211,87 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
         actions: [
           IconButton(
             onPressed: () {
-              createTrainee();
-              
+              if (_firstNameController.text.isEmpty && _lastNameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50))),
+                    elevation: 10,
+                    content: Text(
+                      'Please fill in the information above!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.pink[900]),
+                    )),
+                );
+                return;
+              } else if (_firstNameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50))),
+                    elevation: 10,
+                    content: Text(
+                      'Please enter a first name!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.pink[900]),
+                    )),
+                );
+                return;
+              } else if (_lastNameController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50))),
+                    elevation: 10,
+                    content: Text(
+                      'Please enter a surname!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.pink[900]),
+                    )),
+                );
+                return;
+              } else {
+                createTrainee();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50))),
+                    elevation: 10,
+                    content: Text(
+                      'Successfully created a trainee!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.pink[900]),
+                    )),
+                );
+              }
             },
             iconSize: 50,
             icon: const Icon(Icons.done_rounded),
