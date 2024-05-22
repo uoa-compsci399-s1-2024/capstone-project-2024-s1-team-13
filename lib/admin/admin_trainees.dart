@@ -23,6 +23,7 @@ class _AdminTraineesState extends State<AdminTrainees> {
   final TextEditingController _textController = TextEditingController();
   late List<Trainee> allTrainees = [];
   late List<Trainee> searchResults = []; // For autocomplete
+  int _selectedFilterIndex = 0;
 
   @override
   void initState() {
@@ -124,22 +125,47 @@ class _AdminTraineesState extends State<AdminTrainees> {
   // Autocomplete logic
   void _onSearchTextChanged(String searchText) {
     setState(() {
-      searchResults = allTrainees
-          .where((trainee) =>
-              trainee.firstName!
-                  .toLowerCase()
-                  .contains(searchText.toLowerCase()) ||
-              trainee.lastName!
-                  .toLowerCase()
-                  .contains(searchText.toLowerCase()))
-          .toList();
+      searchResults = _filterTrainees(searchText, _selectedFilterIndex);
     });
+  }
+
+  List<Trainee> _filterTrainees(String searchText, int filterIndex) {
+    return allTrainees.where((trainee) {
+      final matchesSearchText = trainee.firstName!
+              .toLowerCase()
+              .contains(searchText.toLowerCase()) ||
+          trainee.lastName!.toLowerCase().contains(searchText.toLowerCase());
+
+      switch (filterIndex) {
+        case 1:
+          return matchesSearchText && (trainee.isWorking ?? false);
+        case 2:
+          return matchesSearchText && !(trainee.isWorking ?? true);
+        default:
+          return matchesSearchText;
+      }
+    }).toList();
   }
 
   Trainee? selectedTrainee;
 
   @override
   Widget build(BuildContext context) {
+    List<Trainee> displayTrainees;
+    switch (_selectedFilterIndex) {
+      case 1:
+        displayTrainees =
+            allTrainees.where((trainee) => trainee.isWorking ?? false).toList();
+        break;
+      case 2:
+        displayTrainees = allTrainees
+            .where((trainee) => !(trainee.isWorking ?? true))
+            .toList();
+        break;
+      default:
+        displayTrainees = allTrainees;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -208,6 +234,50 @@ class _AdminTraineesState extends State<AdminTrainees> {
             padding: const EdgeInsets.all(25),
             child: _buildTraineeSearchBar(context),
           ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 25),
+            child: ToggleButtons(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text(
+                    'All',
+                    style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 25,
+                        fontWeight: FontWeight.w200),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text('Working',
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w200)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text('Archived',
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w200)),
+                ),
+              ],
+              isSelected:
+                  List.generate(3, (index) => index == _selectedFilterIndex),
+              onPressed: (int index) {
+                setState(() {
+                  _selectedFilterIndex = index;
+                });
+              },
+              borderRadius: BorderRadius.circular(30.0),
+              selectedColor: Colors.white,
+              fillColor: Colors.pink[900],
+              color: Colors.grey[700],
+            ),
+          ),
           Expanded(
             child: RefreshIndicator(
                 onRefresh: fetchAllTrainees,
@@ -215,11 +285,11 @@ class _AdminTraineesState extends State<AdminTrainees> {
                     ? ListView.builder(
                         itemCount: _textController.text.isNotEmpty
                             ? searchResults.length
-                            : allTrainees.length,
+                            : displayTrainees.length,
                         itemBuilder: (context, index) {
                           final trainee = _textController.text.isNotEmpty
                               ? searchResults[index]
-                              : allTrainees[index];
+                              : displayTrainees[index];
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -253,28 +323,16 @@ class _AdminTraineesState extends State<AdminTrainees> {
   }
 
   Widget _buildTraineeSearchBar(context) {
-    final maxListHeight = MediaQuery.of(context).size.height * 0.3;
-    final itemHeight = 70.0;
-    final listItemWidth = MediaQuery.of(context).size.width * 0.95;
-
     return Autocomplete<Trainee>(
       optionsBuilder: (TextEditingValue textEditingValue) {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<Trainee>.empty();
         }
-        return allTrainees.where((trainee) =>
-            trainee.firstName!
-                .toLowerCase()
-                .contains(textEditingValue.text.toLowerCase()) ||
-            trainee.lastName!
-                .toLowerCase()
-                .contains(textEditingValue.text.toLowerCase()));
+        return _filterTrainees(textEditingValue.text, _selectedFilterIndex);
       },
       onSelected: (Trainee selectedTrainee) {
         setState(() {
-          // Filter out the search results to only the selected option
           searchResults = [selectedTrainee];
-          // Store the selected trainee
           this.selectedTrainee = selectedTrainee;
           _textController.text =
               '${selectedTrainee.firstName} ${selectedTrainee.lastName}';
