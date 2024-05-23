@@ -149,6 +149,17 @@ class _AdminTraineesState extends State<AdminTrainees> {
 
   Trainee? selectedTrainee;
 
+  // Navigate to trainee profile
+  void _navigateToTraineeProfile(Trainee trainee) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            AdminTraineeProfile(title: 'Profile', trainee: trainee),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Trainee> displayTrainees;
@@ -292,15 +303,7 @@ class _AdminTraineesState extends State<AdminTrainees> {
                               : displayTrainees[index];
                           return GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AdminTraineeProfile(
-                                    title: 'Profile',
-                                    trainee: allTrainees[index],
-                                  ),
-                                ),
-                              );
+                              _navigateToTraineeProfile(trainee);
                             },
                             child: _TraineeCard(trainee),
                           );
