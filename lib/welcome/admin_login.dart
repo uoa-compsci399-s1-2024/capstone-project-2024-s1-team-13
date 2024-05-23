@@ -55,7 +55,7 @@ class _AdminLoginState extends State<AdminLogin> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 150, top: 60, bottom: 50),
+                  padding: EdgeInsets.only(left: 150, top: 30, bottom: 50),
                   child: _LoginTitle(),
                 ),
                 _adminIcon(),
@@ -204,7 +204,7 @@ class _AdminLoginState extends State<AdminLogin> {
               ),
             ),
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 15),
           Text(
             "Password",
             style: TextStyle(
@@ -247,7 +247,7 @@ class _AdminLoginState extends State<AdminLogin> {
               ),
             ),
           ),
-          SizedBox(height: 50),
+          SizedBox(height: 30),
         ],
       );
 

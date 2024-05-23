@@ -54,7 +54,7 @@ class _SupportLoginState extends State<SupportLogin> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 150, top: 60, bottom: 50),
+                      const EdgeInsets.only(left: 150, top: 30, bottom: 50),
                   child: _LoginTitle(),
                 ),
                 _supportAdminIcon(),
@@ -203,7 +203,7 @@ class _SupportLoginState extends State<SupportLogin> {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 15),
           const Text(
             "Password",
             style: TextStyle(
@@ -246,7 +246,7 @@ class _SupportLoginState extends State<SupportLogin> {
               ),
             ),
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 30),
         ],
       );
 
