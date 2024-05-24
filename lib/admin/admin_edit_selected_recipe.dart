@@ -457,43 +457,49 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
       color: Colors.white,
       child: ListTile(
         title: Padding(
-          padding: const EdgeInsets.all(20),
+          padding:
+              const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color.fromARGB(255, 196, 155, 175),
-                ),
-                child: Center(
-                  child: Text(
-                    '$stepNumber',
-                    style: const TextStyle(
-                      fontFamily: "Lexend Exa",
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
+              Row(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromARGB(255, 196, 155, 175),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$stepNumber',
+                        style: const TextStyle(
+                          fontFamily: "Lexend Exa",
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              Text(
-                'Step $stepNumber',
-                style: const TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 40,
-                  fontWeight: FontWeight.w500,
-                ),
+                  const SizedBox(width: 20),
+                  Text(
+                    'Step $stepNumber',
+                    style: TextStyle(
+                      fontFamily: "Lexend Exa",
+                      fontSize: 40,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
               IconButton(
                 onPressed: () {
                   _deleteStep(context, stepNumber - 1);
                 },
                 icon: const Icon(Icons.remove_circle_rounded),
-                iconSize: 50,
+                iconSize: 55,
                 color: Colors.red[600],
               ),
             ],
