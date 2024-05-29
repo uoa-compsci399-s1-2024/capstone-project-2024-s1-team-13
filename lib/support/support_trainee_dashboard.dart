@@ -378,7 +378,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                 Padding(
                   padding: EdgeInsets.only(left: 50, bottom: 10),
                   child: Text(
-                    "Progress",
+                    "Recent Task",
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontFamily: 'Lexend Exa',
@@ -389,8 +389,8 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 50, right: 50, top: 20, bottom: 20),
+                  padding:
+                      const EdgeInsets.only(left: 50, right: 50, bottom: 20),
                   child: _buildProgressCard(
                     context,
                     selectedTask != null ? selectedTask!.taskProgress : '0.0',
@@ -399,7 +399,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                         : "No Current Task",
                   ),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 20),
                 Padding(
                   padding: EdgeInsets.only(left: 50),
                   child: Text(
@@ -414,7 +414,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                   ),
                 ),
                 _traineeNoteCard(context, "Trainee Note"),
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 _taskNotes(context, generalNote),
               ],
             ),
@@ -438,7 +438,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   Widget _traineeNoteCard(BuildContext context, String title) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
+        padding: EdgeInsets.only(left: 50, right: 50, top: 10, bottom: 20),
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
@@ -576,8 +576,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
             }));
           },
           child: Padding(
-            padding:
-                const EdgeInsets.only(left: 50, right: 50, top: 20, bottom: 20),
+            padding: const EdgeInsets.only(left: 50, right: 50),
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: 190, // Start with a fixed height
