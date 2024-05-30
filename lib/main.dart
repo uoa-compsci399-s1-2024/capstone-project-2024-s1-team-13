@@ -16,13 +16,6 @@ void main() {
     DeviceOrientation.portraitUp,
   ]);
 
-
-  //EXAMPLE COMMENT
-
-  //wow
-
-  /// Please update theme as per your need if required.
-
   runApp(const MyApp());
 }
 
@@ -34,21 +27,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
     configureAmplify();
   }
 
-   // Configure Amplify
+  // Configure Amplify
   Future<void> configureAmplify() async {
     final api = AmplifyAPI(modelProvider: ModelProvider.instance);
     final storage = AmplifyStorageS3();
-    final auth = AmplifyAuthCognito(); 
-    
+    final auth = AmplifyAuthCognito();
+
     await Amplify.addPlugins([api, storage, auth]);
-    
 
     try {
       await Amplify.configure(amplifyconfig);
@@ -56,34 +47,26 @@ class _MyAppState extends State<MyApp> {
       safePrint('An error occurred configuring Amplify: $e');
     }
 
-     @override
+    @override
     State<StatefulWidget> createState() {
       // TODO: implement createState
       throw UnimplementedError();
     }
   }
 
-  
-
-
-  
-
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Inka Test',
+        title: 'Inka',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
 
             // App bar theme
             appBarTheme: const AppBarTheme(
                 toolbarHeight: 100,
-                elevation: 10, // No elevation?
+                elevation: 10,
                 foregroundColor: Colors.white,
-                backgroundColor: Color.fromARGB(
-                    255, 219, 75, 72), // This red does not look the same?
+                backgroundColor: Color.fromARGB(255, 219, 75, 72),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(50),
@@ -96,7 +79,6 @@ class _MyAppState extends State<MyApp> {
             // Bottom navigation bar theme
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
                 backgroundColor: const Color.fromARGB(255, 250, 250, 250),
-                elevation: 10, // No elevation?
 
                 // Theme for selected icon and labels
                 selectedLabelStyle: TextStyle(
@@ -108,6 +90,7 @@ class _MyAppState extends State<MyApp> {
                   color: Colors.pink[900],
                   size: 50,
                 ),
+                selectedItemColor: Colors.pink[900],
 
                 // Theme for unselected icon and labels
                 unselectedLabelStyle: const TextStyle(
@@ -122,8 +105,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
-//start of checking
 class SignInScreen extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -135,7 +116,6 @@ class SignInScreen extends StatelessWidget {
         password: _passwordController.text.trim(),
       );
       if (result.isSignedIn) {
-        // User is signed in, navigate to the next screen
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return SupportSelectTrainee(title: 'Select Trainee');
         }));
@@ -200,7 +180,6 @@ class _SplashScreenState extends State<Welcome> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.white,
-        child: Image.asset('assets/images/inka_logo.png'));
+        color: Colors.white, child: Image.asset('assets/images/inka_logo.png'));
   }
 }
