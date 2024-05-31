@@ -53,19 +53,28 @@
     <li><a href="#role-delegations">Role Delegations</a></li>
     <li><a href="#project-information">Project Information</a></li>
     <li><a href="#all-of-the-technologies-used">All of the technologies used</a></li>
+    <li><a href="#languages-used">Languages Used</a></li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#installation-guide">Installation Guide</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#flutter-installation">Flutter installation</a></li>
+        <li><a href="#amplify-cli-intallation-or-update">Amplify CLI intallation or Update</a></li>
+        <li><a href="#vscode-installation">VSCode installation</a></li>
+        <li><a href="#simulator-installation">Simulator installation</a></li>
+        <ul>
+          <li><a href="#requirements-for-macos">Requirements for MacOS</a></li>
+          <li><a href="#requirements-for-windows">Requirements for Windows</a></li>
+          </ul>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <li><a href="#amplify-cli-command-lines">Amplify CLI Command Lines</a></li>
+    <li><a href="#github-clone-command-line">Github Clone Command Line</a></li>
+    <li><a href="#aws-set-up-documentation">AWS Set-up Documentation</a></li>
+    <li><a href="#link-to-video-demo">Link to Video Demo</a></li>
+    <li><a href="#disclaimer">Disclaimer</a></li>
+    <li><a href="#functions-and-test-cases">Functions and Test Cases</a></li>
+    <li><a href="#future-plans">Future Plans</a></li>
+    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
@@ -96,12 +105,10 @@ Inkā is a one-stop shop for Te Tuhi Cafe employees, both admin and support, to 
 Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [CS399 Google Drive folder](https://drive.google.com/drive/folders/1-gizh0ax6PdQrp2FK9bT6ZF-qECF2oGU?usp=drive_link). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
 
 
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-### All of the technologies used
+## All of the technologies used
 
 * [![AWS Amplify][Aws-amplify]][Aws-amplify-url] 
     * [![Amplify CLI][Amplify-cli]][Amplify-cli-url]  <sup>version 12.11.0</sup>
@@ -111,7 +118,6 @@ Additionally, our client meetings were transcripted by Eisen Belleza which was s
     * [![Flutter SDK][Flutter-sdk]][Fluttersdk-url] <sup>version >=3.3.3 <4.0.0>
 * [![Jira][Jira]][Jira-url]
 * [![LucidChart][LucidChart]][LucidChart-url]
-* [![GraphQL][GraphQL]][GraphQL-url]
 * [![GitHub][GitHub]][GitHub-url]
 * [![Figma][Figma]][Figma-url]
 * [![Xcode Simulator][Xcode-simulator]][Xcode-url] <sup>(macOS) version version 15.3>
@@ -120,115 +126,176 @@ Additionally, our client meetings were transcripted by Eisen Belleza which was s
 * [![VSCode][VSCode]][VSCode-url] <sup>version 1.82.2</sup>
 * [![Discord][Discord]][Discord-url]
 * [![Ruby][Ruby]][Ruby-url] <sup> (for cocoapods) version 3.3.0</sup>
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Languages Used
+* [![GraphQL][GraphQL]][GraphQL-url]
+* [![Dart][Dart]][Dart-url]
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- GETTING STARTED -->
-## Getting Started
+## Installation Guide
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To use Inkā, follow these steps in order to set it up.
 
-### Prerequisites
+### Front end and Backend Installation
+Please make sure that you have the following software listed below installed in your environment before cloning our repository.
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
+Required Software for both
+- Flutter 
+- Amplify Client
+- Visual Studio Code
+- Simulator
+
+#### Flutter installation
+Follow this [documentation](https://docs.flutter.dev/get-started/install) and choose either macOS or Windows depending on your OS and then choose FlutterIOS to set it up 
+
+Run the following command line in terminal to resolve any dependencies
+```
+flutter pub get
+```
+Run the following command line in terminal to verify installation of all components.
+```
+flutter doctor
+```
+
+#### Amplify CLI intallation or Update
+Follow this [documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and choose either macOS or Windows depending on your OS
+
+#### VSCode installation
+Follow this [documentation](https://code.visualstudio.com/Download ) and choose either macOS or Windows depending on your OS
+
+#### Simulator installation 
+
+For Mac Users
+- Cocoapods
+- XCode (you can download this from the AppStore)
+- Ruby
+  
+For Windows Users
+- Android Studio
+
+##### Requirements for MacOS
+* Cocoapods
+  * Put the following code in the command line
+    ```
+    sudo gem install cocoapods
+    ```
+  * Follow the rest of the commands in this [documentation](https://docs.flutter.dev/get-started/install/macos/mobile-ios?tab=vscode) under the Install Cocoapods heading
+* XCode installation
+  * Download and install XCode from the app store
+  * To configure, run the following command line
   ```
+  sudo sh -c 'xcode-select -s /Applications/Xcode.app/Contents/Developer && xcodebuild -runFirstLaunch'
+  ```
+  * Then sign the Xcode license
+  ```
+  sudo xcodebuild -license
+  ```
+  * To run your Flutter app, follow the steps in [this documentation](https://docs.flutter.dev/get-started/install/macos/mobile-ios?tab=vscode) under  Configure you iOS simulator heading
+* Ruby installation
+  * The default Ruby installation can be used for MacOS
+  * Make sure to [install Homebrew ](https://docs.brew.sh/Installation )in not already installed
+  * Put the following code in the command line
+    ```
+    brew install ruby
+    ```
+  * Follow the rest of the commands in this [documentation](https://www.ruby-lang.org/en/documentation/installation/)
 
-### Installation
+##### Requirements for Windows
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+Android Studio installation:
+Follow this [documentation](https://developer.android.com/studio) and choose either macOS or Windows depending on your OS
+* Update the version in the this line inside the file (android > settings.gradle)
+  * `id "org.jetbrains.kotlin.android" version "1.8.10"`
+  * The version will be dependent on what is the latest. However, the terminal will indicate which version you should be running if this version is no longer compatible. 1.8.10 was the current version during this time.
+* Update the sdkVersion in this line inside the file (android > app > build.gradle)
+* `compileSdkVersion 34`
+* `minSdkVersion 24`
+* The version will be dependent on what is the latest. However, the terminal will indicate which version you should be running if this version is no longer compatible. 24 and 34 were the current version during this time.
+
+
+After you have installed and configured the aforementioned services, simply clone our repository either in a terminal or on GitHub itself. 
+
+Once you have a clone of our repository, open up Visual Studio Code and open the extracted file.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Amplify CLI Command Lines
+If there is no “Models” folder inside /lib, use this command line to generate data models inside your Flutter project: 
+```
+amplify codegen models
+```
+To pull and connect the Amplify project into your Flutter project, use this command line: 
+```amplify pull [generated-amplify-name]```
+You can copy-paste this command line from Amplify Studio itself at the dashboard on the website as the generated-amplify-name is unique but is not human-friendly to remember.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Github Clone Command Line
+[insert our GitHub clone cmd]
+
+### AWS Set-up Documentation
+We have included an AWS [documentation](https://docs.google.com/document/d/17ZWbsLJndr8A0jwiOuvkP9uwAZ9P8AkxaGnu-Ex6398/edit) to help with setting up the project on AWS. Please refer to this document when initialising a new Amplify project. We have included screenshots inside the document as a reference if you are unable to proceed to the next instruction. 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Link to Video Demo
+[link goes here]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Disclaimer
+Inside the backend folder in Amplify, all of the functions are empty since our backend functions are included on the frontend screens. We were unable to connect Amplify and Lambda. 
+
+For the data models, we are not making use of the CurrTask table. 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Functions and Test Cases
+The core functionalities of this application are evaluating trainees etc.
+
+This is an example of the test case. 
+
+[insert image here]
+
+For a more thorough explanation of the test cases made, this is the link for the Inkā Test Case [Documentation](https://docs.google.com/document/d/1XAhk4qNIOTb1GPFFwL1Eew_QfBtGGWhFafHnu6uACUM/edit?usp=sharing). 
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Future Plans
+* Logging
+  If any changes are made to the system e.g. adding/editing/deleting/archiving, it would be handy for the cafe to have a history log, showing exactly what the changes were, in the case that something needed to be reviewed. If the user requests a log report, this can be sent directly to an email connected to the account
+* Exporting
+  Based on the trainee’s sessions and their progress, if the cafe would like to download their work in either pdf or excel format, they would have this option. Or if they would like to see the sessions in a monthly format to help the support workers to see the training in a different and more consolidated way. 
+* Distribution of the application
+  During the duration of the project there were conversations about how this application could be used in different countries. It would be beneficial for the cafe, if we could implement something that ensured that the different cafes could have different applications with no information from the separate cafes, for example, they would start with a whole new application and build that from the ground up. 
+* Customisation
+  We could include a customisation feature where If the clients would like to change the theme, or customize the application specific to the trainee , then it would be saved within the specific trainee’s profile.
+
+* Extra Aesthetics
+  * Distinction in background for support and admin
+  * An information button for new users who are unsure of the functionalities
+  * Auto correct function
+  * Time out the session if exceeding a long period of time or a message pop up asking if a session continuance is required - determine whether there needs to be a session limit (something the cafe can configure)
+  * To maximise screen space, we can move the navigation bar at the bottom and create a burger menu for this
+  * In the event that the app crashes, the application should retain the information, like a cache memory stored locally on the iPad and then this will be loaded once the app restarts
+  * Should be more obvious which trainee is being evaluated or trained - with the name at the top of the screen
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Acknowledgements
+
+We want to give a shout out to Osama our tutor for the guidance and reassurance, to Anna for encouraging us and getting just as excited as us about the project.
+
+We appreciate the Amplify Documentation pages, YouTube videos and other documentation which helped the team in troubleshooting and learning the ins and outs of parts of the project
+
+We want to thank the clients for giving us an impactful real world experience and for the feedback they provided which helped us grow both professionally and personally.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTACT -->
-## Contact
-
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -252,6 +319,8 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [LucidChart-url]: https://www.lucidchart.com/
 [GraphQL]: https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white
 [GraphQL-url]: https://graphql.org/
+[Dart]: https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white
+[Dart-url]: https://dart.dev/
 [GitHub]: https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white
 [GitHub-url]: https://github.com/
 [Figma]: https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white
@@ -269,32 +338,3 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Ruby]: https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white
 [Ruby-url]: https://www.ruby-lang.org/en/
 
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
