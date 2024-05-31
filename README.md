@@ -29,11 +29,15 @@
       <img src="assets/images/inka_white_bg_2.svg" alt="Logo" width="300"  >
   </a>
 
-  <p align="left">
+  <p align="middle">
         <br />
-      Te Tuhi Disability Training Cafe platform for Trainees
+      Te Tuhi Disability Training Cafe platform for Trainees 
     <!-- <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a> -->
     <br />
+    <br />
+    Damsels in Development are five Computer Science students that have taken papers such as CS230, CS335, and CS345. These papers have given us the proper knowledge and skills in order to develop Inkā.
+    <br /><br />
+    <r
     <br />
     <a href="https://github.com/github_username/repo_name">View Demo</a>
     ·
@@ -46,6 +50,8 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="#role-delegations">Role Delegations</a></li>
+    <li><a href="#project-information">Project Information</a></li>
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
