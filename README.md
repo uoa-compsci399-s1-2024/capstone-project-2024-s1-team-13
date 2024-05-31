@@ -52,12 +52,7 @@
   <ol>
     <li><a href="#role-delegations">Role Delegations</a></li>
     <li><a href="#project-information">Project Information</a></li>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
+    <li><a href="#all-of-the-technologies-used">All of the technologies used</a></li>
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
@@ -78,8 +73,6 @@
 
 <!-- ABOUT THE PROJECT -->
 ## Role Delegations
-
-Damsels in Development are five different Computer Science students that have taken papers such as CS230, CS335 and CS345. These papers have given us proper knowledge and skills in order to develop Inkā.
 
 Frontend Team
 - Saacha Moyo - Frontend and UI/UX Developer/ Team Leader
@@ -103,20 +96,30 @@ Inkā is a one-stop shop for Te Tuhi Cafe employees, both admin and support, to 
 Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [CS399 Google Drive folder](https://drive.google.com/drive/folders/1-gizh0ax6PdQrp2FK9bT6ZF-qECF2oGU?usp=drive_link). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
 
 
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-### Built With
+### All of the technologies used
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
-
+* [![AWS Amplify][Aws-amplify]][Aws-amplify-url] 
+    * [![Amplify CLI][Amplify-cli]][Amplify-cli-url]  <sup>version 12.11.0</sup>
+    * [![AWS S3][AWS-S3]][AWS-S3-url] <sup>version ^1.0.0</sup>
+    * [![AWS Cognito][AWS-Cognito]][AWS-Cognito-url] <sup>version ^1.8.0</sup>
+* [![Flutter][Flutter]][Flutter-url] <sup>version version 1.0.0+1</sup>
+    * [![Flutter SDK][Flutter-sdk]][Fluttersdk-url] <sup>version >=3.3.3 <4.0.0>
+* [![Jira][Jira]][Jira-url]
+* [![LucidChart][LucidChart]][LucidChart-url]
+* [![GraphQL][GraphQL]][GraphQL-url]
+* [![GitHub][GitHub]][GitHub-url]
+* [![Figma][Figma]][Figma-url]
+* [![Xcode Simulator][Xcode-simulator]][Xcode-url] <sup>(macOS) version version 15.3>
+* [![Android Studio][Android-Studio]][Android-Studio-url] <sup>(macOS) version version ....... need to add>
+* [![Cocoapods][Cocoapods]][Cocoapods-url] <sup>version 1.15.2</sup>
+* [![VSCode][VSCode]][VSCode-url] <sup>version 1.82.2</sup>
+* [![Discord][Discord]][Discord-url]
+* [![Ruby][Ruby]][Ruby-url] <sup> (for cocoapods) version 3.3.0</sup>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -231,6 +234,41 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[Aws-amplify]: https://img.shields.io/badge/Aws_amplify-FF9900?style=for-the-badge&logo=aws-amplify&logoColor=white
+[Aws-amplify-url]: https://docs.amplify.aws/
+[Amplify-cli]: https://img.shields.io/badge/Amplify_CLI-FF9900?style=for-the-badge&logo=aws-amplify&logoColor=white
+[Amplify-cli-url]: https://docs.amplify.aws/cli/
+[AWS-S3]: https://img.shields.io/badge/AWS_S3-569A31?style=for-the-badge&logo=amazon-s3&logoColor=white
+[AWS-S3-url]: https://aws.amazon.com/s3/
+[AWS-Cognito]: https://img.shields.io/badge/AWS_Cognito-FF9900?style=for-the-badge&logo=aws-cognito&logoColor=white
+[AWS-Cognito-url]: https://aws.amazon.com/cognito/
+[Flutter]: https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white
+[Flutter-url]: https://flutter.dev/
+[Flutter-sdk]: https://img.shields.io/badge/Flutter_SDK-02569B?style=for-the-badge&logo=flutter&logoColor=white
+[Fluttersdk-url]: https://docs.flutter.dev/tools/sdk
+[Jira]: https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=jira&logoColor=white
+[Jira-url]: https://www.atlassian.com/software/jira
+[LucidChart]: https://img.shields.io/badge/LucidChart-FC7335?style=for-the-badge&logo=lucidchart&logoColor=white
+[LucidChart-url]: https://www.lucidchart.com/
+[GraphQL]: https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white
+[GraphQL-url]: https://graphql.org/
+[GitHub]: https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white
+[GitHub-url]: https://github.com/
+[Figma]: https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white
+[Figma-url]: https://www.figma.com/
+[Xcode-simulator]: https://img.shields.io/badge/Xcode-1575F9?style=for-the-badge&logo=xcode&logoColor=white
+[Xcode-url]: https://developer.apple.com/xcode/
+[Android-Studio]: https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white
+[Android-Studio-url]: https://developer.android.com/studio
+[Cocoapods]: https://img.shields.io/badge/Cocoapods-EE3322?style=for-the-badge&logo=cocoapods&logoColor=white
+[Cocoapods-url]: https://cocoapods.org/
+[VSCode]: https://img.shields.io/badge/VSCode-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white
+[VSCode-url]: https://code.visualstudio.com/
+[Discord]: https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white
+[Discord-url]: https://discord.com/
+[Ruby]: https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white
+[Ruby-url]: https://www.ruby-lang.org/en/
+
 [contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
 [contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
