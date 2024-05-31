@@ -71,14 +71,33 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## Role Delegations
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+Damsels in Development are five different Computer Science students that have taken papers such as CS230, CS335 and CS345. These papers have given us proper knowledge and skills in order to develop Inkā.
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+Frontend Team
+- Saacha Moyo - Frontend and UI/UX Developer/ Team Leader
+  
+Full Stack Team
+- Istefat Sawda - Full Stack Developer
+- Zainab Shehzad - Full Stack Developer
+  
+Backend Team
+- Natania Thomas - Security Engineer/Project Manager
+- Eisen Belleza - Backend Developer
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
+## Project Information
+
+Inkā is a one-stop shop for Te Tuhi Cafe employees, both admin and support, to create and track progress of their trainees. Additionally, any of the tasks and recipes that is used inside the cafe are ....
+
+[Jira Software](https://capstone-cs-399.atlassian.net/jira/software/projects/CAPSTONE/boards/1?atlOrigin=eyJpIjoiMDM0ZDMyZmQ3OTZiNGMzODg4YmJlODAyNmU3MGI3ZjMiLCJwIjoiaiJ9) was our primary project management tool, and we utilised [Click up](https://app.clickup.com/9016213572/v/li/901601710023) to plan out the project timeline. 
+Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [CS399 Google Drive folder](https://drive.google.com/drive/folders/1-gizh0ax6PdQrp2FK9bT6ZF-qECF2oGU?usp=drive_link). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 ### Built With
