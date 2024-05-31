@@ -237,6 +237,10 @@ You can copy-paste this command line from Amplify Studio itself at the dashboard
 
 ## Github Clone Command Line
 [insert our GitHub clone cmd]
+```
+git clone https://github.com/uoa-compsci399-s1-2024/capstone-project-2024-s1-team-13
+
+```
 
 ### AWS Set-up Documentation
 We have included an AWS [documentation](https://docs.google.com/document/d/17ZWbsLJndr8A0jwiOuvkP9uwAZ9P8AkxaGnu-Ex6398/edit) to help with setting up the project on AWS. Please refer to this document when initialising a new Amplify project. We have included screenshots inside the document as a reference if you are unable to proceed to the next instruction. 
