@@ -84,7 +84,7 @@
 ## Role Delegations
 
 Frontend Team
-- Saacha Moyo - Frontend and UI/UX Developer/ Team Leader
+- Saacha Moyo - Frontend and UI/UX Developer/Team Leader
   
 Full Stack Team
 - Istefat Sawda - Full Stack Developer
@@ -208,14 +208,19 @@ For Windows Users
 ##### Requirements for Windows
 
 Android Studio installation:
-Follow this [documentation](https://developer.android.com/studio) and choose either macOS or Windows depending on your OS
+
+Follow the [documentation](https://developer.android.com/studio) for any questions outside of the given installation guide below.
 * Update the version in the this line inside the file (android > settings.gradle)
   * `id "org.jetbrains.kotlin.android" version "1.8.10"`
   * The version will be dependent on what is the latest. However, the terminal will indicate which version you should be running if this version is no longer compatible. 1.8.10 was the current version during this time.
 * Update the sdkVersion in this line inside the file (android > app > build.gradle)
-* `compileSdkVersion 34`
-* `minSdkVersion 24`
-* The version will be dependent on what is the latest. However, the terminal will indicate which version you should be running if this version is no longer compatible. 24 and 34 were the current version during this time.
+  * `compileSdkVersion 34`
+  * `minSdkVersion 24`
+  * The version will be dependent on what is the latest. However, the terminal will indicate which version you should be running if this version is no longer compatible. 24 and 34 were the current version during this time.
+* Check to make sure that the file path for the Android Emulator is correct in your VSC settings. 
+  * To see file path in Android Studio (Settings > Languages and Frameworks > Android SDK). Android SDK Location is shown at the very top.
+  * To see file path in VSC (Settings > type in ‘android’ in the search bar). Emulator Path is shown at the third line.
+  * Emulator Path should be the file path as shown in the Android Studio. If the path is incorrect, copy and paste the file path from Android Studio into VSC.
 
 
 After you have installed and configured the aforementioned services, simply clone our repository either in a terminal or on GitHub itself. 
