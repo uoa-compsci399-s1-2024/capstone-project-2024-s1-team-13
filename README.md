@@ -123,11 +123,11 @@ Additionally, our client meetings were transcripted by Eisen Belleza which was s
 * [![GitHub][GitHub]][GitHub-url]
 * [![Figma][Figma]][Figma-url]
 * [![Xcode Simulator][Xcode-simulator]][Xcode-url] <sup>(macOS) version version 15.3
-* [![Android Studio][Android-Studio]][Android-Studio-url] <sup>(macOS) version Iguana | 2023.2.1
-* [![Cocoapods][Cocoapods]][Cocoapods-url] <sup>version 1.15.2</sup>
+* [![Android Studio][Android-Studio]][Android-Studio-url] <sup>(Windows) version Iguana | 2023.2.1
+* [![Cocoapods][Cocoapods]][Cocoapods-url] <sup>(macOS)version 1.15.2</sup>
 * [![VSCode][VSCode]][VSCode-url] <sup>version 1.82.2</sup>
 * [![Discord][Discord]][Discord-url]
-* [![Ruby][Ruby]][Ruby-url] <sup> (for cocoapods) version 3.3.0</sup>
+* [![Ruby][Ruby]][Ruby-url] <sup> (for Cocoapods) version 3.3.0</sup>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
