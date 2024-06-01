@@ -268,8 +268,12 @@ There is a summary of the core functionalities of the app below:
 <div style="display: flex; justify-content: space-around; gap: 30px;">
     <img src="documentation/core%20functionality%20images/4.png" alt="Support Worker Evaluation" width="200"/>
     <img src="documentation/core%20functionality%20images/2.png" alt="Support Worker Dashboard" width="200"/>
+    <img src="documentation/core%20functionality%20images/task_feeling.png" alt="Support Worker Task Feeling" width="200"/>
+
 </br>
-    <img src="documentation/core%20functionality%20images/task_progress.png" alt="Support Worker Progress" width="400" height "410"/>
+    <img src="documentation/core%20functionality%20images/task_progress.png" alt="Support Worker Progress" width="400" height= "300"/>
+    <img src="documentation/core%20functionality%20images/task_notes_filter.png" alt="Support Worker Task Notes" width="200" height= "300"/>
+
 </div>
 
  -   **Admins:** Have broader access to manipulate all data, including trainee progress, but cannot evaluate trainees.
@@ -283,8 +287,10 @@ There is a summary of the core functionalities of the app below:
 <br /><br />
 
 - **Training Modules:** Accessible without login, allowing trainees to go through task/recipe steps using cue cards and a text-to-speech option.
-<div style="display: flex; justify-content: center;">
-    <img src="documentation/core%20functionality%20images/1.png" alt="Training module task" width="200"/>
+<div style="display: flex; justify-content: center; gap: 50px;">
+    <img src="documentation/core%20functionality%20images/1.png" alt="Training module cue card" width="200"/>
+    <img src="documentation/core%20functionality%20images/training_modules_task.png" alt="Training module task" width="200"/>
+
 </div>
 
 
