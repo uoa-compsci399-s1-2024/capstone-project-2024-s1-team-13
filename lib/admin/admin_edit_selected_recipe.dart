@@ -164,23 +164,25 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
     }
   }
 
+  
   void deleteStep(int index) {
-    if (index >= 0 && index < recipeSteps.length) {
-      setState(() {
-        recipeSteps.removeAt(index);
-      });
-    } else {
-      safePrint('Invalid index!: $index');
-    }
+  if (index >= 0 && index < recipeSteps.length) {
+    setState(() {
+      recipeStepImages.removeAt(index);
+      recipeSteps.removeAt(index);
+    });
+  } else {
+    safePrint('Invalid index!: $index');
   }
+}
 
   Future<void> _refresh() async {
-    setState(() {
-      recipeSteps = recipeSteps;
-      safePrint('THIS IS THE NEW: $recipeSteps');
-    });
-  }
-
+  setState(() {
+    // No need to set recipeSteps = recipeSteps;
+    // Just calling setState will rebuild the UI with the updated list
+    safePrint('THIS IS THE NEW: $recipeSteps');
+  });
+}
   //FRONTEND
   @override
   Widget build(BuildContext context) {
@@ -301,36 +303,63 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
         ),
 
         // Grid View
-        body: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Padding(
-                  padding: const EdgeInsets.all(25), child: _RecipeTitle()),
+        body: RefreshIndicator(
+  onRefresh: _refresh,
+  child: Column(
+    children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
             ),
-            const SizedBox(height: 30),
-            Expanded(
-                child: ListView.builder(
-              itemCount: recipeSteps.length,
-              itemBuilder: (context, index) {
-                return _StepCard(context, recipeSteps[index], index + 1);
-              },
-            )),
-            const SizedBox(height: 20),
-            _AddStepButton(),
-            const SizedBox(height: 30)
           ],
-        ));
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: _RecipeTitle(),
+        ),
+      ),
+      const SizedBox(height: 30),
+      Expanded(
+  child: ReorderableListView.builder(
+    itemCount: recipeSteps.length,
+    itemBuilder: (context, index) {
+      final stepKey = ValueKey<String>('step_$index');
+      return _StepCard(
+        context,
+        recipeSteps[index],
+        index + 1,
+        key: stepKey, // Pass the key here
+      );
+    },
+    onReorder: (oldIndex, newIndex) {
+      setState(() {
+        if (newIndex > oldIndex) {
+          newIndex -= 1;
+        }
+        final step = recipeSteps.removeAt(oldIndex);
+        recipeSteps.insert(newIndex, step);
+
+        final stepImage = recipeStepImages.removeAt(oldIndex);
+        recipeStepImages.insert(newIndex, stepImage);
+      });
+    },
+  ),
+),
+
+
+      const SizedBox(height: 20),
+      _AddStepButton(),
+      const SizedBox(height: 30)
+    ],
+  ),
+)
+);
   }
 
   // Task Title - text form field and image
@@ -446,72 +475,74 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
       );
 
   // Step Card
-  Widget _StepCard(BuildContext context, String step, int stepNumber) {
-    String? stepImageKey = recipeStepImages.length >= stepNumber
-        ? recipeStepImages[stepNumber - 1]
-        : null;
-    return Card(
-      margin: const EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      elevation: 2,
-      color: Colors.white,
-      child: ListTile(
-        title: Padding(
-          padding:
-              const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromARGB(255, 196, 155, 175),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$stepNumber',
-                        style: const TextStyle(
-                          fontFamily: "Lexend Exa",
-                          fontSize: 30,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
+  Widget _StepCard(BuildContext context, String step, int stepNumber, {Key? key}) {
+  String? stepImageKey = recipeStepImages.length >= stepNumber
+      ? recipeStepImages[stepNumber - 1]
+      : null;
+  return Card(
+    key: key, // Add this line to assign a key to the Card widget
+    margin: const EdgeInsets.all(10),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+    elevation: 2,
+    color: Colors.white,
+    child: ListTile(
+      title: Padding(
+        padding:
+            const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 196, 155, 175),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$stepNumber',
+                      style: const TextStyle(
+                        fontFamily: "Lexend Exa",
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Text(
-                    'Step $stepNumber',
-                    style: TextStyle(
-                      fontFamily: "Lexend Exa",
-                      fontSize: 40,
-                      fontWeight: FontWeight.w500,
-                    ),
+                ),
+                const SizedBox(width: 20),
+                Text(
+                  'Step $stepNumber',
+                  style: TextStyle(
+                    fontFamily: "Lexend Exa",
+                    fontSize: 40,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
-              IconButton(
-                onPressed: () {
-                  _deleteStep(context, stepNumber - 1);
-                },
-                icon: const Icon(Icons.remove_circle_rounded),
-                iconSize: 55,
-                color: Colors.red[600],
-              ),
-            ],
-          ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: _stepDesc(stepNumber, stepImageKey),
+                ),
+              ],
+            ),
+            IconButton(
+              onPressed: () {
+                _deleteStep(context, stepNumber - 1);
+              },
+              icon: const Icon(Icons.remove_circle_rounded),
+              iconSize: 55,
+              color: Colors.red[600],
+            ),
+          ],
         ),
       ),
-    );
-  }
+      subtitle: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: _stepDesc(stepNumber, stepImageKey),
+      ),
+    ),
+  );
+}
+
 
   Widget _stepDesc(int stepNumber, String? stepImageKey) {
     return Row(
@@ -666,66 +697,81 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
       );
 
   void _deleteStep(BuildContext context, int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          title: const Padding(
-              padding: EdgeInsets.all(30),
-              child: Text('Are you sure you want to delete this step?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 35,
-                      fontWeight: FontWeight.w500))),
-          actionsPadding: const EdgeInsets.only(bottom: 60),
-          actions: [
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        title: const Padding(
+          padding: EdgeInsets.all(30),
+          child: Text(
+            'Are you sure you want to delete this step?',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Lexend Exa',
+              fontSize: 35,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        actionsPadding: const EdgeInsets.only(bottom: 60),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(250, 100),
-                      textStyle: const TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Lexend Exa',
-                        fontWeight: FontWeight.w500,
-                      ),
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.pink[900],
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50))),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("NO")),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(250, 100),
+                  textStyle: const TextStyle(
+                    fontSize: 30,
+                    fontFamily: 'Lexend Exa',
+                    fontWeight: FontWeight.w500,
+                  ),
+                  backgroundColor: Colors.grey[300],
+                  foregroundColor: Colors.pink[900],
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("NO"),
+              ),
               const SizedBox(width: 20),
               ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(250, 100),
-                      textStyle: const TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Lexend Exa',
-                        fontWeight: FontWeight.w500,
-                      ),
-                      backgroundColor: Colors.pink[900],
-                      foregroundColor: Colors.white,
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50))),
-                  onPressed: () {
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(250, 100),
+                  textStyle: const TextStyle(
+                    fontSize: 30,
+                    fontFamily: 'Lexend Exa',
+                    fontWeight: FontWeight.w500,
+                  ),
+                  backgroundColor: Colors.pink[900],
+                  foregroundColor: Colors.white,
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
                     deleteStep(index);
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("YES"))
-            ])
-          ],
-        );
-      },
-    );
-  }
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text("YES"),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   void errorSnackbar() {
     ScaffoldMessenger.of(context).showSnackBar(

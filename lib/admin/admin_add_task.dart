@@ -167,21 +167,21 @@ class _AdminAddTaskState extends State<AdminAddTask> {
   }
 
   void deleteStep(int index) {
-    if (index >= 0 && index < taskSteps.length) {
-      setState(() {
-        taskSteps.removeAt(index);
-      });
-    } else {
-      safePrint('Invalid index!: $index');
-    }   
+  if (index >= 0 && index < taskSteps.length) {
+    setState(() {
+      taskStepImages.removeAt(index);
+      taskSteps.removeAt(index);
+    });
+  } else {
+    safePrint('Invalid index!: $index');
   }
+}
 
   Future<void> _refresh() async {
-    setState(() {
-      taskSteps = taskSteps;
-    });
-  }
-
+  setState(() {
+    safePrint('THIS IS THE NEW: $taskSteps');
+  });
+}
   //SCREEN BUILD
   @override
   Widget build(BuildContext context) {
@@ -319,40 +319,63 @@ class _AdminAddTaskState extends State<AdminAddTask> {
       ],
 
       ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+      body: RefreshIndicator(
+          onRefresh: _refresh,
+
+      child: Column(
+    children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(25),
-              child: _TaskTitle(),
-            ),
-          ),
-          const SizedBox(height: 30),
-          Expanded(
-            child: ListView.builder(
-              itemCount: taskSteps.length, 
-              itemBuilder: (context, index) {
-                return _StepCard(context, taskSteps[index], index + 1);
-              },
-            ),
-          ),
-          const SizedBox(height: 20),
-          _AddStepButton(),
-          const SizedBox(height: 30)
-        ],
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: _TaskTitle(),
+        ),
       ),
-    );
+      const SizedBox(height: 30),
+      Expanded(
+  child: ReorderableListView.builder(
+    itemCount: taskSteps.length,
+    itemBuilder: (context, index) {
+      final stepKey = ValueKey<String>('step_$index');
+      return _StepCard(
+        context,
+        taskSteps[index],
+        index + 1,
+        key: stepKey, // Pass the key here
+      );
+    },
+    onReorder: (oldIndex, newIndex) {
+      setState(() {
+        if (newIndex > oldIndex) {
+          newIndex -= 1;
+        }
+        final step = taskSteps.removeAt(oldIndex);
+        taskSteps.insert(newIndex, step);
+
+        final stepImage = taskStepImages.removeAt(oldIndex);
+        taskStepImages.insert(newIndex, stepImage);
+      });
+    },
+  ),
+),
+
+
+      const SizedBox(height: 20),
+      _AddStepButton(),
+      const SizedBox(height: 30)
+    ],
+  ),
+    ));
   }
 
   Widget _TaskTitle() => Row(
@@ -446,73 +469,86 @@ class _AdminAddTaskState extends State<AdminAddTask> {
 );
 
 
-  Widget _StepCard(BuildContext context, String step, int stepNumber) {
-    return Card(
-      margin: const EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      elevation: 2,
-      color: Colors.white,
-      child: ListTile(
-        title: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color.fromARGB(255, 196, 155, 175),
-                ),
-                child: Center(
-                  child: Text(
-                    '$stepNumber',
-                    style: const TextStyle(
-                      fontFamily: "Lexend Exa",
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
+  Widget _StepCard(BuildContext context, String step, int stepNumber, {Key? key}) {
+  String? stepImageKey = taskStepImages.length >= stepNumber
+      ? taskStepImages[stepNumber - 1]
+      : null;
+  return Card(
+    key: key, // Add this line to assign a key to the Card widget
+    margin: const EdgeInsets.all(10),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+    elevation: 2,
+    color: Colors.white,
+    child: ListTile(
+      title: Padding(
+        padding:
+            const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 196, 155, 175),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$stepNumber',
+                      style: const TextStyle(
+                        fontFamily: "Lexend Exa",
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 20),
-              Text(
-                'Step $stepNumber',
-                style: const TextStyle(
-                  fontFamily: "Lexend Exa",
-                  fontSize: 40,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(width: 20),
+                Text(
+                  'Step $stepNumber',
+                  style: TextStyle(
+                    fontFamily: "Lexend Exa",
+                    fontSize: 40,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {
-                  _deleteStep(context, stepNumber);
-                },
-                icon: const Icon(Icons.remove_circle_rounded),
-                iconSize: 50,
-                color: Colors.red[600],
-              ),
-            ],
-          ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: _stepDesc(stepNumber),
+              ],
+            ),
+            IconButton(
+              onPressed: () {
+                _deleteStep(context, stepNumber - 1);
+              },
+              icon: const Icon(Icons.remove_circle_rounded),
+              iconSize: 55,
+              color: Colors.red[600],
+            ),
+          ],
         ),
       ),
-    );
-  }
+      subtitle: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: _stepDesc(stepNumber, stepImageKey),
+      ),
+    ),
+  );
+}
 
-  Widget _stepDesc(int stepNumber) {
+
+  Widget _stepDesc(int stepNumber, String? stepImageKey) {
     return Row(
       children: [
         Expanded(
           child: TextFormField(
-            initialValue: taskSteps[stepNumber - 1],
+            initialValue: taskSteps[
+                stepNumber - 1], // Set initial value based on step text
             onChanged: (value) {
               setState(() {
-                taskSteps[stepNumber - 1] = value;
+                taskSteps[stepNumber - 1] =
+                    value; // Update step text in the data structure
               });
             },
             maxLines: 4,
@@ -522,7 +558,8 @@ class _AdminAddTaskState extends State<AdminAddTask> {
               fontWeight: FontWeight.w500,
             ),
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
               filled: true,
               fillColor: Colors.grey[300],
               hintText: "Enter instruction",
@@ -541,52 +578,77 @@ class _AdminAddTaskState extends State<AdminAddTask> {
         ),
         const SizedBox(width: 20),
         InkWell(
-        onTap: () async {
-          String? key = await uploadStepImage(stepNumber);
-          if (key != null) {
-            setState(() {
-              if (taskStepImages.length >= stepNumber) {
-                taskStepImages[stepNumber - 1] = key;
-              } else {
-                taskStepImages.add(key);
-              }
-            });
-          }
-        },
-        child: Stack(
-          children: [
-            Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35),
-                color: Colors.grey[300],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(35),
-                child: taskStepImages.length >= stepNumber && taskStepImages[stepNumber - 1] != null
-                    ? FutureBuilder<String>(
-                        future: getDownloadUrl(key: taskStepImages[stepNumber - 1]!, accessLevel: StorageAccessLevel.guest),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(child: Text('Error: ${snapshot.error}'));
-                          } else {
-                            return Image.network(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
-                            );
-                          }
-                        },
-                      )
-                    : Center(
-                        child: Icon(
-                          Icons.add_a_photo,
-                          size: 40,
-                          color: Colors.grey[600],
+          onTap: () async {
+            String? url = await uploadStepImage(stepNumber);
+            if (url != null) {
+              setState(() {
+                if (taskStepImages.length >= stepNumber) {
+                  taskStepImages[stepNumber - 1] = url;
+                } else {
+                  taskStepImages.add(url);
+                }
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50))),
+                    elevation: 10,
+                    content: Text(
+                      'Error uploading image!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Lexend Exa',
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.pink[900]),
+                    )),
+              );
+            }
+          },
+          child: Stack(
+            children: [
+              Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(35),
+                  color: Colors.grey[300],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(35),
+                  child: taskStepImages.length >= stepNumber &&
+                          taskStepImages[stepNumber - 1] != null
+                      ? FutureBuilder<String>(
+                          future: getDownloadUrl(
+                              key: taskStepImages[stepNumber - 1]!,
+                              accessLevel: StorageAccessLevel.guest),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            } else {
+                              return Image.network(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                              );
+                            }
+                          },
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.add_a_photo,
+                            size: 40,
+                            color: Colors.grey[600],
+                          ),
                         ),
-                      ),
                 ),
               ),
               Positioned(
@@ -604,6 +666,7 @@ class _AdminAddTaskState extends State<AdminAddTask> {
       ],
     );
   }
+
 
   Widget _AddStepButton() => ElevatedButton(
     onPressed: () {
@@ -681,9 +744,11 @@ class _AdminAddTaskState extends State<AdminAddTask> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50))),
                   onPressed: () {
-                    deleteStep(index-1);
-                    Navigator.of(context).pop();
-                  },
+                  setState(() {
+                    deleteStep(index);
+                  });
+                  Navigator.of(context).pop();
+                },
                   child: const Text("YES"))
             ])
           ],

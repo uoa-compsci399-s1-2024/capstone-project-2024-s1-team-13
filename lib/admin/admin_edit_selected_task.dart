@@ -167,21 +167,21 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
   }
 
   void deleteStep(int index) {
-    if (index >= 0 && index < taskSteps.length) {
-      setState(() {
-        taskSteps.removeAt(index);
-      });
-    } else {
-      safePrint('Invalid index!: $index');
-    }
+  if (index >= 0 && index < taskSteps.length) {
+    setState(() {
+      taskStepImages.removeAt(index);
+      taskSteps.removeAt(index);
+    });
+  } else {
+    safePrint('Invalid index!: $index');
   }
+}
 
   Future<void> _refresh() async {
-    setState(() {
-      taskSteps = taskSteps;
-    });
-  }
-
+  setState(() {
+    safePrint('THIS IS THE NEW: $taskSteps');
+  });
+}
   //FRONTEND
   @override
   Widget build(BuildContext context) {
@@ -324,36 +324,61 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
           ],
         ),
         // Grid View
-        body: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Padding(
-                  padding: const EdgeInsets.all(25), child: _TaskTitle()),
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+        child: Column(
+    children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
             ),
-            const SizedBox(height: 30),
-            Expanded(
-                child: ListView.builder(
-              itemCount: taskSteps.length,
-              itemBuilder: (context, index) {
-                return _StepCard(context, taskSteps[index], index + 1);
-              },
-            )),
-            const SizedBox(height: 20),
-            _AddStepButton(),
-            const SizedBox(height: 30)
           ],
-        ));
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: _TaskTitle(),
+        ),
+      ),
+      const SizedBox(height: 30),
+      Expanded(
+  child: ReorderableListView.builder(
+    itemCount: taskSteps.length,
+    itemBuilder: (context, index) {
+      final stepKey = ValueKey<String>('step_$index');
+      return _StepCard(
+        context,
+        taskSteps[index],
+        index + 1,
+        key: stepKey, // Pass the key here
+      );
+    },
+    onReorder: (oldIndex, newIndex) {
+      setState(() {
+        if (newIndex > oldIndex) {
+          newIndex -= 1;
+        }
+        final step = taskSteps.removeAt(oldIndex);
+        taskSteps.insert(newIndex, step);
+
+        final stepImage = taskStepImages.removeAt(oldIndex);
+        taskStepImages.insert(newIndex, stepImage);
+      });
+    },
+  ),
+),
+
+
+      const SizedBox(height: 20),
+      _AddStepButton(),
+      const SizedBox(height: 30)
+    ],
+  ),));
   }
 
   // Task Title - text form field and image
@@ -469,72 +494,73 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
       );
 
   // Step Card
-  Widget _StepCard(BuildContext context, String step, int stepNumber) {
-    String? stepImageKey = taskStepImages.length >= stepNumber
-        ? taskStepImages[stepNumber - 1]
-        : null;
-    return Card(
-      margin: const EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      elevation: 2,
-      color: Colors.white,
-      child: ListTile(
-        title: Padding(
-          padding:
-              const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromARGB(255, 196, 155, 175),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$stepNumber',
-                        style: const TextStyle(
-                          fontFamily: "Lexend Exa",
-                          fontSize: 30,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
+  Widget _StepCard(BuildContext context, String step, int stepNumber, {Key? key}) {
+  String? stepImageKey = taskStepImages.length >= stepNumber
+      ? taskStepImages[stepNumber - 1]
+      : null;
+  return Card(
+    key: key, // Add this line to assign a key to the Card widget
+    margin: const EdgeInsets.all(10),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+    elevation: 2,
+    color: Colors.white,
+    child: ListTile(
+      title: Padding(
+        padding:
+            const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 196, 155, 175),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$stepNumber',
+                      style: const TextStyle(
+                        fontFamily: "Lexend Exa",
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Text(
-                    'Step $stepNumber',
-                    style: const TextStyle(
-                      fontFamily: "Lexend Exa",
-                      fontSize: 40,
-                      fontWeight: FontWeight.w500,
-                    ),
+                ),
+                const SizedBox(width: 20),
+                Text(
+                  'Step $stepNumber',
+                  style: TextStyle(
+                    fontFamily: "Lexend Exa",
+                    fontSize: 40,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
-              IconButton(
-                onPressed: () {
-                  _deleteStep(context, stepNumber);
-                },
-                icon: const Icon(Icons.remove_circle_rounded),
-                iconSize: 55,
-                color: Colors.red[600],
-              ),
-            ],
-          ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: _stepDesc(stepNumber, stepImageKey),
+                ),
+              ],
+            ),
+            IconButton(
+              onPressed: () {
+                _deleteStep(context, stepNumber - 1);
+              },
+              icon: const Icon(Icons.remove_circle_rounded),
+              iconSize: 55,
+              color: Colors.red[600],
+            ),
+          ],
         ),
       ),
-    );
-  }
+      subtitle: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: _stepDesc(stepNumber, stepImageKey),
+      ),
+    ),
+  );
+}
 
   Widget _stepDesc(int stepNumber, String? stepImageKey) {
     return Row(
@@ -741,9 +767,11 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50))),
                   onPressed: () {
-                    deleteStep(index - 1);
-                    Navigator.of(context).pop();
-                  },
+                  setState(() {
+                    deleteStep(index);
+                  });
+                  Navigator.of(context).pop();
+                },
                   child: const Text("YES"))
             ])
           ],
