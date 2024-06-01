@@ -79,7 +79,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return const SupportSettings(title: 'Settings');
               }));
-            }, // To add functionality to settings
+            }, 
             iconSize: 45,
             icon: Icon(Icons.settings),
             padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -220,10 +220,10 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  color: Colors.grey.withOpacity(0.5), 
                   spreadRadius: 1, // Spread radius
                   blurRadius: 5, // Blur radius
-                  offset: Offset(0, 3), // Offset in the x and y direction
+                  offset: Offset(0, 3), 
                 ),
               ],
             ),
@@ -276,10 +276,10 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 1, // Spread radius
                   blurRadius: 5, // Blur radius
-                  offset: Offset(0, 3), // Offset in the x and y direction
+                  offset: Offset(0, 3), 
                 ),
               ],
             ),

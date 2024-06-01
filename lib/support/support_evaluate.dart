@@ -152,7 +152,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       final request = ModelQueries.get(
           Task.classType,
           TaskModelIdentifier(
-              id: taskID)); // Use ModelQuery.get to fetch a single task by ID
+              id: taskID)); 
       final response = await Amplify.API.query(request: request).response;
 
       final task = response.data;
@@ -253,7 +253,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
                   return const SupportSettings(title: 'Settings');
                 }));
               },
-              // To add functionality to settings
+  
               iconSize: 45,
               icon: Icon(Icons.settings),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -410,7 +410,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
           focusNode: focusNode,
           onChanged: _onSearchTextChanged,
           style: TextStyle(
-            fontSize: 27, // Adjust the font size here
+            fontSize: 27, 
           ),
           decoration: InputDecoration(
             prefixIcon: Padding(

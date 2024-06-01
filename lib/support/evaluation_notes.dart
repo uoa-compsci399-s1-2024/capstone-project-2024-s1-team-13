@@ -407,7 +407,6 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
   Widget _notesTextBox() => TextFormField(
         controller: _notesController,
         maxLines: 8,
-        // For getting input - mock functionality
         onChanged: (value) {
           setState(() {
             _notesController.text = value.toString();
@@ -554,5 +553,4 @@ class _EvaluationNotesState extends State<EvaluationNotes> {
       safePrint('Error creating a session: $e');
     }
   }
-  // Pop-up dialog for when addNoteButton - to add
 }

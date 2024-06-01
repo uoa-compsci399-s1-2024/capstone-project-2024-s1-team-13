@@ -60,7 +60,7 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
       final request = ModelQueries.get(
           Task.classType,
           TaskModelIdentifier(
-              id: taskID)); // Use ModelQuery.get to fetch a single task by ID
+              id: taskID)); // ModelQuery.get to fetch a single task by ID
       final response = await Amplify.API.query(request: request).response;
 
       final task = response.data;

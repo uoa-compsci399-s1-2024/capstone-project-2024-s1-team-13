@@ -356,7 +356,7 @@ class _AdminEditTraineesState extends State<AdminEditTrainees> {
           title: Padding(
               padding: const EdgeInsets.all(30),
               child: Text(
-                  'Archive ${allTrainees[index].firstName} and their details?', // Warning: This works, but throws a NoSuchMethod Error for some reason?
+                  'Archive ${allTrainees[index].firstName} and their details?', 
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontFamily: 'Lexend Exa',

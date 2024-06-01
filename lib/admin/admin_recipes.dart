@@ -295,7 +295,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
                             } else {
                               return GestureDetector(
                                 onTap: () {
-                                  // Navigate to the desired screen when a recipe card is tapped
+                                  
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -310,7 +310,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
                                   recipe.recipeTitle ??
                                       "Recipe Title Not Found",
                                   snapshot.data ??
-                                      "", // Use the URL from the snapshot
+                                      "", 
                                 ),
                               );
                             }
@@ -364,7 +364,7 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
       child: Column(
         children: [
           Container(
-            height: 260, // Set a fixed height for the image container
+            height: 260, 
             width: 400,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -398,9 +398,9 @@ class _AdminRecipesScreenState extends State<AdminRecipesScreen> {
                             fontWeight: FontWeight.w300,
                           ),
                           maxLines: 1, // Limit the text to a single line
-                          minFontSize: 10, // Set the minimum font size
+                          minFontSize: 10, 
                           overflow: TextOverflow
-                              .ellipsis, // Add ellipsis if the text overflows
+                              .ellipsis, 
                         ),
                       ),
                     )

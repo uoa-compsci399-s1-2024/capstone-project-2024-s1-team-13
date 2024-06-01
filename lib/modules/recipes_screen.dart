@@ -168,7 +168,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
           focusNode: focusNode,
           onChanged: _onSearchTextChanged,
           style: TextStyle(
-            fontSize: 27, // Adjust the font size here
+            fontSize: 27, 
           ),
           decoration: InputDecoration(
             prefixIcon: Padding(
@@ -218,7 +218,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return const ModulesSettings(title: 'Settings');
               }));
-            }, // To add functionality to settings
+            }, 
             iconSize: 45,
             icon: const Icon(Icons.settings),
             padding:
@@ -307,7 +307,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
                                   recipe.recipeTitle ??
                                       "Recipe Title Not Found",
                                   snapshot.data ??
-                                      "", // Use the URL from the snapshot
+                                      "", 
                                 ),
                               );
                             }
@@ -362,7 +362,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
         child: Column(
           children: [
             Container(
-              height: 260, // Set a fixed height for the image container
+              height: 260, 
               width: 400,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -397,9 +397,9 @@ class _RecipesScreenState extends State<RecipesScreen> {
                           fontWeight: FontWeight.w300,
                         ),
                         maxLines: 1, // Limit the text to a single line
-                        minFontSize: 10, // Set the minimum font size
+                        minFontSize: 10, 
                         overflow: TextOverflow
-                            .ellipsis, // Add ellipsis if the text overflows
+                            .ellipsis, 
                       ),
                     ),
                   ),

@@ -60,7 +60,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
       return null;
     }
 
-    // Since you're querying by ID, you expect only one task to match
+    
     return tasks[0];
   } on ApiException catch (e) {
     safePrint('Query failed: $e');
@@ -116,7 +116,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
                   return const SupportSettings(title: 'Settings');
                 }));
               },
-              // To add functionality to settings
+             
               iconSize: 45,
               icon: Icon(Icons.settings),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -141,7 +141,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
         Padding(
             padding: EdgeInsets.only(left: 50, right: 50),
             child: Text(
-                '${widget.trainee.firstName} has completed the evaluation.', // need to insert trainee name here, may need to make a trainee class, and evaluation extends trainee.
+                '${widget.trainee.firstName} has completed the evaluation.', 
                 textAlign: TextAlign.center,
                 maxLines: 5,
                 style: TextStyle(
@@ -152,7 +152,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
             padding:
                 EdgeInsets.only(left: 100, right: 100, top: 50, bottom: 50),
             child: Text(
-                "What do you think was ${widget.trainee.firstName}'s overall accuracy?", // need to insert trainee name here, may need to make a trainee class, and evaluation extends trainee.
+                "What do you think was ${widget.trainee.firstName}'s overall accuracy?", 
                 textAlign: TextAlign.center,
                 maxLines: 3,
                 style: TextStyle(
@@ -256,7 +256,6 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
 // Physical Prompt
   Widget _PPButton(context) => ElevatedButton(
       onPressed: () {
-        // pending backend functionality
         updateTaskProgress('P', widget.trainee.id);
 
 

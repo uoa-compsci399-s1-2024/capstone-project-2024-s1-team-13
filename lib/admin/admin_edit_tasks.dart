@@ -201,7 +201,6 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
                             } else {
                               return GestureDetector(
                                 onTap: () {
-                                  // Navigate to the desired screen when a task card is tapped
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -215,7 +214,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
                                 child: _buildTaskCard(
                                     task.taskTitle ?? "Task Title Not Found",
                                     snapshot.data ??
-                                        "", // Use the URL from the snapshot
+                                        "", 
                                     task.id),
                               );
                             }
@@ -339,7 +338,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
         child: Column(
           children: [
             Container(
-              height: 260, // Set a fixed height for the image container
+              height: 260, 
               width: 400,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -374,15 +373,15 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
                           fontWeight: FontWeight.w300,
                         ),
                         maxLines: 1, // Limit the text to a single line
-                        minFontSize: 10, // Set the minimum font size
+                        minFontSize: 10, 
                         overflow: TextOverflow
-                            .ellipsis, // Add ellipsis if the text overflows
+                            .ellipsis, 
                       ),
                     ),
                   ),
                   IconButton(
                     onPressed: () => deleteTaskDialog(
-                        context, currTaskId), // change this later
+                        context, currTaskId), 
                     //_deleteTask(context, mockTasks.indexOf(atask)),
                     icon: const Icon(Icons.remove_circle_rounded),
                     iconSize: 50,

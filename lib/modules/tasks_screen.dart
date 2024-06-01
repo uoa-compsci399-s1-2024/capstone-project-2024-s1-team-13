@@ -277,7 +277,7 @@ class _TasksScreenState extends State<TasksScreen> {
           focusNode: focusNode,
           onChanged: _onSearchTextChanged,
           style: TextStyle(
-            fontSize: 27, // Adjust the font size here
+            fontSize: 27, 
           ),
           decoration: InputDecoration(
             prefixIcon: Padding(
@@ -348,7 +348,7 @@ class _TasksScreenState extends State<TasksScreen> {
         child: Column(
           children: [
             Container(
-              height: 260, // Set a fixed height for the image container
+              height: 260, 
               width: 400,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -383,9 +383,9 @@ class _TasksScreenState extends State<TasksScreen> {
                           fontWeight: FontWeight.w300,
                         ),
                         maxLines: 1, // Limit the text to a single line
-                        minFontSize: 10, // Set the minimum font size
+                        minFontSize: 10, 
                         overflow: TextOverflow
-                            .ellipsis, // Add ellipsis if the text overflows
+                            .ellipsis, 
                       ),
                     ),
                   ),

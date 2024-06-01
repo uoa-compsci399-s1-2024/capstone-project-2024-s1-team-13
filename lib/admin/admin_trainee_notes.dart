@@ -164,7 +164,7 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
         // If trainee notes are available, update the state with the text of the latest note
         setState(() {
           generalNote = traineeNotes.last!
-              .noteDesc!; // Assuming 'noteDesc' is the field containing the note text
+              .noteDesc!; 
         });
       }
     } catch (e) {
@@ -389,7 +389,7 @@ class _AdminTraineeNotes extends State<AdminTraineeNotes> {
           focusNode: focusNode,
           onChanged: _onSearchTextChanged,
           style: TextStyle(
-            fontSize: 27, // Adjust the font size here
+            fontSize: 27, 
           ),
           decoration: InputDecoration(
             prefixIcon: Padding(

@@ -12,7 +12,7 @@ class SelectedRecipe extends StatefulWidget {
       {super.key, required this.title, required this.recipeId});
 
   final String title;
-  final String recipeId; // Add taskId parameter
+  final String recipeId; 
 
   @override
   // ignore: library_private_types_in_public_api
@@ -291,4 +291,3 @@ class StepScreen extends StatelessWidget {
   }
 }
 
-// Add Linear Progress Indicator somehow

@@ -12,7 +12,7 @@ import 'package:inka_test/support/support_trainee_profile.dart';
 import 'package:inka_test/support/support_trainee_progress.dart';
 import 'package:inka_test/support/support_settings.dart';
 
-//will get rid of selected task after
+
 
 class SupportTraineeDashboard extends StatefulWidget {
   // ignore: prefer_const_constructors_in_immutables
@@ -358,7 +358,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
           onRefresh: _refreshData,
           child: SingleChildScrollView(
             physics:
-                AlwaysScrollableScrollPhysics(), // Add this line to enable scrolling even when there's not enough content
+                AlwaysScrollableScrollPhysics(), 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -589,7 +589,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                     color: Colors.grey.withOpacity(0.5), // Shadow color
                     spreadRadius: 1, // Spread radius
                     blurRadius: 5, // Blur radius
-                    offset: Offset(0, 3), // Offset in the x and y direction
+                    offset: Offset(0, 3), 
                   ),
                 ],
               ),

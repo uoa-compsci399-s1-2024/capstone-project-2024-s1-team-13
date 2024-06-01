@@ -513,7 +513,6 @@ class _AdminEditSelectedRecipeState extends State<AdminEditSelectedRecipe> {
     );
   }
 
-  // Step Card helper widget - text field
   Widget _stepDesc(int stepNumber, String? stepImageKey) {
     return Row(
       children: [

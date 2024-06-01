@@ -166,7 +166,7 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
         // If trainee notes are available, update the state with the text of the latest note
         setState(() {
           generalNote = traineeNotes.last!
-              .noteDesc!; // Assuming 'noteDesc' is the field containing the note text
+              .noteDesc!; 
         });
       }
     } catch (e) {

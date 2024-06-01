@@ -62,7 +62,7 @@ class _EvaluationFeedback extends State<EvaluationFeedback> {
       return null;
     }
 
-    // Since you're querying by ID, you expect only one task to match
+    
     return tasks[0];
   } on ApiException catch (e) {
     safePrint('Query failed: $e');
@@ -151,7 +151,7 @@ Future<void> updateTaskFeeling(String newTaskFeeling, String newTraineeID) async
               fontSize: 45,
               fontWeight: FontWeight.w500)));
 
-  // Feedback Buttons  - from line 68 to 92
+  
   Widget _feedbackButtons(context) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

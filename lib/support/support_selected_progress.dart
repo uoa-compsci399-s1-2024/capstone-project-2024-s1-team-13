@@ -211,9 +211,9 @@ class _SupportSelectedProgressState extends State<SupportSelectedProgress> {
       String eval_date = '';
 
       if (sess.aSess != null && sess.aSess!.length >= 3) {
-        judgementCall = sess.aSess![2] ?? ''; // Accessing the first string in aSess
-        feedback = sess.aSess![1] ?? ''; // Accessing the second string in aSess
-        notes = sess.aSess![0] ?? ''; // Accessing the third string in aSess
+        judgementCall = sess.aSess![2] ?? ''; 
+        feedback = sess.aSess![1] ?? ''; 
+        notes = sess.aSess![0] ?? ''; 
         eval_date = sess.aSess![3] ?? '';
 
 
@@ -221,7 +221,7 @@ class _SupportSelectedProgressState extends State<SupportSelectedProgress> {
 
       return DataRow(
         cells: [
-          DataCell(Text('$sessionNumber')), // Displaying session number
+          DataCell(Text('$sessionNumber')), 
           DataCell(Text(eval_date)),
           DataCell(Text(judgementCall)),
           DataCell(Text(feedback)),
