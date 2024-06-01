@@ -99,7 +99,7 @@ Backend Team
 
 ## Project Information
 
-Our application, Inka, serves as a one-stop shop for the training programs developed by the School of Psychology at The University of Auckland, as well as other partners (Rescare Homes Trust). It functions as a platform for monitoring cafe trainee progress and fostering personalized learning experiences for trainees within the cafe environment.
+Our application, Inkā, serves as a one-stop shop for the training programs developed by the School of Psychology at The University of Auckland, as well as other partners (Rescare Homes Trust). It functions as a platform for monitoring cafe trainee progress and fostering personalized learning experiences for trainees within the cafe environment.
 
 [Jira Software](https://capstone-cs-399.atlassian.net/jira/software/projects/CAPSTONE/boards/1?atlOrigin=eyJpIjoiMDM0ZDMyZmQ3OTZiNGMzODg4YmJlODAyNmU3MGI3ZjMiLCJwIjoiaiJ9) was our primary project management tool, and we utilised [Click up](https://app.clickup.com/9016213572/v/li/901601710023) to plan out the project timeline. 
 Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [CS399 Google Drive folder](https://drive.google.com/drive/folders/1-gizh0ax6PdQrp2FK9bT6ZF-qECF2oGU?usp=drive_link). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
@@ -122,8 +122,8 @@ Additionally, our client meetings were transcripted by Eisen Belleza which was s
 * [![LucidChart][LucidChart]][LucidChart-url]
 * [![GitHub][GitHub]][GitHub-url]
 * [![Figma][Figma]][Figma-url]
-* [![Xcode Simulator][Xcode-simulator]][Xcode-url] <sup>(macOS) version version 15.3>
-* [![Android Studio][Android-Studio]][Android-Studio-url] <sup>(macOS) version version ....... need to add>
+* [![Xcode Simulator][Xcode-simulator]][Xcode-url] <sup>(macOS) version version 15.3
+* [![Android Studio][Android-Studio]][Android-Studio-url] <sup>(macOS) version Iguana | 2023.2.1
 * [![Cocoapods][Cocoapods]][Cocoapods-url] <sup>version 1.15.2</sup>
 * [![VSCode][VSCode]][VSCode-url] <sup>version 1.82.2</sup>
 * [![Discord][Discord]][Discord-url]
@@ -238,13 +238,13 @@ To pull and connect the Amplify project into your Flutter project, use this comm
 ```amplify pull [generated-amplify-name]```
 You can copy-paste this command line from Amplify Studio itself at the dashboard on the website as the generated-amplify-name is unique but is not human-friendly to remember.
 
+Make sure that the __amplify_config__ file is up to date as it can cause errors with the project when running it.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Github Clone Command Line
-[insert our GitHub clone cmd]
 ```
 git clone https://github.com/uoa-compsci399-s1-2024/capstone-project-2024-s1-team-13
-
 ```
 
 ## AWS Set-up Documentation
@@ -302,7 +302,7 @@ There is a summary of the core functionalities of the app below:
 
 
 <br/>
-We have provided a thorough explanation of the test cases made, this is the link for the Inkā Test Case [Documentation](https://docs.google.com/document/d/1XAhk4qNIOTb1GPFFwL1Eew_QfBtGGWhFafHnu6uACUM/edit?usp=sharing). 
+We have provided a thorough explanation of the test cases made, this is the link for the [Inkā Test Case Documentation](https://docs.google.com/document/d/1XAhk4qNIOTb1GPFFwL1Eew_QfBtGGWhFafHnu6uACUM/edit?usp=sharing). 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
