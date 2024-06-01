@@ -263,11 +263,34 @@ For the data models, we are not making use of the CurrTask table.
 There is a summary of the core functionalities of the app below: 
 
 **Trainee Evaluation and Data Manipulation**:<br />
-  **Support Workers:** Can manipulate existing data (trainee and task notes) and evaluate trainee progress.<br />
-  **Admins:** Have broader access to manipulate all data, including trainee progress, but cannot evaluate trainees.
-  <br />
-<br />**Training Modules:** Accessible without login, allowing trainees to go through task/recipe steps using cue cards and a text-to-speech option.
+ -  **Support Workers:** Can manipulate existing data (trainee and task notes) and evaluate trainee progress.<br />
 
+<div style="display: flex; justify-content: space-around; gap: 30px;">
+    <img src="documentation/core%20functionality%20images/4.png" alt="Support Worker Evaluation" width="200"/>
+    <img src="documentation/core%20functionality%20images/2.png" alt="Support Worker Dashboard" width="200"/>
+</br>
+    <img src="documentation/core%20functionality%20images/task_progress.png" alt="Support Worker Progress" width="400" height "410"/>
+</div>
+
+ -   **Admins:** Have broader access to manipulate all data, including trainee progress, but cannot evaluate trainees.
+    
+<div style="display: flex; justify-content: space-around; gap: 30px;">
+    <img src="documentation/core%20functionality%20images/5.png" alt="Admin add trainee" width="200"/> 
+    <img src="documentation/core%20functionality%20images/6.png" alt="Admin edit recipe" width="200"/>
+    <img src="documentation/core%20functionality%20images/7.png" alt="Admin delete task" width="200"/>
+</div>
+
+<br /><br />
+
+- **Training Modules:** Accessible without login, allowing trainees to go through task/recipe steps using cue cards and a text-to-speech option.
+<div style="display: flex; justify-content: center;">
+    <img src="documentation/core%20functionality%20images/1.png" alt="Training module task" width="200"/>
+</div>
+
+
+
+
+<br/>
 This is an example of the test case. 
 
 [insert image here]
@@ -313,6 +336,10 @@ We want to thank the clients for giving us an impactful real world experience an
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+<!-- app images --> 
+
+
 [Aws-amplify]: https://img.shields.io/badge/Aws_amplify-FF9900?style=for-the-badge&logo=aws-amplify&logoColor=white
 [Aws-amplify-url]: https://docs.amplify.aws/
 [Amplify-cli]: https://img.shields.io/badge/Amplify_CLI-FF9900?style=for-the-badge&logo=aws-amplify&logoColor=white
