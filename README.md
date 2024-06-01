@@ -99,7 +99,7 @@ Backend Team
 
 ## Project Information
 
-Inkā is a one-stop shop for Te Tuhi Cafe employees, both admin and support, to create and track progress of their trainees. Additionally, any of the tasks and recipes that is used inside the cafe are ....
+Our application, Inka, serves as a one-stop shop for the training programs developed by the School of Psychology at The University of Auckland, as well as other partners (Rescare Homes Trust). It functions as a platform for monitoring cafe trainee progress and fostering personalized learning experiences for trainees within the cafe environment.
 
 [Jira Software](https://capstone-cs-399.atlassian.net/jira/software/projects/CAPSTONE/boards/1?atlOrigin=eyJpIjoiMDM0ZDMyZmQ3OTZiNGMzODg4YmJlODAyNmU3MGI3ZjMiLCJwIjoiaiJ9) was our primary project management tool, and we utilised [Click up](https://app.clickup.com/9016213572/v/li/901601710023) to plan out the project timeline. 
 Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [CS399 Google Drive folder](https://drive.google.com/drive/folders/1-gizh0ax6PdQrp2FK9bT6ZF-qECF2oGU?usp=drive_link). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
@@ -260,7 +260,13 @@ For the data models, we are not making use of the CurrTask table.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Functions and Test Cases
-The core functionalities of this application are evaluating trainees etc.
+There is a summary of the core functionalities of the app below: 
+
+**Trainee Evaluation and Data Manipulation**:<br />
+  **Support Workers:** Can manipulate existing data (trainee and task notes) and evaluate trainee progress.<br />
+  **Admins:** Have broader access to manipulate all data, including trainee progress, but cannot evaluate trainees.
+  <br />
+<br />**Training Modules:** Accessible without login, allowing trainees to go through task/recipe steps using cue cards and a text-to-speech option.
 
 This is an example of the test case. 
 
