@@ -19,11 +19,13 @@ class AdminTrainees extends StatefulWidget {
 }
 
 class _AdminTraineesState extends State<AdminTrainees> {
+  //GLOBAL VARIABLES
   late final String title;
   final TextEditingController _textController = TextEditingController();
   late List<Trainee> allTrainees = [];
   late List<Trainee> searchResults = []; // For autocomplete
   int _selectedFilterIndex = 0;
+  Trainee? selectedTrainee;
 
   @override
   void initState() {
@@ -32,7 +34,7 @@ class _AdminTraineesState extends State<AdminTrainees> {
     fetchAllTrainees();
   }
 
-  // Function to fetch all trainees
+  //BACKEND FUNCTIONS
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
@@ -45,7 +47,6 @@ class _AdminTraineesState extends State<AdminTrainees> {
     }
   }
 
-  // Function to query all task notes
   Future<List<Trainee>> queryTrainees() async {
     try {
       final request = ModelQueries.list(Trainee.classType);
@@ -147,8 +148,6 @@ class _AdminTraineesState extends State<AdminTrainees> {
     }).toList();
   }
 
-  Trainee? selectedTrainee;
-
   // Navigate to trainee profile
   void _navigateToTraineeProfile(Trainee trainee) {
     Navigator.push(
@@ -160,6 +159,7 @@ class _AdminTraineesState extends State<AdminTrainees> {
     );
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     List<Trainee> displayTrainees;
@@ -387,14 +387,13 @@ class _AdminTraineesState extends State<AdminTrainees> {
     );
   }
 
-// Trainee Card
+  // Trainee Card
   Widget _TraineeCard(Trainee trainee) => Card(
         margin: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         elevation: 2,
         color: trainee.isWorking == true ? Colors.white : Colors.grey[400],
         child: ListTile(
-          // Avatar containing image - set as leading for Card instance, needs fixing
           leading: FutureBuilder<String>(
             future: getDownloadUrl(
               key: trainee.traineePhoto!,

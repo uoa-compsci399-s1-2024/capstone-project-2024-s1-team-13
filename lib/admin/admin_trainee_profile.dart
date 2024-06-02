@@ -21,43 +21,31 @@ class AdminTraineeProfile extends StatefulWidget {
 }
 
 class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
-  // Bottom Bar Navigation
-  int _selectedIndex = 0;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        // Navigate to trainees
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const AdminTrainees(title: 'Trainees')));
-        break;
-      case 1:
-        // Navigate to tasks
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const AdminTasksScreen(
-                      title: "Tasks",
-                    )));
-        break;
-      case 2:
-        // Navigate to recipes
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    const AdminRecipesScreen(title: 'Recipes')));
-        break;
-      default:
-        break;
+  
+  //BACKEND FUNCTIONS
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      print('Could not get a downloadable URL: ${e.message}');
+      rethrow;
     }
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +94,6 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
       ),
 
       // Body of screen
-
       body: SingleChildScrollView(
         child: SafeArea(
           child: Center(
@@ -125,30 +112,44 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
     );
   }
 
-  Future<String> getDownloadUrl({
-    required String key,
-    required StorageAccessLevel accessLevel,
-  }) async {
-    try {
-      final result = await Amplify.Storage.getUrl(
-        key: key,
-        options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.guest,
-          pluginOptions: S3GetUrlPluginOptions(
-            validateObjectExistence: true,
-            expiresIn: Duration(days: 7),
-          ),
-        ),
-      ).result;
-      return result.url.toString();
-    } on StorageException catch (e) {
-      print('Could not get a downloadable URL: ${e.message}');
-      rethrow;
+  // Bottom Bar Navigation
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate to trainees
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AdminTrainees(title: 'Trainees')));
+        break;
+      case 1:
+        // Navigate to tasks
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AdminTasksScreen(
+                      title: "Tasks",
+                    )));
+        break;
+      case 2:
+        // Navigate to recipes
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    const AdminRecipesScreen(title: 'Recipes')));
+        break;
+      default:
+        break;
     }
   }
 
   // Widgets
-
   Widget _profileDetails() => Row(
         children: [
           FutureBuilder<String>(
@@ -247,7 +248,6 @@ class _AdminTraineeProfileState extends State<AdminTraineeProfile> {
       );
 
   // Notes Button
-
   Widget _notesButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {

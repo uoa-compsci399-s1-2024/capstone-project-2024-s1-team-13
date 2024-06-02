@@ -20,7 +20,17 @@ class AdminTasksScreen extends StatefulWidget {
 
 class _AdminTasksScreenState extends State<AdminTasksScreen> {
   late List<Task> searchResults = []; // For autocomplete
+  late List<Task> allTasks = []; // List to store all tasks
+  final TextEditingController _textController = TextEditingController();
+  Task? selectedTask;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchAllTask();
+  }
+
+  //BACKEND FUNCTIONS
   Future<String> getDownloadUrl({
     required String key,
     required StorageAccessLevel accessLevel,
@@ -43,17 +53,9 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
     }
   }
 
-  late List<Task> allTasks = []; // List to store all tasks
-  @override
-  void initState() {
-    super.initState();
-    fetchAllTask(); // Call the function to fetch all task notes
-  }
-
   Future<void> fetchAllTask() async {
     try {
       final task = await queryTask();
-
       setState(() {
         allTasks = task.cast<Task>();
       });
@@ -62,12 +64,10 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
     }
   }
 
-  // Function to query all task notes
   Future<List<Task>> queryTask() async {
     try {
       final request = ModelQueries.list(Task.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data?.items;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -80,47 +80,6 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
     }
   }
 
-  final TextEditingController _textController = TextEditingController();
-
-  // Bottom Bar Navigation
-  int _selectedIndex = 1;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        // Navigate to modules dashboard
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const AdminTrainees(title: 'Trainees')));
-        break;
-      case 1:
-        // Navigate to evaluate screen
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const AdminTasksScreen(
-                      title: "Tasks",
-                    )));
-        break;
-      case 2:
-        // Navigate to profile screen
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    const AdminRecipesScreen(title: 'Recipes')));
-        break;
-      default:
-        break;
-    }
-  }
-
-  Task? selectedTask;
-
   void _onSearchTextChanged(String searchText) {
     setState(() {
       searchResults = allTasks
@@ -130,6 +89,7 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
     });
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -260,6 +220,43 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
     );
   }
 
+  // Bottom Bar Navigation
+  int _selectedIndex = 1;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate to modules dashboard
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AdminTrainees(title: 'Trainees')));
+        break;
+      case 1:
+        // Navigate to evaluate screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AdminTasksScreen(
+                      title: "Tasks",
+                    )));
+        break;
+      case 2:
+        // Navigate to profile screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    const AdminRecipesScreen(title: 'Recipes')));
+        break;
+      default:
+        break;
+    }
+  }
+
   // Search Bar with Autocomplete
   Widget _buildTaskSearchBar(context) {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
@@ -328,9 +325,9 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
   String _getTitle(int index) {
     if (index < allTasks.length) {
       return allTasks[index].taskTitle ??
-          "Task Title Not Found"; // Providing a default value if taskTitle is null
+          "Task Title Not Found";
     } else {
-      return "Task Title Not Found"; // Fallback title if index exceeds the length of allTasks
+      return "Task Title Not Found";
     }
   }
 
@@ -339,12 +336,11 @@ class _AdminTasksScreenState extends State<AdminTasksScreen> {
       String? imageUrl = allTasks[index].taskCoverImage;
       if (imageUrl != null && imageUrl.isNotEmpty) {
         return imageUrl;
-        // Return the task cover image URL if it's not null or empty
       } else {
-        return ""; // Return an empty string as a fallback if the URL is null or empty
+        return "";
       }
     } else {
-      return ""; // Fallback if index exceeds the length of allTasks
+      return "";
     }
   }
 
