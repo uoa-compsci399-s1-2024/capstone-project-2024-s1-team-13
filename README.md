@@ -35,7 +35,7 @@
     <!-- <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a> -->
     <br />
     <br />
-    Damsels in Development are five Computer Science students that have taken papers such as CS230, CS335, and CS345. These papers have given us the proper knowledge and skills in order to develop Inkā.
+    Damsels in Development consist of five Computer Science students that have taken papers such as CS230, CS335, and CS345. These papers have given us the proper knowledge and skills in order to develop Inkā.
     <br /><br />
     <r
     <br />
