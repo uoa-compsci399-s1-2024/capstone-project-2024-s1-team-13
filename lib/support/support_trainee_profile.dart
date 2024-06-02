@@ -25,7 +25,86 @@ class SupportTraineeProfile extends StatefulWidget {
 }
 
 class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
-  //late final Task task;
+  //BACKEND
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      print('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
+  //FRONTEND
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const SupportSettings(title: 'Settings');
+              }));
+            }, 
+            iconSize: 45,
+            icon: Icon(Icons.settings),
+            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_rounded),
+            label: 'HOME',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.task_rounded),
+            label: 'EVALUATE',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: 'PROFILE',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+
+      // Body of screen
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+              child: Column(
+            children: [
+              Padding(padding: EdgeInsets.all(50), child: _profileDetails()),
+              SizedBox(height: 10),
+              //_progressButton(context),
+              _progressButton(context),
+              SizedBox(height: 50),
+              _notesButton(context)
+            ],
+          )),
+        ),
+      ),
+    );
+  }
 
   // Bottom Bar Navigation
   int _selectedIndex = 2;
@@ -67,66 +146,7 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const SupportSettings(title: 'Settings');
-              }));
-            }, 
-            iconSize: 45,
-            icon: Icon(Icons.settings),
-            padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'HOME',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.task_rounded),
-            label: 'EVALUATE',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: 'PROFILE',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-
-      // Body of screen
-
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Center(
-              child: Column(
-            children: [
-              Padding(padding: EdgeInsets.all(50), child: _profileDetails()),
-              SizedBox(height: 10),
-              //_progressButton(context),
-              _progressButton(context),
-              SizedBox(height: 50),
-              _notesButton(context)
-            ],
-          )),
-        ),
-      ),
-    );
-  }
-
   // Widgets
-
   Widget _profileDetails() => Row(
         children: [
           FutureBuilder<String>(
@@ -168,28 +188,6 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
           ))
         ],
       );
-
-  Future<String> getDownloadUrl({
-    required String key,
-    required StorageAccessLevel accessLevel,
-  }) async {
-    try {
-      final result = await Amplify.Storage.getUrl(
-        key: key,
-        options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.guest,
-          pluginOptions: S3GetUrlPluginOptions(
-            validateObjectExistence: true,
-            expiresIn: Duration(days: 7),
-          ),
-        ),
-      ).result;
-      return result.url.toString();
-    } on StorageException catch (e) {
-      print('Could not get a downloadable URL: ${e.message}');
-      rethrow;
-    }
-  }
 
   // Progress Button
   Widget _progressButton(context) => GestureDetector(
@@ -248,7 +246,6 @@ class _SupportTraineeProfileState extends State<SupportTraineeProfile> {
       );
 
   // Notes Button
-
   Widget _notesButton(context) => GestureDetector(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {

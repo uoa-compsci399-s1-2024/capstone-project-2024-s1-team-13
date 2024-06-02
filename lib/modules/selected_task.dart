@@ -19,14 +19,16 @@ class SelectedTask extends StatefulWidget {
 class _SelectedTaskState extends State<SelectedTask> {
   Task? selectedTask;
   final FlutterTts flutterTts = FlutterTts();
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _configureTts(); // Configure TTS settings
+    _configureTts();
     fetchSelectedTask();
   }
 
+  //BACKEND FUNCTIONS
   Future<void> _configureTts() async {
     await flutterTts.setSpeechRate(0.5);
     await flutterTts.setVolume(1.0);
@@ -36,7 +38,6 @@ class _SelectedTaskState extends State<SelectedTask> {
   Future<void> fetchSelectedTask() async {
     try {
       final task = await queryTaskById(widget.taskId);
-
       setState(() {
         selectedTask = task!;
       });
@@ -50,7 +51,6 @@ class _SelectedTaskState extends State<SelectedTask> {
       final request =
           ModelQueries.get(Task.classType, TaskModelIdentifier(id: taskId));
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -84,8 +84,7 @@ class _SelectedTaskState extends State<SelectedTask> {
     }
   }
 
-  int _currentPageIndex = 0;
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -67,7 +67,7 @@ class _TrainingModulesState extends State<TrainingModules> {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return const ModulesSettings(title: 'Settings');
               }));
-            }, // To add functionality to settings
+            },
             iconSize: 45,
             icon: const Icon(Icons.settings),
             padding:
@@ -97,7 +97,6 @@ class _TrainingModulesState extends State<TrainingModules> {
       ),
 
       // Body of screen
-
       body: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

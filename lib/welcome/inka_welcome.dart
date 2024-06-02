@@ -81,7 +81,7 @@ class InkaWelcome extends StatelessWidget {
     )));
   }
 
-// Welcome Logo
+  // Welcome Logo
   Widget _buildLogo() => Container(
         height: 100,
         decoration: const BoxDecoration(
@@ -90,7 +90,7 @@ class InkaWelcome extends StatelessWidget {
         )),
       );
 
-// Welome Title Widget
+  // Welome Title Widget
   Widget _buildTitle() => const Text(
         "Welcome to Te Tuhi Café",
         textAlign: TextAlign.center,
@@ -100,8 +100,7 @@ class InkaWelcome extends StatelessWidget {
             fontWeight: FontWeight.w500),
       );
 
-// Welcome Image Widget
-
+  // Welcome Image Widget
   Widget _buildImage() => Container(
         height: 500,
         decoration: const BoxDecoration(

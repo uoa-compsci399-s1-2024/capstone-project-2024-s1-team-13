@@ -9,6 +9,7 @@ class PasswordResetPage extends StatefulWidget {
 }
 
 class _PasswordResetPageState extends State<PasswordResetPage> {
+  //GLOBAL VARIABLES
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -27,6 +28,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   bool _isConfirmPasswordVisible =
       false; // For toggling confirm password visibility
 
+  //BACKEND FUNCTIONS
   void _validatePassword(String password) {
     setState(() {
       _hasMinLength = password.length >= 8;
@@ -258,6 +260,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
         ],
       );
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
