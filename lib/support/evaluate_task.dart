@@ -27,6 +27,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
   late List<Task> allTasks = []; // List to store all tasks
   late String traineeID = widget.trainee.id; // Get the selected trainee's ID
   late Task selectedTask;
+  List<bool> _isCheckedList = [];
 
   @override
   void didUpdateWidget(EvaluateTask oldWidget) {
@@ -48,6 +49,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
         List<bool>.filled(widget.task.taskStep?.length ?? 0, false);
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedTask() async {
     try {
       final task = await queryTaskByID(widget.task.id);
@@ -69,7 +71,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
       final request = ModelQueries.get(
           Task.classType,
           TaskModelIdentifier(
-              id: taskID)); // Use ModelQuery.get to fetch a single task by ID
+              id: taskID));
       final response = await Amplify.API.query(request: request).response;
 
       final task = response.data;
@@ -106,7 +108,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
       final request = ModelQueries.get(
           Trainee.classType,
           TraineeModelIdentifier(
-              id: traineeID)); // Use ModelQuery.get to fetch a single task by ID
+              id: traineeID));
       final response = await Amplify.API.query(request: request).response;
 
       final trainee = response.data;
@@ -120,14 +122,10 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     }
   }
 
-  
-
   Future<void> updateSelectedTask(
       List<bool> isCheckedList, String newTraineeID) async {
     try {
       int checkedStepsCount = 0;
-
-      // Loop through each task step and increment checkedStepsCount if it's checked
       for (int i = 0; i < isCheckedList.length; i++) {
         if (isCheckedList[i]) {
           checkedStepsCount++;
@@ -137,26 +135,21 @@ class _EvaluateTaskState extends State<EvaluateTask> {
       final updatedTask = selectedTask.copyWith(
           checkedStepsCount: checkedStepsCount, traineeID: widget.trainee.id);
 
-      // Perform the update mutation
       final request = ModelMutations.update(updatedTask);
       final response = await Amplify.API.mutate(request: request).response;
 
-      // Check for errors in the mutation response
       if (response.errors.isNotEmpty) {
         throw Exception('Failed to update');
       }
 
-      // Print the response for debugging purposes
       safePrint("Selected Task updated!");
       safePrint("Checked Steps Count: $checkedStepsCount");
       safePrint('Update response: $response');
     } catch (e) {
-      // Handle any errors
       safePrint('Error updating selected task steps count and trainee ID: $e');
     }
   }
 
-  // Function to fetch all task
   Future<void> fetchAllTask() async {
     try {
       final task = await queryTask();
@@ -169,9 +162,6 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     }
   }
 
-  
-
-  // Function to query all task
   Future<List<Task>> queryTask() async {
     try {
       final request = ModelQueries.list(Task.classType);
@@ -189,9 +179,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
     }
   }
 
-  // List to track the checked state of each item
-  List<bool> _isCheckedList = [];
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,7 +190,7 @@ class _EvaluateTaskState extends State<EvaluateTask> {
           icon: Icon(Icons.arrow_back_ios),
           padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
           onPressed: () {
-            Navigator.pop(context); // Navigates to previous screen
+            Navigator.pop(context);
           },
         ),
         actions: [

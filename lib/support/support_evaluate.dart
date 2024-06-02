@@ -29,6 +29,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
   late List<Task> allTasks = []; // List to store all tasks
   late Task selectedTask;
   late List<Task> searchResults = []; // For autocomplete
+  Task? selectedTaskSearch;
 
   @override
   void initState() {
@@ -38,24 +39,43 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     selectedTask = widget.task; // Provide a default task if widget.task is null
   }
 
+  //BACKEND FUNCTIONS
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+
   Future<void> fetchLatestTaskForTrainee() async {
     try {
-      // Query latest task for the trainee
       final Task? latestTask =
           await queryLatestTaskForTrainee(widget.trainee.id);
       if (latestTask != null) {
-        // Update selectedTask with the latest task
         setState(() {
           selectedTask = latestTask;
           safePrint("selected task set");
           safePrint(selectedTask);
         });
       } else {
-        // Handle case where no task is found
         safePrint('Latest task for trainee not found');
       }
     } catch (e) {
-      // Handle any errors
       safePrint('Error fetching latest task for trainee: $e');
     }
   }
@@ -65,15 +85,11 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       final request = ModelQueries.list(Task.classType,
           where: Task.TRAINEEID.eq(traineeID));
       final response = await Amplify.API.query(request: request).response;
-
       final tasks = response.data?.items;
       if (tasks == null || tasks.isEmpty) {
-        // Handle case where no tasks are found
         safePrint('No tasks found for trainee: $traineeID');
         return null;
       }
-
-      // Sort tasks based on creation date in descending order
       tasks.sort((a, b) {
         final createdAtA = (a as Task).createdAt;
         final createdAtB = (b as Task).createdAt;
@@ -82,11 +98,8 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
         }
         return createdAtB.compareTo(createdAtA);
       });
-
-      // Return the first (most recent) task
       return tasks.first as Task;
     } catch (e) {
-      // Handle any errors
       safePrint('Query failed: $e');
       return null;
     }
@@ -103,7 +116,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
       if (selectedTask == null) {
         throw Exception('No selected task found');
       }
-
       final updatedTask = selectedTask.copyWith(
         taskTitle: newTaskTitle,
         taskSteps: newTaskSteps,
@@ -112,21 +124,14 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
         taskProgress: newTaskProgress,
         taskCoverImage: newCoverImage,
       );
-
       final request = ModelMutations.update(updatedTask);
       final response = await Amplify.API.mutate(request: request).response;
-
-      // Check for errors in the mutation response
       if (response.errors.isNotEmpty) {
         throw Exception('Failed to update');
       }
-
-      // Print the response for debugging purposes
       safePrint("Selected Task updated!");
-
       safePrint('Update response: $response');
     } catch (e) {
-      // Handle any errors
       safePrint('Error updating selected task: $e');
     }
   }
@@ -154,7 +159,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
           TaskModelIdentifier(
               id: taskID)); 
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -166,11 +170,9 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     }
   }
 
-  // Function to fetch all task
   Future<void> fetchAllTask() async {
     try {
       final task = await queryTask();
-
       setState(() {
         allTasks = task.cast<Task>();
       });
@@ -179,12 +181,10 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     }
   }
 
-  // Function to query all task
   Future<List<Task>> queryTask() async {
     try {
       final request = ModelQueries.list(Task.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data?.items;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -197,55 +197,13 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     }
   }
 
-  // Bottom Bar Navigation
-  int _selectedIndex = 1;
-  Future<void> _onItemTapped(int index) async {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        // Navigate to trainee dashboard
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SupportTraineeDashboard(
-                    trainee: widget.trainee, task: selectedTask)));
-        break;
-      case 1:
-        // Navigate to evaluate screen
-        await Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SupportEvaluate(
-                    title: "Evaluate ${widget.trainee.firstName}",
-                    trainee: widget.trainee,
-                    task: selectedTask)));
-        break;
-      case 2:
-        // Navigate to profile screen
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SupportTraineeProfile(
-                    title: 'Profile', trainee: widget.trainee)));
-        break;
-      default:
-        break;
-    }
-  }
-
-  Task? selectedTaskSearch;
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          // Change to notification icon once bottom bar navigation is sorted
           automaticallyImplyLeading: false,
-
           actions: [
             IconButton(
               onPressed: () {
@@ -253,7 +211,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
                   return const SupportSettings(title: 'Settings');
                 }));
               },
-  
               iconSize: 45,
               icon: Icon(Icons.settings),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -305,7 +262,7 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
                           itemCount: searchResults.length,
                           itemBuilder: (context, index) {
                             final task = searchResults[
-                                index]; // Use searchResults instead of allTasks
+                                index];
                             return GestureDetector(
                               onTap: () async {
                                 setState(() {
@@ -369,6 +326,44 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
         ));
   }
 
+  // Bottom Bar Navigation
+  int _selectedIndex = 1;
+  Future<void> _onItemTapped(int index) async {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        // Navigate to trainee dashboard
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SupportTraineeDashboard(
+                    trainee: widget.trainee, task: selectedTask)));
+        break;
+      case 1:
+        // Navigate to evaluate screen
+        await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SupportEvaluate(
+                    title: "Evaluate ${widget.trainee.firstName}",
+                    trainee: widget.trainee,
+                    task: selectedTask)));
+        break;
+      case 2:
+        // Navigate to profile screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SupportTraineeProfile(
+                    title: 'Profile', trainee: widget.trainee)));
+        break;
+      default:
+        break;
+    }
+  }
+
   // Autocomplete logic
   void _onSearchTextChanged(String searchText) {
     setState(() {
@@ -384,7 +379,6 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
     final itemHeight = 70.0;
     final listItemWidth = MediaQuery.of(context).size.width * 0.95;
-
     return Autocomplete<Task>(
       optionsBuilder: (TextEditingValue textEditingValue) {
         if (textEditingValue.text.isEmpty) {
@@ -447,33 +441,10 @@ class _SupportEvaluateState extends State<SupportEvaluate> {
     );
   }
 
-  Future<String> getDownloadUrl({
-    required String key,
-    required StorageAccessLevel accessLevel,
-  }) async {
-    try {
-      final result = await Amplify.Storage.getUrl(
-        key: key,
-        options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.guest,
-          pluginOptions: S3GetUrlPluginOptions(
-            validateObjectExistence: true,
-            expiresIn: Duration(days: 7),
-          ),
-        ),
-      ).result;
-      return result.url.toString();
-    } on StorageException catch (e) {
-      safePrint('Could not get a downloadable URL: ${e.message}');
-      rethrow;
-    }
-  }
-
   Widget _EvalCard(Task task) => Card(
         margin: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         elevation: 2,
-        //color: Color.fromARGB(255, 196, 155, 175),
         child: Stack(
           children: [
             Positioned.fill(

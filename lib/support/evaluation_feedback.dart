@@ -15,7 +15,6 @@ class EvaluationFeedback extends StatefulWidget {
       {Key? key, required this.task, required this.trainee})
       : super(key: key);
 
-  //final EvaluateItem evaluation;
   final Task task;
   final Trainee trainee;
 
@@ -36,7 +35,6 @@ class _EvaluationFeedback extends State<EvaluationFeedback> {
   Future<void> fetchSelectedTask() async {
     try {
       final task = await querySelectedTask(widget.task!.id, widget.trainee.id);
-     
 
       if (task != null) {
         setState(() {
@@ -51,52 +49,45 @@ class _EvaluationFeedback extends State<EvaluationFeedback> {
   }
 
   Future<Task?> querySelectedTask(String taskID, String traineeID) async {
-  try {
-    final request = ModelQueries.list(Task.classType,
-        where: Task.TRAINEEID.eq(traineeID) & Task.ID.eq(taskID));
-    final response = await Amplify.API.query(request: request).response;
+    try {
+      final request = ModelQueries.list(Task.classType,
+          where: Task.TRAINEEID.eq(traineeID) & Task.ID.eq(taskID));
+      final response = await Amplify.API.query(request: request).response;
 
-    final tasks = response.data?.items;
-    if (tasks == null || tasks.isEmpty) {
-      safePrint('Task not found');
+      final tasks = response.data?.items;
+      if (tasks == null || tasks.isEmpty) {
+        safePrint('Task not found');
+        return null;
+      }
+
+      return tasks[0];
+    } on ApiException catch (e) {
+      safePrint('Query failed: $e');
       return null;
     }
-
-    
-    return tasks[0];
-  } on ApiException catch (e) {
-    safePrint('Query failed: $e');
-    return null;
   }
-}
 
-Future<void> updateTaskFeeling(String newTaskFeeling, String newTraineeID) async {
-  try {
-    // Create a new JudgementCall object
-    final taskFeeling = TaskFeeling(
-      taskID: selectedTask.id,
-      traineeID: newTraineeID,
-      feeling: newTaskFeeling,
-    );
+  Future<void> updateTaskFeeling(String newTaskFeeling, String newTraineeID) async {
+    try {
+      final taskFeeling = TaskFeeling(
+        taskID: selectedTask.id,
+        traineeID: newTraineeID,
+        feeling: newTaskFeeling,
+      );
 
-    // Use Amplify to save the judgement call to the database
-    final request = ModelMutations.create(taskFeeling);
-    final response = await Amplify.API.mutate(request: request).response;
+      final request = ModelMutations.create(taskFeeling);
+      final response = await Amplify.API.mutate(request: request).response;
 
-    // Check for errors in the mutation response
-    if (response.errors.isNotEmpty) {
-      throw Exception('Failed to update task feeling');
+      if (response.errors.isNotEmpty) {
+        throw Exception('Failed to update task feeling');
+      }
+
+      safePrint("Task Feeling call updated!");
+      safePrint('Update response: $response');
+    } catch (e) {
+      safePrint('Error updating task feeling: $e');
     }
-
-    // Print the response for debugging purposes
-    safePrint("Task Feeling call updated!");
-    safePrint('Update response: $response');
-  } catch (e) {
-    safePrint('Error updating task feeling: $e');
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -127,12 +118,9 @@ Future<void> updateTaskFeeling(String newTaskFeeling, String newTraineeID) async
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Question
               _feedbackQuestion(),
-              // Feedback buttons
               SizedBox(height: 50),
               _feedbackButtons(context),
-              // Skip button
               SizedBox(height: 50),
               _skipButton(context)
             ],
@@ -165,19 +153,20 @@ Future<void> updateTaskFeeling(String newTaskFeeling, String newTraineeID) async
 
   // Helper for feedback buttons
   Widget _button(context, imagePath, feeling) => GestureDetector(
-  onTap: () {
-    updateTaskFeeling(feeling, widget.trainee.id); // Pass widget.trainee.id as the trainee ID
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return EvaluationJudgmentCall(
-        task: widget.task,
-        trainee: widget.trainee,
-      );
-    }));
-  },
-  child: Image.asset(imagePath,
-      width: 125, height: 125, fit: BoxFit.contain),
-);
-// Skip button
+    onTap: () {
+      updateTaskFeeling(feeling, widget.trainee.id); // Pass widget.trainee.id as the trainee ID
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return EvaluationJudgmentCall(
+          task: widget.task,
+          trainee: widget.trainee,
+        );
+      }));
+    },
+    child: Image.asset(imagePath,
+        width: 125, height: 125, fit: BoxFit.contain),
+  );
+
+  // Skip button
   Widget _skipButton(context) => TextButton(
       onPressed: () {
         updateTaskFeeling("skipped", widget.trainee.id);

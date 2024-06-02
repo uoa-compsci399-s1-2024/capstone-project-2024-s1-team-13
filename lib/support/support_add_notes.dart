@@ -7,7 +7,6 @@ import 'package:inka_test/models/Admin.dart';
 import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/models/TaskNotes.dart';
 
-
 class SupportAddNotes extends StatefulWidget {
   final String title;
 
@@ -40,12 +39,11 @@ class _SupportAddNotes extends State<SupportAddNotes> {
     fetchSelectedTrainee();
   }
 
-  //FUNCTIONS
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedTrainee() async {
     try {
       final trainee = await queryTraineeById(
           widget.trainee.id);
-
       setState(() {
         selectedTrainee = trainee!;
       });
@@ -61,7 +59,6 @@ class _SupportAddNotes extends State<SupportAddNotes> {
         TraineeModelIdentifier(id: traineeID)
       );
       final response = await Amplify.API.query(request: request).response;
-
       final trainee = response.data;
       if (trainee == null) {
         safePrint('errors: ${response.errors}');
@@ -76,7 +73,6 @@ class _SupportAddNotes extends State<SupportAddNotes> {
   Future<void> fetchAllTaskNotes() async {
     try {
       final taskNotes = await queryTaskNotes();
-
       setState(() {
         allTaskNotes = taskNotes;
       });
@@ -89,9 +85,7 @@ class _SupportAddNotes extends State<SupportAddNotes> {
     try {
       final request = ModelQueries.list(TaskNotes.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final taskNotes = response.data?.items;
-
       if (taskNotes == null) {
         safePrint('errors: ${response.errors}');
         return [];
@@ -243,90 +237,45 @@ class _SupportAddNotes extends State<SupportAddNotes> {
   void _addNote() async {
     String title = _notesTitleController.text;
     String description = _notesController.text;
-
     if (title.isEmpty != true && description.isEmpty != true){
       await createTaskNotes(title, description);
       await fetchAllTaskNotes();
     }
-
     if (title.isNotEmpty && description.isNotEmpty) {
       Navigator.pop(context, {'title': title, 'description': description});
     } else if (widget.trainee.isWorking == false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50))),
-          elevation: 10,
-          content: Text(
-            'Cannot create a note for archived trainee!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Lexend Exa',
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.pink[900]),
-          )),
-      );
+      _showSnackBar('Cannot create a note for archived trainee!');
     } else if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50))),
-            elevation: 10,
-            content: Text(
-              'Please enter a title!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.pink[900]),
-            )),
-      );
+      _showSnackBar('Please enter a title!');
     } else if (description.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50))),
-            elevation: 10,
-            content: Text(
-              'Please enter a description!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.pink[900]),
-            )),
-      );
+      _showSnackBar('Please enter a description!');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50))),
-            elevation: 10,
-            content: Text(
-              'Please fill in both title and description!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'Lexend Exa',
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.pink[900]),
-            )),
-      );
+      _showSnackBar('Please fill in both title and description!');
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        elevation: 10,
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontFamily: 'Lexend Exa',
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+            color: Colors.pink,
+          ),
+        ),
+      ),
+    );
   }
 }
