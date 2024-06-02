@@ -114,47 +114,11 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
 
   Future<void> createTrainee() async {
     if (_firstNameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50))),
-          elevation: 10,
-          content: Text(
-            'Please enter a first name!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Lexend Exa',
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.pink[900]),
-          )),
-      );
-      return;
+      _showSnackBar('Please enter a first name!');
     }
 
     if (_lastNameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50))),
-          elevation: 10,
-          content: Text(
-            'Please enter a surname!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Lexend Exa',
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.pink[900]),
-          )),
-      );
-      return;
+      _showSnackBar('Please enter a surname!');
     }
 
     try {
@@ -184,14 +148,14 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
 
       final createdTrainee = res.data;
       if (createdTrainee == null) {
-        errorSnackbar();
+        _showSnackBar('Error saving changes!');
         safePrint('errors: ${res.errors}');
         return;
       }
       safePrint('Successfully created a trainee! TRAINEE: ${createdTrainee.firstName}');
       Navigator.pop(context);  // Pop the screen only on success
     } on ApiException catch (e) {
-      errorSnackbar();
+      _showSnackBar('Error saving changes!');
       safePrint('Error creating a trainee: $e');
     }
   }
@@ -214,85 +178,14 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
           IconButton(
             onPressed: () {
               if (_firstNameController.text.isEmpty && _lastNameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50))),
-                    elevation: 10,
-                    content: Text(
-                      'Please fill in the information above!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900]),
-                    )),
-                );
-                return;
+                _showSnackBar('Please fill in the information above!');
               } else if (_firstNameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50))),
-                    elevation: 10,
-                    content: Text(
-                      'Please enter a first name!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900]),
-                    )),
-                );
-                return;
+                _showSnackBar('Please enter a first name!');
               } else if (_lastNameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50))),
-                    elevation: 10,
-                    content: Text(
-                      'Please enter a surname!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900]),
-                    )),
-                );
-                return;
+                _showSnackBar('Please enter a surname!');
               } else {
                 createTrainee();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50))),
-                    elevation: 10,
-                    content: Text(
-                      'Successfully created a trainee!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900]),
-                    )),
-                );
+                _showSnackBar('Successfully created a trainee!');
               }
             },
             iconSize: 50,
@@ -463,24 +356,28 @@ class _AdminAddTraineeState extends State<AdminAddTrainee> {
         ],
       );
 
-  void errorSnackbar() {
+  void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50))),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
         elevation: 10,
         content: Text(
-          'Error saving changes!',
+          message,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontFamily: 'Lexend Exa',
-              fontSize: 25,
-              fontWeight: FontWeight.w500,
-              color: Colors.pink[900]),
-        )),
+          style: const TextStyle(
+            fontFamily: 'Lexend Exa',
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+            color: Colors.pink,
+          ),
+        ),
+      ),
     );
   }
 }
