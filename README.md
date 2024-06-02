@@ -248,7 +248,7 @@ git clone https://github.com/uoa-compsci399-s1-2024/capstone-project-2024-s1-tea
 ```
 
 ## AWS Set-up Documentation
-We have included an AWS [documentation](documentation/AWS%20setup.pdf) to help with setting up the project on AWS. Please refer to this document when initialising a new Amplify project. We have included screenshots inside the document as a reference if you are unable to proceed to the next instruction. Please note that this AWS Setup document is purely a reference to the way that we have set up our Amplify Studio and the components that are connected to AWS - please refer above to any installation requirements.
+We have included an [AWS Setup](documentation/AWS%20setup.pdf) document to help with setting up the project on AWS. Please refer to this document when initialising a new Amplify project. We have included screenshots inside the document as a reference if you are unable to proceed to the next instruction. Please note that this AWS Setup document is purely a reference to the way that we have set up our Amplify Studio and the components that are connected to AWS - please refer above to any installation requirements.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -302,7 +302,8 @@ There is a summary of the core functionalities of the app below:
 
 
 <br/>
-We have provided a thorough explanation of the test cases made, below is the link for the Inkā Test Case Documentation. (https://docs.google.com/document/d/1XAhk4qNIOTb1GPFFwL1Eew_QfBtGGWhFafHnu6uACUM/edit?usp=sharing). 
+We have provided a thorough explanation of the test cases made, below is the link for the Inkā Test Case Documentation. [Test Case Document](documentation/Inka_Test_Cases.pdf)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
