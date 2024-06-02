@@ -306,6 +306,7 @@ There is a summary of the core functionalities of the app below:
 <br/>
 We have provided a thorough explanation of the test cases made. Below is the link for the Inkā Test Case Documentation: 
 <br/>
+
 [Test Case Document](documentation/test_cases/Inka_Test_Cases.pdf)
 
 
