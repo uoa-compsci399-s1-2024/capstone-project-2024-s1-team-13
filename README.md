@@ -302,27 +302,27 @@ There is a summary of the core functionalities of the app below:
 
 
 <br/>
-We have provided a thorough explanation of the test cases made, this is the link for the [Inkā Test Case Documentation](https://docs.google.com/document/d/1XAhk4qNIOTb1GPFFwL1Eew_QfBtGGWhFafHnu6uACUM/edit?usp=sharing). 
+We have provided a thorough explanation of the test cases made, below is the link for the Inkā Test Case Documentation. (https://docs.google.com/document/d/1XAhk4qNIOTb1GPFFwL1Eew_QfBtGGWhFafHnu6uACUM/edit?usp=sharing). 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Future Plans
-* Logging
-  If any changes are made to the system e.g. adding/editing/deleting/archiving, it would be handy for the cafe to have a history log, showing exactly what the changes were, in the case that something needed to be reviewed. If the user requests a log report, this can be sent directly to an email connected to the account
-* Exporting
-  Based on the trainee’s sessions and their progress, if the cafe would like to download their work in either pdf or excel format, they would have this option. Or if they would like to see the sessions in a monthly format to help the support workers to see the training in a different and more consolidated way. 
-* Distribution of the application
-  During the duration of the project there were conversations about how this application could be used in different countries. It would be beneficial for the cafe, if we could implement something that ensured that the different cafes could have different applications with no information from the separate cafes, for example, they would start with a whole new application and build that from the ground up. 
-* Customisation
-  We could include a customisation feature where If the clients would like to change the theme, or customize the application specific to the trainee , then it would be saved within the specific trainee’s profile.
+**Logging:** <br/>
+  If any changes are made to the system e.g. adding/editing/deleting/archiving, it would be handy for the cafe to have a history log, showing exactly what the changes were, in the case that something needed to be reviewed. If the user requests a log report, this can be sent directly to an email connected to the account.<br/><br/>
+**Exporting:** <br/>
+  Based on the trainee’s sessions and their progress, if the cafe would like to download their work in either pdf or excel format, they would have this option. Another option could be to allow them to view the sessions in a monthly format to help the support workers oversee the training in a different and more consolidated way. <br/><br/>
+**Distribution of the application:** <br/>
+  During the duration of the project there were conversations about how this application could be used in different countries. It would be beneficial for the cafe, if we could implement something that ensured that the different cafes could have different applications with no information from the separate cafes, for example, they would start with a whole new application and build that from the ground up. <br/><br/>
+**Customisation:** <br/>
+  We could include a customisation feature where If the clients would like to change the theme, or customize the application specific to the trainee , then it would be saved within the specific trainee’s profile. <br/><br/>
 
-* Extra Aesthetics
+**Extra Aesthetics:** </br>
   * Distinction in background for support and admin
   * An information button for new users who are unsure of the functionalities
   * Auto correct function
   * Time out the session if exceeding a long period of time or a message pop up asking if a session continuance is required - determine whether there needs to be a session limit (something the cafe can configure)
   * To maximise screen space, we can move the navigation bar at the bottom and create a burger menu for this
-  * In the event that the app crashes, the application should retain the information, like a cache memory stored locally on the iPad and then this will be loaded once the app restarts
+  * In the event that the app crashes, the application should retain the information, like a cache memory stored locally on the iPad and this should be loaded once the app restarts
   * Should be more obvious which trainee is being evaluated or trained - with the name at the top of the screen
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
