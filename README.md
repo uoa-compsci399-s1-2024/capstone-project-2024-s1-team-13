@@ -302,7 +302,8 @@ There is a summary of the core functionalities of the app below:
 
 
 <br/>
-We have provided a thorough explanation of the test cases made, below is the link for the Inkā Test Case Documentation. [Test Case Document](documentation/Inka_Test_Cases.pdf)
+We have provided a thorough explanation of the test cases made. Below is the link for the Inkā Test Case Documentation: [Test Case Document](https://github.com/uoa-compsci399-s1-2024/capstone-project-2024-s1-team-13/blob/final_final/documentation/Inka_Test_Cases.pdf).
+
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
