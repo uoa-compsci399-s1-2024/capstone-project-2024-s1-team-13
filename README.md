@@ -283,6 +283,8 @@ There is a summary of the core functionalities of the app below:
 
 </div>
 
+<br />
+
  -   **Admins:** Have broader access to manipulate all data, including trainee progress, but cannot evaluate trainees.
     
 <div style="display: flex; justify-content: space-around; gap: 30px;">
@@ -291,7 +293,7 @@ There is a summary of the core functionalities of the app below:
     <img src="documentation/core%20functionality%20images/7.png" alt="Admin delete task" width="200"/>
 </div>
 
-<br /><br />
+<br />
 
 - **Training Modules:** Accessible without login, allowing trainees to go through task/recipe steps using cue cards and a text-to-speech option.
 <div style="display: flex; justify-content: center; gap: 50px;">
