@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
-//------------------------------------------------------------
-//AMPLIFY IMPORTS --------------------------------------------
-//------------------------------------------------------------
+//AMPLIFY IMPORTS
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/ModelProvider.dart';
-
-//------------------------------------------------------------
 
 class AdminEditSelectedTask extends StatefulWidget {
   final String title;
@@ -35,7 +31,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
   List<String> taskStepImages = [];
   bool? hasInstructions;
 
-  //INIT STATE
+  //INITSTATE
   @override
   void initState() {
     super.initState();
@@ -200,113 +196,22 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
             IconButton(
               onPressed: () {
                 if (_taskTitleController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(50),
-                          topRight: Radius.circular(50),
-                        ),
-                      ),
-                      elevation: 10,
-                      content: Text(
-                        'Please add a task title!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900],
-                        ),
-                      ),
-                    ),
-                  );
-                  return;
+                  _showSnackBar('Please add a task title!');
                 }
-
                 if (taskSteps.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(50),
-                          topRight: Radius.circular(50),
-                        ),
-                      ),
-                      elevation: 10,
-                      content: Text(
-                        'Please add at least 1 task step!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900],
-                        ),
-                      ),
-                    ),
-                  );
-                  return;
+                  _showSnackBar('Please add at least 1 task step!');
                 }
-
                 if (globalCoverImageUrl == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(50),
-                          topRight: Radius.circular(50),
-                        ),
-                      ),
-                      elevation: 10,
-                      content: Text(
-                        'Please add a task cover image!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900],
-                        ),
-                      ),
-                    ),
-                  );
-                  return;
+                  _showSnackBar('Please add a task cover image!');
                 }
-
                 for (int i = 0; i < taskSteps.length; i++) {
                   if (taskSteps[i].isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50),
-                          ),
-                        ),
-                        elevation: 10,
-                        content: Text(
-                          'No instructions in Step ${i + 1}!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'Lexend Exa',
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.pink[900],
-                          ),
-                        ),
-                      ),
-                    );
+                    _showSnackBar('No instructions in Step ${i + 1}!');
                     hasInstructions = false;
                     return;
                   }
                   hasInstructions = true;
                 }
-
                 if (globalCoverImageUrl != null &&
                     _taskTitleController.text.isNotEmpty &&
                     hasInstructions! &&
@@ -327,58 +232,56 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
         body: RefreshIndicator(
           onRefresh: _refresh,
         child: Column(
-    children: <Widget>[
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(25),
+                child: _TaskTitle(),
+              ),
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(25),
-          child: _TaskTitle(),
-        ),
-      ),
-      const SizedBox(height: 30),
-      Expanded(
-  child: ReorderableListView.builder(
-    itemCount: taskSteps.length,
-    itemBuilder: (context, index) {
-      final stepKey = ValueKey<String>('step_$index');
-      return _StepCard(
-        context,
-        taskSteps[index],
-        index + 1,
-        key: stepKey, // Pass the key here
-      );
-    },
-    onReorder: (oldIndex, newIndex) {
-      setState(() {
-        if (newIndex > oldIndex) {
-          newIndex -= 1;
-        }
-        final step = taskSteps.removeAt(oldIndex);
-        taskSteps.insert(newIndex, step);
+            const SizedBox(height: 30),
+            Expanded(
+              child: ReorderableListView.builder(
+                itemCount: taskSteps.length,
+                itemBuilder: (context, index) {
+                  final stepKey = ValueKey<String>('step_$index');
+                  return _StepCard(
+                    context,
+                    taskSteps[index],
+                    index + 1,
+                    key: stepKey, // Pass the key here
+                  );
+                },
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  final step = taskSteps.removeAt(oldIndex);
+                  taskSteps.insert(newIndex, step);
 
-        final stepImage = taskStepImages.removeAt(oldIndex);
-        taskStepImages.insert(newIndex, stepImage);
-      });
-    },
-  ),
-),
-
-
-      const SizedBox(height: 20),
-      _AddStepButton(),
-      const SizedBox(height: 30)
-    ],
-  ),));
+                  final stepImage = taskStepImages.removeAt(oldIndex);
+                  taskStepImages.insert(newIndex, stepImage);
+                });
+              },
+            ),
+          ),
+        const SizedBox(height: 20),
+        _AddStepButton(),
+        const SizedBox(height: 30)
+      ],
+    ),));
   }
 
   // Task Title - text form field and image
@@ -417,24 +320,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                   globalCoverImageUrl = url;
                 });
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(50),
-                              topRight: Radius.circular(50))),
-                      elevation: 10,
-                      content: Text(
-                        'Task could not be saved.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Lexend Exa',
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.pink[900]),
-                      )),
-                );
+                _showSnackBar('Task could not be saved.');
               }
             },
             child: Stack(
@@ -498,69 +384,69 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
   String? stepImageKey = taskStepImages.length >= stepNumber
       ? taskStepImages[stepNumber - 1]
       : null;
-  return Card(
-    key: key, // Add this line to assign a key to the Card widget
-    margin: const EdgeInsets.all(10),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-    elevation: 2,
-    color: Colors.white,
-    child: ListTile(
-      title: Padding(
-        padding:
-            const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color.fromARGB(255, 196, 155, 175),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$stepNumber',
-                      style: const TextStyle(
-                        fontFamily: "Lexend Exa",
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+    return Card(
+      key: key, // Add this line to assign a key to the Card widget
+      margin: const EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      elevation: 2,
+      color: Colors.white,
+      child: ListTile(
+        title: Padding(
+          padding:
+              const EdgeInsets.only(left: 20, right: 5, top: 20, bottom: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color.fromARGB(255, 196, 155, 175),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$stepNumber',
+                        style: const TextStyle(
+                          fontFamily: "Lexend Exa",
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  'Step $stepNumber',
-                  style: TextStyle(
-                    fontFamily: "Lexend Exa",
-                    fontSize: 40,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(width: 20),
+                  Text(
+                    'Step $stepNumber',
+                    style: TextStyle(
+                      fontFamily: "Lexend Exa",
+                      fontSize: 40,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            IconButton(
-              onPressed: () {
-                _deleteStep(context, stepNumber - 1);
-              },
-              icon: const Icon(Icons.remove_circle_rounded),
-              iconSize: 55,
-              color: Colors.red[600],
-            ),
-          ],
+                ],
+              ),
+              IconButton(
+                onPressed: () {
+                  _deleteStep(context, stepNumber - 1);
+                },
+                icon: const Icon(Icons.remove_circle_rounded),
+                iconSize: 55,
+                color: Colors.red[600],
+              ),
+            ],
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: _stepDesc(stepNumber, stepImageKey),
         ),
       ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: _stepDesc(stepNumber, stepImageKey),
-      ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _stepDesc(int stepNumber, String? stepImageKey) {
     return Row(
@@ -613,24 +499,7 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
                 }
               });
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50))),
-                    elevation: 10,
-                    content: Text(
-                      'Error uploading image!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Lexend Exa',
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.pink[900]),
-                    )),
-              );
+              _showSnackBar('Error uploading image!');
             }
           },
           child: Stack(
@@ -800,28 +669,37 @@ class _AdminEditSelectedTaskState extends State<AdminEditSelectedTask> {
     );
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        elevation: 10,
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontFamily: 'Lexend Exa',
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+            color: Colors.pink,
+          ),
+        ),
+      ),
+    );
+  }
+
   void saveTask() {
     String taskName = _taskTitleController.text;
 
     print('Task Name: $taskName');
     print('Steps: $taskSteps');
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50), topRight: Radius.circular(50))),
-          elevation: 10,
-          content: Text(
-            'Successfully edited task!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Lexend Exa',
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.pink[900]),
-          )),
-    );
+    _showSnackBar('Successfully edited task!');
   }
 }

@@ -4,15 +4,12 @@ import 'package:inka_test/admin/admin_edit_selected_task.dart';
 import 'package:inka_test/modules/module_items/task_item.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
-//------------------------------------------------------------
-//AMPLIFY IMPORTS --------------------------------------------
-//------------------------------------------------------------
+//AMPLIFY IMPORTS
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:inka_test/models/Task.dart';
 
-//------------------------------------------------------------
 
 class AdminEditTasks extends StatefulWidget {
   const AdminEditTasks({super.key, required this.title});
@@ -24,28 +21,21 @@ class AdminEditTasks extends StatefulWidget {
 }
 
 class _AdminEditTasksState extends State<AdminEditTasks> {
-  //------------------------------------------------------------
-  //GLOBAL VARIABLES -------------------------------------------
-  //------------------------------------------------------------
+  //GLOBAL VARIABLES
   late List<Task> allTasks = []; // List to store all tasks
   final TextEditingController _textController = TextEditingController();
   late List<Task> searchResults = []; // For autocomplete
   Task? selectedTask;
 
-  //------------------------------------------------------------
-  //INITSTATE() ------------------------------------------------
-  //------------------------------------------------------------
 
+  //INITSTATE
   @override
   void initState() {
     super.initState();
-    fetchAllTask(); // Call the function to fetch all task notes
+    fetchAllTask();
   }
 
-  //------------------------------------------------------------
-  //FUNCTIONS SECTION ------------------------------------------
-  //------------------------------------------------------------
-
+  //BACKEND FUNCTIONS
   void _onSearchTextChanged(String searchText) {
     setState(() {
       searchResults = allTasks
@@ -67,7 +57,6 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
     }
   }
 
-  // Function to query all task notes
   Future<List<Task>> queryTask() async {
     try {
       final request = ModelQueries.list(Task.classType);
@@ -125,10 +114,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
     }
   }
 
-  //------------------------------------------------------------
-  //SCREEN BUILD -----------------------------------------------
-  //------------------------------------------------------------
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -305,9 +291,9 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
   String _getTitle(int index) {
     if (index < allTasks.length) {
       return allTasks[index].taskTitle ??
-          "Task Title Not Found"; // Providing a default value if taskTitle is null
+          "Task Title Not Found";
     } else {
-      return "Task Title Not Found"; // Fallback title if index exceeds the length of allTasks
+      return "Task Title Not Found";
     }
   }
 
@@ -316,12 +302,11 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
       String? imageUrl = allTasks[index].taskCoverImage;
       if (imageUrl != null && imageUrl.isNotEmpty) {
         return imageUrl;
-        // Return the task cover image URL if it's not null or empty
       } else {
-        return ""; // Return an empty string as a fallback if the URL is null or empty
+        return "";
       }
     } else {
-      return ""; // Fallback if index exceeds the length of allTasks
+      return "";
     }
   }
 
@@ -382,7 +367,6 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
                   IconButton(
                     onPressed: () => deleteTaskDialog(
                         context, currTaskId), 
-                    //_deleteTask(context, mockTasks.indexOf(atask)),
                     icon: const Icon(Icons.remove_circle_rounded),
                     iconSize: 50,
                     color: Colors.red[600],
@@ -428,7 +412,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50))),
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
                   child: const Text("NO")),
               const SizedBox(width: 20),
@@ -447,7 +431,7 @@ class _AdminEditTasksState extends State<AdminEditTasks> {
                           borderRadius: BorderRadius.circular(50))),
                   onPressed: () {
                     deleteTask(currTaskId);
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop();
                   },
                   child: const Text("YES"))
             ])
