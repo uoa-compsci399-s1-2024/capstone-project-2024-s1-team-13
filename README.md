@@ -102,7 +102,7 @@ Backend Team
 Our application, Inkā, serves as a one-stop shop for the training programs developed by the School of Psychology at The University of Auckland, as well as other partners (Rescare Homes Trust). It functions as a platform for monitoring cafe trainee progress and fostering personalized learning experiences for trainees within the cafe environment.
 
 [Jira Software](https://capstone-cs-399.atlassian.net/jira/software/projects/CAPSTONE/boards/1?atlOrigin=eyJpIjoiMDM0ZDMyZmQ3OTZiNGMzODg4YmJlODAyNmU3MGI3ZjMiLCJwIjoiaiJ9) was our primary project management tool, and we utilised [Click up](https://app.clickup.com/9016213572/v/li/901601710023) to plan out the project timeline. 
-Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our ![Documentation Folder](documentation/Client_Meeting_Logs). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
+Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [Client Meeting Logs](documentation/Client%20Meeting%20Logs/). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
 
 ![Jira Software](documentation/jira.png)
 ![Gantt Chart](documentation/gant.png)
