@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, use_super_parameters
-
 import 'package:flutter/material.dart';
 import 'package:inka_test/items/note_item.dart';
 import 'package:amplify_api/amplify_api.dart';
@@ -7,13 +5,11 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:inka_test/models/ModelProvider.dart';
 import 'package:inka_test/models/TaskNotes.dart';
 import 'package:inka_test/models/Trainee.dart';
-
 import '../models/TraineeNotes.dart';
 
 class SupportEditNotes extends StatefulWidget {
   late final String title;
   final Trainee trainee;
-
   SupportEditNotes({super.key, required this.title, required this.trainee});
   @override
   _SupportEditNotes createState() => _SupportEditNotes();
@@ -27,9 +23,7 @@ class _SupportEditNotes extends State<SupportEditNotes> {
   late List<Trainee> allTrainees = [];
   late List<TaskNotes> searchResults = []; // For autocomplete
   TaskNotes? selectedTaskNote;
-
   late Future<Trainee?> _selectedTraineeFuture;
-
   String _selectedGroup = 'All';
 
   @override
@@ -41,6 +35,7 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     fetchAllTaskNotes(); // Call the function to fetch all task notes
   }
 
+  //BACKEND FUNCTIONS
   Future<Trainee?> fetchSelectedTrainee() async {
     try {
       final trainee = await queryTraineeById(widget.trainee.id);
@@ -74,14 +69,11 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     }
   }
 
-  // Function to fetch all trainees
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
-
       setState(() {
         allTrainees = trainees;
-        //final List<TraineeItem> traineesList = allTrainees.map((trainee) => TraineeItem.fromTrainee(trainee)).toList();
       });
     } catch (e) {
       print('Error fetching trainees: $e');
@@ -120,12 +112,10 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     return groupedNotes;
   }
 
-  // Function to query all task notes
   Future<List<Trainee>> queryTrainees() async {
     try {
       final request = ModelQueries.list(Trainee.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final trainee = response.data?.items;
       if (trainee == null) {
         safePrint('errors: ${response.errors}');
@@ -144,10 +134,8 @@ class _SupportEditNotes extends State<SupportEditNotes> {
         TaskNotes.classType,
         TaskModelIdentifier(id: taNoId),
       );
-
       final res = await Amplify.API.mutate(request: req).response;
       safePrint('The task note has been deleted!: $res');
-
       setState(() {
         allTaskNotes.removeWhere((taskNote) => taskNote.id == taNoId);
       });
@@ -156,7 +144,6 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     }
   }
 
-  // Function to fetch all task notes
   Future<void> fetchAllTaskNotes() async {
     try {
       final taskNotes = await queryTaskNotes(widget.trainee.id);
@@ -168,7 +155,6 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     }
   }
 
-  // Function to query all task notes
   Future<List<TaskNotes>> queryTaskNotes(String traineeID) async {
     try {
       final request = ModelQueries.list(TaskNotes.classType,
@@ -190,7 +176,6 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     try {
       final request = ModelQueries.list(TraineeNotes.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final traineeNotes = response.data?.items;
       if (traineeNotes == null) {
         safePrint('errors: ${response.errors}');
@@ -203,14 +188,10 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     }
   }
 
-  // Function to fetch the latest trainee note
   Future<void> fetchLatestTraineeNote() async {
     try {
-      // Query all trainee notes
       final List<TraineeNotes?> traineeNotes = await queryTraineeNoteListItem();
-
       if (mounted && traineeNotes.isNotEmpty) {
-        // If trainee notes are available, update the state with the text of the latest note
         setState(() {
           generalNote = traineeNotes.last!
               .noteDesc!; 
@@ -221,6 +202,7 @@ class _SupportEditNotes extends State<SupportEditNotes> {
     }
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     // Group task notes by title

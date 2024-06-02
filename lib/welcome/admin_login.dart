@@ -14,13 +14,14 @@ class AdminLogin extends StatefulWidget {
 }
 
 class _AdminLoginState extends State<AdminLogin> {
+  //GLOBAL VARIABLES
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   String _errorMessage = '';
   bool _isPasswordVisible = false; // For toggling password visibility
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(

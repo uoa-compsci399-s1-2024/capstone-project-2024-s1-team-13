@@ -15,57 +15,22 @@ class TasksScreen extends StatefulWidget {
   final String title;
 
   @override
-  // ignore: library_private_types_in_public_api
   _TasksScreenState createState() => _TasksScreenState();
 }
 
 class _TasksScreenState extends State<TasksScreen> {
   late List<Task> searchResults = []; // For autocomplete
   Task? selectedTask;
-
-  // Bottom Bar Navigation
-  int _selectedIndex = 1;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        // Navigate to modules dashboard
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const TrainingModules(title: 'Modules')));
-        break;
-      case 1:
-        // Navigate to evaluate screen
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const TasksScreen(
-                      title: "Tasks",
-                    )));
-        break;
-      case 2:
-        // Navigate to profile screen
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const RecipesScreen(title: 'Recipes')));
-        break;
-      default:
-        break;
-    }
-  }
-
+  final TextEditingController _textController = TextEditingController();
   late List<Task> allTasks = []; // List to store all tasks
+
   @override
   void initState() {
     super.initState();
     fetchAllTask(); // Call the function to fetch all task notes
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchAllTask() async {
     try {
       final task = await queryTask();
@@ -78,7 +43,6 @@ class _TasksScreenState extends State<TasksScreen> {
     }
   }
 
-  // Function to query all task notes
   Future<List<Task>> queryTask() async {
     try {
       final request = ModelQueries.list(Task.classType);
@@ -118,8 +82,6 @@ class _TasksScreenState extends State<TasksScreen> {
     }
   }
 
-  final TextEditingController _textController = TextEditingController();
-
   void _onSearchTextChanged(String searchText) {
     setState(() {
       searchResults = allTasks
@@ -129,6 +91,7 @@ class _TasksScreenState extends State<TasksScreen> {
     });
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     print(allTasks);
@@ -244,6 +207,42 @@ class _TasksScreenState extends State<TasksScreen> {
         ),
       ),
     );
+  }
+
+  // Bottom Bar Navigation
+  int _selectedIndex = 1;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate to modules dashboard
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const TrainingModules(title: 'Modules')));
+        break;
+      case 1:
+        // Navigate to evaluate screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const TasksScreen(
+                      title: "Tasks",
+                    )));
+        break;
+      case 2:
+        // Navigate to profile screen
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const RecipesScreen(title: 'Recipes')));
+        break;
+      default:
+        break;
+    }
   }
 
   // Search Bar

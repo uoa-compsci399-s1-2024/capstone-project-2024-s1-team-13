@@ -36,7 +36,6 @@ class SelectLoginTypeState extends State<SelectLoginType> {
 
     _timer = Timer.periodic(Duration(seconds: 2), (Timer timer) {
       setState(() {
-        // Toggle between start and end colors for the gradient
         if (_gradient.colors == _startColors) {
           _gradient = LinearGradient(colors: _endColors);
         } else {
@@ -88,7 +87,6 @@ class SelectLoginTypeState extends State<SelectLoginType> {
                   fontFamily: 'Lexend Exa',
                   fontSize: 55,
                   fontWeight: FontWeight.w600)),
-
           SizedBox(height: 75),
 
           // Support Login Button
@@ -118,7 +116,6 @@ class SelectLoginTypeState extends State<SelectLoginType> {
                         borderRadius: BorderRadius.circular(70))),
                 child: const Text("Support")),
           ),
-
           SizedBox(height: 40),
 
           // Admin Login Button

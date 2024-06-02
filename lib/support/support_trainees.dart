@@ -11,22 +11,22 @@ class SupportTrainees extends StatefulWidget {
   const SupportTrainees({
     Key? key,
     required this.title,
-    //required this.task,
   }) : super(key: key);
   final String title;
-  //final Task task;
 
   @override
   _SupportTrainees createState() => _SupportTrainees();
 }
 
 class _SupportTrainees extends State<SupportTrainees> {
+  //GLOBAL VARIABLES
   late final String title;
   final TextEditingController _textController = TextEditingController();
   late List<Trainee> allTrainees = [];
   late List<Trainee> searchResults = []; // For autocomplete
   late Task task;
   int _selectedFilterIndex = 0;
+  Trainee? selectedTrainee;
 
   @override
   void initState() {
@@ -35,26 +35,23 @@ class _SupportTrainees extends State<SupportTrainees> {
     fetchAllTrainees();
   }
 
-  // Function to fetch all trainees
+  //BACKEND FUNCTIONS
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
-
       setState(() {
         allTrainees = trainees;
-        searchResults = trainees; // Initialize search results with all trainees
+        searchResults = trainees;
       });
     } catch (e) {
       print('Error fetching trainees: $e');
     }
   }
 
-  // Function to query all task notes
   Future<List<Trainee>> queryTrainees() async {
     try {
       final request = ModelQueries.list(Trainee.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final trainee = response.data?.items;
       if (trainee == null) {
         safePrint('errors: ${response.errors}');
@@ -80,7 +77,6 @@ class _SupportTrainees extends State<SupportTrainees> {
               .toLowerCase()
               .contains(searchText.toLowerCase()) ||
           trainee.lastName!.toLowerCase().contains(searchText.toLowerCase());
-
       switch (filterIndex) {
         case 1:
           return matchesSearchText && (trainee.isWorking ?? false);
@@ -92,7 +88,6 @@ class _SupportTrainees extends State<SupportTrainees> {
     }).toList();
   }
 
-  // Navigate to trainee dashboard
   void _navigateToTraineeDashboard(Trainee trainee) {
     Navigator.push(
       context,
@@ -102,9 +97,7 @@ class _SupportTrainees extends State<SupportTrainees> {
     );
   }
 
-// Store the selected trainee in a variable
-  Trainee? selectedTrainee;
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     List<Trainee> displayTrainees;

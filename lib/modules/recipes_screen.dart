@@ -21,57 +21,17 @@ class RecipesScreen extends StatefulWidget {
 class _RecipesScreenState extends State<RecipesScreen> {
   late List<Recipe> searchResults = []; // For autocomplete
   Recipe? selectedRecipe;
-
-
   int _selectedIndex = 2;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        // Navigate to modules dashboard
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TrainingModules(title: 'Modules'),
-          ),
-        );
-        break;
-      case 1:
-        // Navigate to evaluate screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TasksScreen(
-              title: "Tasks",
-            ),
-          ),
-        );
-        break;
-      case 2:
-        // Navigate to profile screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RecipesScreen(title: 'Recipes'),
-          ),
-        );
-        break;
-      default:
-        break;
-    }
-  }
-
   late List<Recipe> allRecipes = []; // List to store all tasks
+  final TextEditingController _textController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     fetchAllRecipe(); // Call the function to fetch all task notes
   }
 
+  //BACKEND FUNCTIONS
   void _onSearchTextChanged(String searchText) {
     setState(() {
       searchResults = allRecipes
@@ -94,12 +54,10 @@ class _RecipesScreenState extends State<RecipesScreen> {
     }
   }
 
-  // Function to query all task notes
   Future<List<Recipe>> queryRecipe() async {
     try {
       final request = ModelQueries.list(Recipe.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final recipe = response.data?.items;
       if (recipe == null) {
         safePrint('errors: ${response.errors}');
@@ -134,15 +92,11 @@ class _RecipesScreenState extends State<RecipesScreen> {
     }
   }
 
-  final TextEditingController _textController = TextEditingController();
-
-
   // Search Bar with Autocomplete
   Widget _buildRecipeSearchBar(context) {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
     final itemHeight = 70.0;
     final listItemWidth = MediaQuery.of(context).size.width * 0.95;
-
     return Autocomplete<Recipe>(
       optionsBuilder: (TextEditingValue textEditingValue) {
         if (textEditingValue.text.isEmpty) {
@@ -205,7 +159,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
     );
   }
 
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -330,9 +284,9 @@ class _RecipesScreenState extends State<RecipesScreen> {
   String _getTitle(int index) {
     if (index < allRecipes.length) {
       return allRecipes[index].recipeTitle ??
-          "Recipe Title Not Found"; // Providing a default value if taskTitle is null
+          "Recipe Title Not Found";
     } else {
-      return "Recipe Title Not Found"; // Fallback title if index exceeds the length of allTasks
+      return "Recipe Title Not Found";
     }
   }
 
@@ -341,17 +295,15 @@ class _RecipesScreenState extends State<RecipesScreen> {
       String? imageUrl = allRecipes[index].recipeCoverImage;
       if (imageUrl != null && imageUrl.isNotEmpty) {
         return imageUrl;
-        // Return the task cover image URL if it's not null or empty
       } else {
-        return ""; // Return an empty string as a fallback if the URL is null or empty
+        return "";
       }
     } else {
-      return ""; // Fallback if index exceeds the length of allTasks
+      return "";
     }
   }
 
-  // Recipe Card
-  // Task Card
+  // Recipe/Task Card
   Widget _buildRecipeCard(String title, String recipeCoverImageUrl) => Card(
         margin: const EdgeInsets.all(20),
         elevation: 2,
@@ -409,4 +361,44 @@ class _RecipesScreenState extends State<RecipesScreen> {
           ],
         ),
       );
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Navigate to modules dashboard
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const TrainingModules(title: 'Modules'),
+          ),
+        );
+        break;
+      case 1:
+        // Navigate to evaluate screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const TasksScreen(
+              title: "Tasks",
+            ),
+          ),
+        );
+        break;
+      case 2:
+        // Navigate to profile screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RecipesScreen(title: 'Recipes'),
+          ),
+        );
+        break;
+      default:
+        break;
+    }
+  }
 }

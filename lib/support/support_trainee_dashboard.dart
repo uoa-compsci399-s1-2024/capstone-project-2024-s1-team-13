@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison, must_be_immutable
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
@@ -12,31 +10,22 @@ import 'package:inka_test/support/support_trainee_profile.dart';
 import 'package:inka_test/support/support_trainee_progress.dart';
 import 'package:inka_test/support/support_settings.dart';
 
-
-
 class SupportTraineeDashboard extends StatefulWidget {
-  // ignore: prefer_const_constructors_in_immutables
-
   SupportTraineeDashboard({super.key, required this.trainee, this.task});
   Trainee trainee;
   final Task? task;
-
   @override
   _SupportTraineeDashboardState createState() =>
       _SupportTraineeDashboardState();
 }
 
 class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
+  //GLOBAL VARIABLES
   final TextEditingController _traineeNotesController = TextEditingController();
-
   bool isEditing = false;
-
   Task? selectedTask;
-
   String generalNote = '';
   late Trainee selectedTrainee;
-
-  // Provide a default task if widget.task is null;
   List<CurrTask>? currentTasks = [];
   TaskNotes taskNote = TaskNotes();
   bool isLoading = true;
@@ -54,11 +43,32 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
     _traineeNotesController.text = widget.trainee.traineeNote ?? '';
   }
 
-  // Function to fetch all task
+  //BACKEND FUNCTIONS
+  Future<String> getDownloadUrl({
+    required String key,
+    required StorageAccessLevel accessLevel,
+  }) async {
+    try {
+      final result = await Amplify.Storage.getUrl(
+        key: key,
+        options: const StorageGetUrlOptions(
+          accessLevel: StorageAccessLevel.guest,
+          pluginOptions: S3GetUrlPluginOptions(
+            validateObjectExistence: true,
+            expiresIn: Duration(days: 7),
+          ),
+        ),
+      ).result;
+      return result.url.toString();
+    } on StorageException catch (e) {
+      safePrint('Could not get a downloadable URL: ${e.message}');
+      rethrow;
+    }
+  }
+  
   Future<void> fetchAllData() async {
-    await Future.delayed(Duration(milliseconds: 500)); // Simulating fetch delay
+    await Future.delayed(Duration(milliseconds: 500));
     await fetchAllTask();
-    //await fetchSelectedTask();
     await fetchLatestTaskForTrainee(); // Fetch the most recently accessed task
     await fetchLatestTaskNote(allTasks!);
     setState(() {
@@ -68,22 +78,18 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
 
   Future<void> fetchLatestTaskForTrainee() async {
     try {
-      // Query latest task for the trainee
       final Task? latestTask =
           await queryLatestTaskForTrainee(widget.trainee.id);
       if (latestTask != null) {
-        // Update selectedTask with the latest task
         setState(() {
           selectedTask = latestTask;
           safePrint("selected task set");
           safePrint(selectedTask);
         });
       } else {
-        // Handle case where no task is found
         safePrint('Latest task for trainee not found');
       }
     } catch (e) {
-      // Handle any errors
       safePrint('Error fetching latest task for trainee: $e');
     }
   }
@@ -91,7 +97,6 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   Future<void> fetchAllTask() async {
     try {
       final task = await queryTask();
-
       setState(() {
         allTasks = task.cast<Task>();
       });
@@ -108,37 +113,28 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
 
       final tasks = response.data?.items;
       if (tasks == null || tasks.isEmpty) {
-        // Handle case where no tasks are found
         safePrint('No tasks found for trainee: $traineeID');
         return null;
       }
-
-      // Sort tasks based on updated time date in descending order
       tasks.sort((a, b) {
         final updatedAtA = (a as Task).updatedAt;
         final updatedAtB = (b as Task).updatedAt;
         if (updatedAtA == null || updatedAtB == null) {
           return 0;
         }
-
         return updatedAtB.compareTo(updatedAtA);
       });
-
-      // Return the first (most recent) task
       return tasks.first as Task;
     } catch (e) {
-      // Handle any errors
       safePrint('Query failed: $e');
       return null;
     }
   }
 
-  // Function to query all task
   Future<List<Task>> queryTask() async {
     try {
       final request = ModelQueries.list(Task.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data?.items;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -172,7 +168,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
       final request = ModelQueries.get(
           Task.classType,
           TaskModelIdentifier(
-              id: taskID)); // Use ModelQuery.get to fetch a single task by ID
+              id: taskID));
       final response = await Amplify.API.query(request: request).response;
 
       final task = response.data;
@@ -190,10 +186,10 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   Future<void> fetchSelectedTrainee() async {
     try {
       final trainee = await queryTraineeById(
-          widget.trainee.id); // Query for the trainee by ID
+          widget.trainee.id);
 
       setState(() {
-        selectedTrainee = trainee!; // Store the selected trainee in the state
+        selectedTrainee = trainee!;
       });
     } catch (e) {
       safePrint('Error fetching selected trainee: $e');
@@ -205,9 +201,8 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
       final request = ModelQueries.get(
           Trainee.classType,
           TraineeModelIdentifier(
-              id: traineeID)); // Use ModelQuery.get to fetch a single task by ID
+              id: traineeID));
       final response = await Amplify.API.query(request: request).response;
-
       final trainee = response.data;
       if (trainee == null) {
         safePrint('errors: ${response.errors}');
@@ -224,7 +219,6 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
       final request = ModelQueries.list(TaskNotes.classType,
           where: TaskNotes.TRAINEEID.eq(traineeID));
       final response = await Amplify.API.query(request: request).response;
-
       final taskNotes = response.data?.items;
       if (taskNotes == null) {
         safePrint('errors: ${response.errors}');
@@ -237,7 +231,6 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
     }
   }
 
-  // Function to fetch the latest task note
   Future<void> fetchLatestTaskNote(List<Task?> allTasks) async {
     try {
       if (selectedTask != null) {
@@ -253,7 +246,6 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
       }
     } catch (e) {
       safePrint("Error fetching task notes");
-      // Handle any errors
     }
   }
 
@@ -306,6 +298,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
     }
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     if (selectedTask == null || isLoading) {
@@ -425,9 +418,7 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
   }
 
   Future<void> _refreshData() async {
-    //await fetchSelectedTask();
     await fetchLatestTaskForTrainee();
-    // If current task is available, fetch task note based on it
     if (selectedTask != null) {
       await fetchLatestTaskNote(allTasks);
     }
@@ -476,27 +467,24 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
                       IconButton(
                         icon: isEditing
                             ? Icon(Icons.check,
-                                size: 35) // Change to tick icon in edit mode
+                                size: 35)
                             : Icon(
                                 Icons.edit,
                                 size: 35,
-                              ), // Default to edit icon
+                              ),
                         onPressed: () async {
                           if (isEditing) {
                             setState(() {
-                              isEditing = false; // Exit editing mode
-                              // Update trainee note in widget
+                              isEditing = false;
                               widget.trainee = widget.trainee.copyWith(
                                 traineeNote: _traineeNotesController.text,
                               );
                             });
-                            // Update the UI immediately with the edited note
                             await updateTraineeNote(
                                 _traineeNotesController.text);
                           } else {
                             setState(() {
-                              isEditing = true; // Enter editing mode
-                              // Populate the text field with existing note if not empty
+                              isEditing = true;
                               _traineeNotesController.text =
                                   widget.trainee.traineeNote ?? '';
                             });
@@ -549,11 +537,9 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
     final originalTraineeNote = widget.trainee.traineeNote;
     final updatedTraineeNote =
         trainee_note.isNotEmpty ? trainee_note : originalTraineeNote;
-
     final updatedTrainee = widget.trainee.copyWith(
       traineeNote: updatedTraineeNote,
     );
-
     final request =
         ModelMutations.update(updatedTrainee); // Pass updatedTrainee here
     try {
@@ -627,28 +613,6 @@ class _SupportTraineeDashboardState extends State<SupportTraineeDashboard> {
           ),
         ),
       );
-
-  Future<String> getDownloadUrl({
-    required String key,
-    required StorageAccessLevel accessLevel,
-  }) async {
-    try {
-      final result = await Amplify.Storage.getUrl(
-        key: key,
-        options: const StorageGetUrlOptions(
-          accessLevel: StorageAccessLevel.guest,
-          pluginOptions: S3GetUrlPluginOptions(
-            validateObjectExistence: true,
-            expiresIn: Duration(days: 7),
-          ),
-        ),
-      ).result;
-      return result.url.toString();
-    } on StorageException catch (e) {
-      safePrint('Could not get a downloadable URL: ${e.message}');
-      rethrow;
-    }
-  }
 
   // Recent Progress
   // Inside _buildProgressCard method -- NOT USING PROGRESS

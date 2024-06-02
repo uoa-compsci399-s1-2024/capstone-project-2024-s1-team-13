@@ -15,30 +15,29 @@ class SelectedRecipe extends StatefulWidget {
   final String recipeId; 
 
   @override
-  // ignore: library_private_types_in_public_api
   _SelectedRecipeState createState() => _SelectedRecipeState();
 }
 
 class _SelectedRecipeState extends State<SelectedRecipe> {
+  //GLOBAL VARIABLES
   Recipe? selectedRecipe; // Variable to store the selected task
-  //late List<Task> allTasks = []; // List to store all tasks
   final FlutterTts flutterTts = FlutterTts();
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    //fetchAllTask(); // Call the function to fetch all task notes
-    _configureTts(); // Configure TTS settings
+    _configureTts();
     fetchSelectedRecipe();
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedRecipe() async {
     try {
       final recipe =
-          await queryRecipeById(widget.recipeId); // Query for the task by ID
-
+          await queryRecipeById(widget.recipeId);
       setState(() {
-        selectedRecipe = recipe!; // Store the selected task in the state
+        selectedRecipe = recipe!;
       });
     } catch (e) {
       safePrint('Error fetching selected task: $e');
@@ -56,9 +55,8 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
       final request = ModelQueries.get(
           Recipe.classType,
           RecipeModelIdentifier(
-              id: recipeId)); // Use ModelQuery.get to fetch a single task by ID
+              id: recipeId));
       final response = await Amplify.API.query(request: request).response;
-
       final recipe = response.data;
       if (recipe == null) {
         safePrint('errors: ${response.errors}');
@@ -92,8 +90,7 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
     }
   }
 
-  int _currentPageIndex = 0;
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +111,6 @@ class _SelectedRecipeState extends State<SelectedRecipe> {
     );
   }
 
-  // Build task content
   // Build task content
   Widget buildRecipeContent() {
     return Column(
@@ -275,7 +271,6 @@ class StepScreen extends StatelessWidget {
         ),
 
         // Step image/visual cue
-
         const SizedBox(height: 50),
         ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(50)),

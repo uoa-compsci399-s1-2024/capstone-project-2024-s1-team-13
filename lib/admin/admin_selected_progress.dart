@@ -8,22 +8,16 @@ import 'package:inka_test/models/Task.dart';
 import 'package:inka_test/models/Trainee.dart';
 import 'package:inka_test/support/support_settings.dart';
 
-
-
-// ignore: must_be_immutable
 class AdminSelectedProgress extends StatefulWidget {
   final Task task;
   final Trainee trainee;
   final String title;
   
-
   AdminSelectedProgress({
     Key? key,
     required this.task,
     required this.trainee,
     required this.title,
-
-
   }) : super(key: key);
 
   @override
@@ -39,10 +33,10 @@ class _AdminSelectedProgress extends State<AdminSelectedProgress> {
     fetchSession();
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchSession() async {
     try {
       final session = await querySession(widget.task.id, widget.trainee.id);
-
       setState(() {
         sessions = session ?? [];
         sessions.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
@@ -52,10 +46,6 @@ class _AdminSelectedProgress extends State<AdminSelectedProgress> {
     }
   }
 
-
-
-  //QUERY ALL THE SESSIONS FOR THE TRAINEE
-  // QUERY ALL THE SESSIONS FOR THE TRAINEE AND SELECTED TASK
   Future<List<Session>?> querySession(String taskID, String traineeID) async {
     try {
       final request = ModelQueries.list(
@@ -63,20 +53,17 @@ class _AdminSelectedProgress extends State<AdminSelectedProgress> {
         where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
       );
       final response = await Amplify.API.query(request: request).response;
-
       final session = response.data?.items;
       if (session == null) {
         safePrint('errors: ${response.errors}');
       } else {
         session.sort((a, b) {
           if (a == null || a.createdAt == null || b == null || b.createdAt == null) {
-            return 0; // Handle null values
+            return 0;
           }
           return a.createdAt!.compareTo(b.createdAt!);
         });
-        // Sort sessions by createdAt in ascending order
       }
-
       return session?.cast<Session>();
     } on ApiException catch (e) {
       safePrint('Query failed: $e');
@@ -84,7 +71,7 @@ class _AdminSelectedProgress extends State<AdminSelectedProgress> {
     }
   }
 
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,7 +154,6 @@ class _AdminSelectedProgress extends State<AdminSelectedProgress> {
   }
 
   // Data Table
-
   DataTable _createDataTable() {
     return DataTable(
       columns: _createColumns(),
@@ -199,46 +185,39 @@ class _AdminSelectedProgress extends State<AdminSelectedProgress> {
   }
 
   List<DataRow> _createRows() {
-  return sessions.asMap().entries.map((entry) {
-    final int sessionNumber = entry.key + 1;
-    final Session session = entry.value;
-
-    if (session.sessionList != null && session.sessionList!.isNotEmpty) {
-      final Sess sess = session.sessionList![0];
-      
-      String judgementCall = '';
-      String feedback = '';
-      String notes = '';
-      String eval_date = '';
-
-      if (sess.aSess != null && sess.aSess!.length >= 3) {
-        judgementCall = sess.aSess![2] ?? ''; 
-        feedback = sess.aSess![1] ?? ''; 
-        notes = sess.aSess![0] ?? ''; 
-        eval_date = sess.aSess![3] ?? '';
-
-
-      }
-
-      return DataRow(
-        cells: [
-          DataCell(Text('$sessionNumber')), 
-          DataCell(Text(eval_date)),
-          DataCell(Text(judgementCall)),
-          DataCell(Text(feedback)),
-          DataCell(
-            Container(
-              padding: EdgeInsets.all(20),
-              width: 650,
-              child: Text(notes),
+    return sessions.asMap().entries.map((entry) {
+      final int sessionNumber = entry.key + 1;
+      final Session session = entry.value;
+      if (session.sessionList != null && session.sessionList!.isNotEmpty) {
+        final Sess sess = session.sessionList![0];
+        String judgementCall = '';
+        String feedback = '';
+        String notes = '';
+        String eval_date = '';
+        if (sess.aSess != null && sess.aSess!.length >= 3) {
+          judgementCall = sess.aSess![2] ?? ''; 
+          feedback = sess.aSess![1] ?? ''; 
+          notes = sess.aSess![0] ?? ''; 
+          eval_date = sess.aSess![3] ?? '';
+        }
+        return DataRow(
+          cells: [
+            DataCell(Text('$sessionNumber')), 
+            DataCell(Text(eval_date)),
+            DataCell(Text(judgementCall)),
+            DataCell(Text(feedback)),
+            DataCell(
+              Container(
+                padding: EdgeInsets.all(20),
+                width: 650,
+                child: Text(notes),
+              ),
             ),
-          ),
-        ],
-      );
-    } else {
-      return DataRow(cells: [DataCell(Text('No data'))]); // Handle the case when sessionList is empty
-    }
-  }).toList();
-}
-
+          ],
+        );
+      } else {
+        return DataRow(cells: [DataCell(Text('No data'))]); // Handle the case when sessionList is empty
+      }
+    }).toList();
+  }
 }

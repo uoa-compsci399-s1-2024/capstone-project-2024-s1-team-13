@@ -24,6 +24,7 @@ class SupportTraineeProgress extends StatefulWidget {
 }
 
 class _SupportTraineeProgress extends State<SupportTraineeProgress> {
+  //GLOBAL VARIABLES
   late List<Task> allTasks = []; // List to store all tasks
   final String title = '';
   TaskNotes taskNote = TaskNotes();
@@ -39,6 +40,7 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
     selectedTask = widget.task!;
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedTask() async {
     try {
       final task = await queryTaskByID(widget.task!.id);
@@ -60,9 +62,8 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
       final request = ModelQueries.get(
           Task.classType,
           TaskModelIdentifier(
-              id: taskID)); // ModelQuery.get to fetch a single task by ID
+              id: taskID));
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -75,23 +76,20 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
     }
   }
 
-  // Function to fetch all tasks
   Future<void> fetchAllTask() async {
     try {
       setState(() {
-        isLoading = true; // Set loading state to true while fetching tasks
+        isLoading = true;
       });
-
       final task = await queryTask();
-
       setState(() {
         allTasks = task.cast<Task>();
-        isLoading = false; // Set loading state to false after fetching tasks
+        isLoading = false;
         print('Fetched tasks: $allTasks');
       });
     } catch (e) {
       setState(() {
-        isLoading = false; // Set loading state to false if an error occurs
+        isLoading = false;
       });
       print('Error fetching tasks: $e');
     }
@@ -101,7 +99,6 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
     try {
       final request = ModelQueries.list(Task.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data?.items;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -114,6 +111,33 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
     }
   }
 
+   Future<List<Session>?> querySession(String taskID, String traineeID) async {
+    try {
+      final request = ModelQueries.list(
+        Session.classType,
+        where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
+      );
+      final response = await Amplify.API.query(request: request).response;
+      final session = response.data?.items;
+      if (session == null) {
+        safePrint('errors: ${response.errors}');
+        return null;
+      } else {
+        session.sort((a, b) {
+          if (a == null || a.createdAt == null || b == null || b.createdAt == null) {
+            return 0; // Handle null values
+          }
+          return a.createdAt!.compareTo(b.createdAt!);
+        });
+      }
+      return session?.cast<Session>();
+    } on ApiException catch (e) {
+      safePrint('Query failed: $e');
+      return null;
+    }
+  }
+
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,7 +157,6 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
                 return const SupportSettings(title: 'Settings');
               }));
             },
-            // To add functionality to settings
             iconSize: 45,
             icon: Icon(Icons.settings),
             padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -203,112 +226,78 @@ class _SupportTraineeProgress extends State<SupportTraineeProgress> {
 
   // Widget to build progress information
   Widget _buildProgress(Task task) {
-  return FutureBuilder<List<Session>?>(
-    future: querySession(task.id, widget.trainee.id),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Text('No progress available');
-      } else {
-        final sessions = snapshot.data!;
-        // Sort sessions by createdAt in descending order to get the latest one
-        sessions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
-        final latestSession = sessions.first;
-        
-        final feedback = latestSession.sessionList![0].aSess![1] ?? 'No feedback available';
-        final judgementCall = latestSession.sessionList![0].aSess![2];
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Judgment Call: ',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
+    return FutureBuilder<List<Session>?>(
+      future: querySession(task.id, widget.trainee.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Text('No progress available');
+        } else {
+          final sessions = snapshot.data!;
+          // Sort sessions by createdAt in descending order to get the latest one
+          sessions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+          final latestSession = sessions.first;
+          final feedback = latestSession.sessionList![0].aSess![1] ?? 'No feedback available';
+          final judgementCall = latestSession.sessionList![0].aSess![2];
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Judgment Call: ',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: '$judgementCall',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.pink[900],
+                    TextSpan(
+                      text: '$judgementCall',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.pink[900],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Recent Feedback: ',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
+              SizedBox(height: 20),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Recent Feedback: ',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: '$feedback',
-                    style: TextStyle(
-                      fontFamily: 'Lexend Exa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.pink[900],
+                    TextSpan(
+                      text: '$feedback',
+                      style: TextStyle(
+                        fontFamily: 'Lexend Exa',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.pink[900],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      }
-    },
-  );
-}
-
-  // QUERY ALL THE SESSIONS FOR THE TRAINEE AND SELECTED TASK
-  Future<List<Session>?> querySession(String taskID, String traineeID) async {
-  try {
-    final request = ModelQueries.list(
-      Session.classType,
-      where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
-    );
-    final response = await Amplify.API.query(request: request).response;
-
-    final session = response.data?.items;
-    if (session == null) {
-      safePrint('errors: ${response.errors}');
-      return null;
-    } else {
-      session.sort((a, b) {
-        if (a == null || a.createdAt == null || b == null || b.createdAt == null) {
-          return 0; // Handle null values
+            ],
+          );
         }
-        return a.createdAt!.compareTo(b.createdAt!);
-      });
-      // Sort sessions by createdAt in ascending order
-    }
-
-    return session?.cast<Session>();
-  } on ApiException catch (e) {
-    safePrint('Query failed: $e');
-    return null;
+      },
+    );
   }
-}
-
-
 }

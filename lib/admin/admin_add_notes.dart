@@ -253,43 +253,34 @@ class _AdminAddNotesState extends State<AdminAddNotes> {
     if (title.isNotEmpty && description.isNotEmpty && widget.trainee.isWorking == true) {
       Navigator.pop(context, {'title': title, 'description': description});
     } else if (widget.trainee.isWorking == false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50))),
-          elevation: 10,
-          content: Text(
-            'Cannot create a note for archived trainee!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Lexend Exa',
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.pink[900]),
-          )),
-      );
+      _showSnackBar('Cannot create a note for archived trainee!');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50))),
-          elevation: 10,
-          content: Text(
-            'Please fill in both title and description',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Lexend Exa',
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: Colors.pink[900]),
-          )),
-      );
+      _showSnackBar('Please fill in both title and description!');
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        elevation: 10,
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontFamily: 'Lexend Exa',
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+            color: Colors.pink,
+          ),
+        ),
+      ),
+    );
   }
 }

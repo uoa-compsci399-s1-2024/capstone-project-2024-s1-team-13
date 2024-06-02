@@ -29,11 +29,10 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
     fetchSelectedTask();
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedTask() async {
     try {
       final task = await querySelectedTask(widget.task!.id, widget.trainee.id);
-     
-
       if (task != null) {
         setState(() {
           selectedTask = task;
@@ -46,57 +45,43 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
     }
   }
 
-  
-
   Future<Task?> querySelectedTask(String taskID, String traineeID) async {
-  try {
-    final request = ModelQueries.list(Task.classType,
-        where: Task.TRAINEEID.eq(traineeID) & Task.ID.eq(taskID));
-    final response = await Amplify.API.query(request: request).response;
-
-    final tasks = response.data?.items;
-    if (tasks == null || tasks.isEmpty) {
-      safePrint('Task not found');
-      return null;
+    try {
+      final request = ModelQueries.list(Task.classType,
+          where: Task.TRAINEEID.eq(traineeID) & Task.ID.eq(taskID));
+      final response = await Amplify.API.query(request: request).response;
+      final tasks = response.data?.items;
+      if (tasks == null || tasks.isEmpty) {
+        safePrint('Task not found');
+        return null;
+      }
+        return tasks[0];
+      } on ApiException catch (e) {
+        safePrint('Query failed: $e');
+        return null;
+      }
     }
-
-    
-    return tasks[0];
-  } on ApiException catch (e) {
-    safePrint('Query failed: $e');
-    return null;
-  }
-}
-
 
     Future<void> updateTaskProgress(String newJudgementCall, String newTraineeID) async {
-  try {
-    // Create a new JudgementCall object
-    final judgementCall = JudgementCall(
-      taskID: selectedTask.id,
-      traineeID: newTraineeID,
-      call: newJudgementCall,
-    );
-
-    // Use Amplify to save the judgement call to the database
-    final request = ModelMutations.create(judgementCall);
-    final response = await Amplify.API.mutate(request: request).response;
-
-    // Check for errors in the mutation response
-    if (response.errors.isNotEmpty) {
-      throw Exception('Failed to update task progress');
+      try {
+        final judgementCall = JudgementCall(
+          taskID: selectedTask.id,
+          traineeID: newTraineeID,
+          call: newJudgementCall,
+        );
+        final request = ModelMutations.create(judgementCall);
+        final response = await Amplify.API.mutate(request: request).response;
+        if (response.errors.isNotEmpty) {
+          throw Exception('Failed to update task progress');
+        }
+        safePrint("Judgement call updated!");
+        safePrint('Update response: $response');
+      } catch (e) {
+        safePrint('Error updating task progress: $e');
+      }
     }
 
-    // Print the response for debugging purposes
-    safePrint("Judgement call updated!");
-    safePrint('Update response: $response');
-  } catch (e) {
-    safePrint('Error updating task progress: $e');
-  }
-}
-
-
-
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +101,6 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
                   return const SupportSettings(title: 'Settings');
                 }));
               },
-             
               iconSize: 45,
               icon: Icon(Icons.settings),
               padding: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 10.0),
@@ -178,10 +162,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
 // Independent
   Widget _IndependentButton(context) => ElevatedButton(
       onPressed: () {
-        // pending backend functionality
       updateTaskProgress('I', widget.trainee.id);
-
-
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return EvaluationNotes(
               task: widget.task!, trainee: widget.trainee); // change parameters
@@ -204,10 +185,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
 // Verbal Prompt
   Widget _VPButton(context) => ElevatedButton(
       onPressed: () {
-        // pending backend functionality
       updateTaskProgress('VP', widget.trainee.id);
-
-
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return EvaluationNotes(
                task: widget.task!, trainee: widget.trainee); // change parameters
@@ -230,10 +208,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
 // Gestural Prompt
   Widget _GPButton(context) => ElevatedButton(
       onPressed: () {
-        // pending backend functionality
         updateTaskProgress('GP', widget.trainee.id);
-
-
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return EvaluationNotes(
                task: widget.task!, trainee: widget.trainee); // change parameters
@@ -257,8 +232,6 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
   Widget _PPButton(context) => ElevatedButton(
       onPressed: () {
         updateTaskProgress('P', widget.trainee.id);
-
-
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return EvaluationNotes(
                task: widget.task!, trainee: widget.trainee); // change parameters
@@ -281,10 +254,7 @@ class _EvaluationJudgmentCall extends State<EvaluationJudgmentCall> {
 // Not Completed
   Widget _NCButton(context) => ElevatedButton(
       onPressed: () {
-        // pending backend functionality
           updateTaskProgress('NC', widget.trainee.id);
-
-
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return EvaluationNotes(
                task: widget.task!, trainee: widget.trainee); // change parameters

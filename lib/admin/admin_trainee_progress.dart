@@ -23,6 +23,7 @@ class AdminTraineeProgress extends StatefulWidget {
 }
 
 class _AdminTraineeProgress extends State<AdminTraineeProgress> {
+  //GLOBAL VARIABLES
   late List<Task> allTasks = []; // List to store all tasks
   final String title = '';
   TaskNotes taskNote = TaskNotes();
@@ -32,12 +33,12 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
 
   void initState() {
     super.initState();
-    fetchAllTask(); // Call the function to fetch all task
+    fetchAllTask();
 
     fetchSelectedTask();
-    //selectedTask = widget.task!;
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedTask() async {
     try {
       final task = await queryTaskByID(widget.task!.id);
@@ -59,9 +60,8 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
       final request = ModelQueries.get(
           Task.classType,
           TaskModelIdentifier(
-              id: taskID)); // Use ModelQuery.get to fetch a single task by ID
+              id: taskID));
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -74,15 +74,12 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
     }
   }
 
-  // Function to fetch all tasks
   Future<void> fetchAllTask() async {
     try {
       setState(() {
-        isLoading = true; // Set loading state to true while fetching tasks
+        isLoading = true;
       });
-
       final task = await queryTask();
-
       setState(() {
         allTasks = task.cast<Task>();
         isLoading = false; // Set loading state to false after fetching tasks
@@ -100,7 +97,6 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
     try {
       final request = ModelQueries.list(Task.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final task = response.data?.items;
       if (task == null) {
         safePrint('errors: ${response.errors}');
@@ -113,6 +109,39 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
     }
   }
 
+  Future<List<Session>?> querySession(String taskID, String traineeID) async {
+    try {
+      final request = ModelQueries.list(
+        Session.classType,
+        where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
+      );
+      final response = await Amplify.API.query(request: request).response;
+
+      final session = response.data?.items;
+      if (session == null) {
+        safePrint('errors: ${response.errors}');
+        return null;
+      } else {
+        session.sort((a, b) {
+          if (a == null ||
+              a.createdAt == null ||
+              b == null ||
+              b.createdAt == null) {
+            return 0; // Handle null values
+          }
+          return a.createdAt!.compareTo(b.createdAt!);
+        });
+        // Sort sessions by createdAt in ascending order
+      }
+
+      return session?.cast<Session>();
+    } on ApiException catch (e) {
+      safePrint('Query failed: $e');
+      return null;
+    }
+  }
+
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,7 +169,6 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
       ),
       body: isLoading
           ? Center(
-              // Display a loading indicator while fetching tasks
               child: CircularProgressIndicator(),
             )
           : Center(
@@ -214,7 +242,6 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
           return Text('No progress available');
         } else {
           final sessions = snapshot.data!;
-          // Sort sessions by createdAt in descending order to get the latest one
           sessions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
           final latestSession = sessions.first;
 
@@ -279,38 +306,5 @@ class _AdminTraineeProgress extends State<AdminTraineeProgress> {
         }
       },
     );
-  }
-
-  // QUERY ALL THE SESSIONS FOR THE TRAINEE AND SELECTED TASK
-  Future<List<Session>?> querySession(String taskID, String traineeID) async {
-    try {
-      final request = ModelQueries.list(
-        Session.classType,
-        where: Session.TRAINEEID.eq(traineeID) & Session.TASKID.eq(taskID),
-      );
-      final response = await Amplify.API.query(request: request).response;
-
-      final session = response.data?.items;
-      if (session == null) {
-        safePrint('errors: ${response.errors}');
-        return null;
-      } else {
-        session.sort((a, b) {
-          if (a == null ||
-              a.createdAt == null ||
-              b == null ||
-              b.createdAt == null) {
-            return 0; // Handle null values
-          }
-          return a.createdAt!.compareTo(b.createdAt!);
-        });
-        // Sort sessions by createdAt in ascending order
-      }
-
-      return session?.cast<Session>();
-    } on ApiException catch (e) {
-      safePrint('Query failed: $e');
-      return null;
-    }
   }
 }

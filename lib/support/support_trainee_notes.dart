@@ -20,8 +20,8 @@ class SupportTraineeNotes extends StatefulWidget {
 }
 
 class _SupportTraineeNotes extends State<SupportTraineeNotes> {
+  //GLOBAL VARIABLES
   final TextEditingController _textController = TextEditingController();
-
   late final String title;
   final TextEditingController _searchController = TextEditingController();
   String generalNote = ''; // Placeholder for the latest trainee note text
@@ -29,6 +29,7 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
   late List<Trainee> allTrainees = [];
   late Trainee selectedTrainee;
   late List<TaskNotes> searchResults = []; // For autocomplete
+  TaskNotes? selectedTaskNote;
 
   String _selectedGroup = 'All';
 
@@ -38,20 +39,19 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     title = widget.title;
 
     fetchSelectedTrainee();
-    fetchLatestTraineeNote(); // Call the function to fetch the latest trainee note
-    fetchAllTaskNotes(); // Call the function to fetch all task notes
+    fetchLatestTraineeNote();
+    fetchAllTaskNotes();
   }
 
+  //BACKEND FUNCTIONS
   Future<void> fetchSelectedTrainee() async {
     try {
       final trainee = await queryTraineeById(
-          widget.trainee.id); // Query for the trainee by ID
-
+          widget.trainee.id);
       setState(() {
         assert(
-            trainee != null, 'Trainee is null after fetching'); // Add assertion
-
-        selectedTrainee = trainee!; // Store the selected trainee in the state
+            trainee != null, 'Trainee is null after fetching');
+        selectedTrainee = trainee!;
       });
     } catch (e) {
       safePrint('Error fetching selected trainee: $e');
@@ -63,9 +63,8 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
       final request = ModelQueries.get(
           Trainee.classType,
           TraineeModelIdentifier(
-              id: traineeID)); // Use ModelQuery.get to fetch a single task by ID
+              id: traineeID));
       final response = await Amplify.API.query(request: request).response;
-
       final trainee = response.data;
       if (trainee == null) {
         safePrint('errors: ${response.errors}');
@@ -77,26 +76,21 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     }
   }
 
-  // Function to fetch all trainees
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
-
       setState(() {
         allTrainees = trainees;
-        //final List<TraineeItem> traineesList = allTrainees.map((trainee) => TraineeItem.fromTrainee(trainee)).toList();
       });
     } catch (e) {
       print('Error fetching trainees: $e');
     }
   }
 
-  // Function to query all task notes
   Future<List<Trainee>> queryTrainees() async {
     try {
       final request = ModelQueries.list(Trainee.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final trainee = response.data?.items;
       if (trainee == null) {
         safePrint('errors: ${response.errors}');
@@ -109,7 +103,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     }
   }
 
-  // Function to fetch all task notes
   Future<void> fetchAllTaskNotes() async {
     try {
       final taskNotes = await queryTaskNotes(widget.trainee.id);
@@ -121,7 +114,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     }
   }
 
-  // Function to query all task notes
   Future<List<TaskNotes>> queryTaskNotes(String traineeID) async {
     try {
       final request = ModelQueries.list(TaskNotes.classType,
@@ -143,7 +135,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     try {
       final request = ModelQueries.list(TraineeNotes.classType);
       final response = await Amplify.API.query(request: request).response;
-
       final traineeNotes = response.data?.items;
       if (traineeNotes == null) {
         safePrint('errors: ${response.errors}');
@@ -156,14 +147,10 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     }
   }
 
-  // Function to fetch the latest trainee note
   Future<void> fetchLatestTraineeNote() async {
     try {
-      // Query all trainee notes
       final List<TraineeNotes?> traineeNotes = await queryTraineeNoteListItem();
-
       if (mounted && traineeNotes.isNotEmpty) {
-        // If trainee notes are available, update the state with the text of the latest note
         setState(() {
           generalNote = traineeNotes.last!
               .noteDesc!; 
@@ -173,8 +160,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
       print('Error fetching trainee note: $e');
     }
   }
-
-  TaskNotes? selectedTaskNote;
 
   // Autocomplete logic
   void _onSearchTextChanged(String searchText) {
@@ -357,7 +342,6 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
     final maxListHeight = MediaQuery.of(context).size.height * 0.3;
     final itemHeight = 70.0;
     final listItemWidth = MediaQuery.of(context).size.width * 0.95;
-
     return Autocomplete<TaskNotes>(
       optionsBuilder: (TextEditingValue textEditingValue) {
         if (textEditingValue.text.isEmpty) {
@@ -390,7 +374,7 @@ class _SupportTraineeNotes extends State<SupportTraineeNotes> {
           focusNode: focusNode,
           onChanged: _onSearchTextChanged,
           style: TextStyle(
-            fontSize: 27, // Adjust the font size here
+            fontSize: 27,
           ),
           decoration: InputDecoration(
             prefixIcon: Padding(

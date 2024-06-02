@@ -69,21 +69,18 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     }
   }
 
-  // Function to fetch all trainees
   Future<void> fetchAllTrainees() async {
     try {
       final trainees = await queryTrainees();
 
       setState(() {
         allTrainees = trainees;
-        //final List<TraineeItem> traineesList = allTrainees.map((trainee) => TraineeItem.fromTrainee(trainee)).toList();
       });
     } catch (e) {
       print('Error fetching trainees: $e');
     }
   }
 
-  // Function to query all task notes
   Future<List<Trainee>> queryTrainees() async {
     try {
       final request = ModelQueries.list(Trainee.classType);
@@ -119,7 +116,6 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     }
   }
 
-  // Function to fetch all task notes
   Future<void> fetchAllTaskNotes() async {
     try {
       final taskNotes = await queryTaskNotes(widget.trainee.id);
@@ -131,7 +127,6 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     }
   }
 
-  // Function to query all task notes
   Future<List<TaskNotes>> queryTaskNotes(String traineeID) async {
     try {
       final request = ModelQueries.list(TaskNotes.classType,
@@ -166,14 +161,11 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     }
   }
 
-  // Function to fetch the latest trainee note
   Future<void> fetchLatestTraineeNote() async {
     try {
-      // Query all trainee notes
       final List<TraineeNotes?> traineeNotes = await queryTraineeNoteListItem();
 
       if (mounted && traineeNotes.isNotEmpty) {
-        // If trainee notes are available, update the state with the text of the latest note
         setState(() {
           generalNote = traineeNotes.last!
               .noteDesc!; 
@@ -203,7 +195,6 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     });
   }
 
-  // Group task notes by title
   Map<String, List<TaskNotes>> _groupTaskNotesByTitle(List<TaskNotes> notes) {
     Map<String, List<TaskNotes>> groupedNotes = {};
     for (var note in notes) {
@@ -216,6 +207,7 @@ class _AdminEditNotes extends State<AdminEditNotes> {
     return groupedNotes;
   }
 
+  //FRONTEND
   @override
   Widget build(BuildContext context) {
     // Group task notes by title

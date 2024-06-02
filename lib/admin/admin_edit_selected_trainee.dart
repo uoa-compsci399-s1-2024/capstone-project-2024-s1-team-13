@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
@@ -29,6 +27,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
   String? uploadedImageKey;
   String? downloadedImageUrl;
 
+  //INITSTATE
   @override
   void initState() {
     super.initState();
@@ -128,7 +127,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
       final response = await Amplify.API.mutate(request: request).response;
       safePrint('Response: $response');
     } catch (e) {
-      errorSnackbar();
+      _showSnackBar('Error saving changes!');
       safePrint('Error updating trainee: $e');
     }
   }
@@ -157,24 +156,7 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
               } else {
                 print('Image upload failed.');
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(50),
-                          topRight: Radius.circular(50))),
-                  elevation: 10,
-                  content: Text(
-                    'Successfully edited trainee!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: 'Lexend Exa',
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.pink[900]),
-                  )),
-              );
+              _showSnackBar('Successfully edited trainee!');
               Navigator.pop(context);
             },
             iconSize: 50,
@@ -350,24 +332,28 @@ class AdminEditSelectedTraineeState extends State<AdminEditSelectedTrainee> {
     );
   }
 
-  void errorSnackbar() {
+  void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50))),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
         elevation: 10,
         content: Text(
-          'Error saving changes!',
+          message,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              fontFamily: 'Lexend Exa',
-              fontSize: 25,
-              fontWeight: FontWeight.w500,
-              color: Colors.pink[900]),
-        )),
+          style: const TextStyle(
+            fontFamily: 'Lexend Exa',
+            fontSize: 25,
+            fontWeight: FontWeight.w500,
+            color: Colors.pink,
+          ),
+        ),
+      ),
     );
   }
 }

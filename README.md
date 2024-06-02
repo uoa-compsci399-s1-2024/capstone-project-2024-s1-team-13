@@ -35,7 +35,7 @@
     <!-- <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a> -->
     <br />
     <br />
-    Damsels in Development are five Computer Science students that have taken papers such as CS230, CS335, and CS345. These papers have given us the proper knowledge and skills in order to develop Inkā.
+    Damsels in Development consist of five Computer Science students that have taken papers such as CS230, CS335, and CS345. These papers have given us the proper knowledge and skills in order to develop Inkā.
     <br /><br />
     <r
     <br />
@@ -102,7 +102,7 @@ Backend Team
 Our application, Inkā, serves as a one-stop shop for the training programs developed by the School of Psychology at The University of Auckland, as well as other partners (Rescare Homes Trust). It functions as a platform for monitoring cafe trainee progress and fostering personalized learning experiences for trainees within the cafe environment.
 
 [Jira Software](https://capstone-cs-399.atlassian.net/jira/software/projects/CAPSTONE/boards/1?atlOrigin=eyJpIjoiMDM0ZDMyZmQ3OTZiNGMzODg4YmJlODAyNmU3MGI3ZjMiLCJwIjoiaiJ9) was our primary project management tool, and we utilised [Click up](https://app.clickup.com/9016213572/v/li/901601710023) to plan out the project timeline. 
-Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [CS399 Google Drive folder](https://drive.google.com/drive/folders/1-gizh0ax6PdQrp2FK9bT6ZF-qECF2oGU?usp=drive_link). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
+Additionally, our client meetings were transcripted by Eisen Belleza which was stored in our [Client Meeting Logs](documentation/Client%20Meeting%20Logs/). We kept track of our client/ group meeting notes, documentations and reports through the same shared google drive. Our group meetings and brainstorming sessions were held on our Discord server and group chat.
 
 ![Jira Software](documentation/jira.png)
 ![Gantt Chart](documentation/gant.png)
@@ -248,7 +248,7 @@ git clone https://github.com/uoa-compsci399-s1-2024/capstone-project-2024-s1-tea
 ```
 
 ## AWS Set-up Documentation
-We have included an AWS [documentation](https://docs.google.com/document/d/17ZWbsLJndr8A0jwiOuvkP9uwAZ9P8AkxaGnu-Ex6398/edit) to help with setting up the project on AWS. Please refer to this document when initialising a new Amplify project. We have included screenshots inside the document as a reference if you are unable to proceed to the next instruction. 
+We have included an AWS [documentation](documentation/AWS%20setup.pdf) to help with setting up the project on AWS. Please refer to this document when initialising a new Amplify project. We have included screenshots inside the document as a reference if you are unable to proceed to the next instruction. Please note that this AWS Setup document is purely a reference to the way that we have set up our Amplify Studio and the components that are connected to AWS - please refer above to any installation requirements.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
