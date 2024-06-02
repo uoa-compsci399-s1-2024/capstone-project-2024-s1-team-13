@@ -253,7 +253,9 @@ We have included an [AWS Setup](documentation/AWS%20setup.pdf) document to help 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Link to Video Demo
-[link goes here]
+The demo highlights the key features of the Inkā application in a succinct manner.
+
+<a href='https://youtu.be/zaYUskN_kiw'>Video Demo</a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
